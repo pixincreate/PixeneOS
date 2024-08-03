@@ -11,4 +11,3 @@ GrapheneOS with additionals:
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 - [AlterInstaller](https://github.com/chenxiaolong/AlterInstaller) (>= version 1.1)
 - [Magisk](https://github.com/pixincreate/Magisk) (>= version 27006) -- optional
-
