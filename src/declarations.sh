@@ -3,8 +3,9 @@
 # Declarations
 # GitHub repository
 DOMAIN="https://github.com"
-AVBROOT_REPOSITORY="chenxiaolong/avbroot"
 ARCH="x86_64-unknown-linux-gnu"
+
+AVBROOT_REPOSITORY="chenxiaolong/avbroot"
 MAGISK_REPOSITORY="pixincreate/Magisk" # My fork with Zygisk support for GrapheneOS
 
 # AVBRoot
