@@ -12,7 +12,6 @@ GrapheneOS with additionals:
 - [my-avbroot-setup](https://github.com/chenxiaolong/my-avbroot-setup)
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
-
 ## TO-DO
 
 - [ ] Complete functions
@@ -22,4 +21,4 @@ GrapheneOS with additionals:
   - [ ] Check for untracked files and add `-dirty` suffix to the version
   - [ ] Verify the source
   - [ ] Clean up
-  - [ ] Rewrite Downloader
+  - [x] Rewrite Downloader

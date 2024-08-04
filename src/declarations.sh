@@ -1,46 +1,39 @@
-#!/bin/bash
+declare -A AVBROOT
+declare -A MAGISK
+declare -A KEYS
+declare -A GRAPHENEOS
+declare -A ADDITIONALS
 
-# Declarations
-# GitHub repository
+# Specifications
+CLEANUP="${CLEANUP:-''}" # Clean up after the script finishes
 DOMAIN="https://github.com"
-ARCH="x86_64-unknown-linux-gnu"
-
-AVBROOT_REPOSITORY="chenxiaolong/avbroot"
-MAGISK_REPOSITORY="pixincreate/Magisk" # My fork with Zygisk support for GrapheneOS
-
-# AVBRoot
-AVBROOT_VERSION="3.4.1"
-
-AVBROOT_URL="${DOMAIN}/${REPOSITORY}/releases/download/v${AVBROOT_VERSION}/avbroot-${AVBROOT_VERSION}-${ARCH}.zip"
-AVBROOT_SIGNATURE_URL="${DOMAIN}/${REPOSITORY}/releases/download/v${AVBROOT_VERSION}/avbroot-${AVBROOT_VERSION}-${ARCH}.zip.sig"
-
-AVBROOT_DIR="${HOME}/avbroot"
-AVBROOT_ZIP_FILE="${AVBROOT_DIR}/avbroot-${AVBROOT_VERSION}-${ARCH}.zip"
+DEVICE_NAME="${DEVICE_NAME:-}"
+FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
+WORKDIR="${HOME}/.tmp"
 
 # Magisk
-MAGISK_VERSION=${MAGISK_VERSION:-}
-MAGISK_URL="${DOMAIN}/${MAGISK_REPOSITORY}/releases/download/canary-${MAGISK_VERSION}/app-release.apk"
+MAGISK[REPOSITORY]="pixincreate/Magisk"
+MAGISK[VERSION]="${MAGISK[VERSION]:-}"
+MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}/releases/download/canary-${MAGISK[VERSION]}/app-release.apk"
 
 # Keys
-KEY_AVB=${KEY_AVB:-avb.key}
-KEY_OTA=${KEY_OTA:-ota.key}
-CERT_OTA=${CERT_OTA:-ota.crt}
+KEYS[AVB]="${KEYS[AVB]:-avb.key}"
+KEYS[CERT_OTA]="${KEYS[CERT_OTA]:-ota.crt}"
+KEYS[OTA]="${KEYS[OTA]:-ota.key}"
 
-# Device
-DEVICE_NAME=${DEVICE_NAME:-}
-
-GRAPHENEOS_OTA_BASE_URL="https://releases.grapheneos.org"
-GRAPHENEOS_UPDATE_CHANNEL='alpha'
-GRAPHENEOS_VERSION=${GRAPHENEOS_VERSION:-}
-GRAPHENEOS_UPDATE_TYPE=${GRAPHENEOS_UPDATE_TYPE:-'ota_update'} # 'ota_update' or 'factory'
-GRAPHENEOS_OTA_URL=${GRAPHENEOS_OTA_URL:-}
+# GrapheneOS
+GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"
+GRAPHENEOS[UPDATE_CHANNEL]="alpha"
+GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # 'ota_update' or 'factory'
+GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-}"
+GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}" # Will be constructed from the latest version
 
 # Additionals
-BCR=${BCR:-true}                               # Basic Call Recorder
-CUSTOTA=${CUSTOTA:-true}                       # Custom OTA Updater app
-FORCE_UPDATE=${FORCE_UPDATE:-false}            # Push update to device forcefully
-MSD=${MSD:-true}                               # Mass Storage Device on USB
-OEM_UNLOCK_ON_BOOT=${OEM_UNLOCK_ON_BOOT:-true} # Unlock bootloader on boot
-ROOT=${ROOT:-false}                            # Only Magisk is supported
-
-CLEANUP=${CLEANUP:-''} # Clean up after the script finishes
+ADDITIONALS[afsr]="${ADDITIONALS[afsr]:-true}"                         # Android File system repack
+ADDITIONALS[avbroot]="${ADDITIONALS[avbroot]:-true}"                   # Android Verified Boot Root
+ADDITIONALS[bcr]="${ADDITIONALS[bcr]:-true}"                           # Basic Call Recorder
+ADDITIONALS[custota]="${ADDITIONALS[custota]:-true}"                   # Custom OTA Updater app
+ADDITIONALS[msd]="${ADDITIONALS[msd]:-false}"                          # Mass Storage Device on USB
+ADDITIONALS[my_avbroot_setup]="${ADDITIONALS[my_avbroot_setup]:-true}" # My AVBRoot setup
+ADDITIONALS[oemunlockonboot]="${ADDITIONALS[oemunlockonboot]:-true}"   # Unlock bootloader on boot
+ADDITIONALS[root]="${ADDITIONALS[root]:-false}"                        # Only Magisk is supported

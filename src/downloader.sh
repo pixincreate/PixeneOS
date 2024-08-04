@@ -43,6 +43,8 @@ download() {
   local repository="${1}"
   local URL="${2}"
 
+  get_latest_version
+
   if [ "${ADDITIONALS[root]}" ]; then
     get "magisk" "${MAGISK[URL]}"
   fi
@@ -62,14 +64,29 @@ get() {
       git clone "${url}" "${WORKDIR}/${filename}"
     else
       curl -sL "${url}" --output "${WORKDIR}/${filename}"
-      curl -sL "${url}.sig" --output "${WORKDIR}/${filename}.sig"
 
       echo N | unzip -q "${WORKDIR}/${filename}.zip" -d "${WORKDIR}"
-      echo N | unzip -q "${WORKDIR}/${filename}.sig" -d "${WORKDIR}/${filename}"
 
       chmod +x "${WORKDIR}/${filename}"
-      rm "${WORKDIR}/${filename}.zip" "${WORKDIR}/${filename}.sig"
+      rm "${WORKDIR}/${filename}.zip"
     fi
     echo "${filename} downloaded to: ${WORKDIR}/${filename}"
+  fi
+}
+
+download_dependencies() {
+  # Download the required tools
+  # If the tools are already present, skip the download
+  # Else, download them
+  url_constructor
+}
+
+download_ota() {
+  local ota_location="${WORKDIR}/${OTA_TARGET}.zip"
+
+  if [ -z "${ota_location}" ]; then
+    echo "Downloading OTA from: $GRAPHENEOS[OTA_URL]"
+    curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota_location}
+    echo "OTA downloaded to: ${ota_location}"
   fi
 }
