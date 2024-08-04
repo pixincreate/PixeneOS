@@ -22,7 +22,7 @@ download_dependencies() {
   # Download the required tools
   # If the tools are already present, skip the download
   # Else, download them
-  download
+  url_constructor
 }
 
 verify_downloads() {

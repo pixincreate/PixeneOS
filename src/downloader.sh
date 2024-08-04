@@ -1,58 +1,75 @@
 . ./declarations.sh
 
-download_helper() {
-  local filename="${1}"
-  local extension="${2}"
-  local URL="${3}"
+url_constructor() {
+  local user='chenxiaolong'
+  local arch="x86_64-unknown-linux-gnu"
+  local declare -A VERSION
 
-  if [ -e "${WORKDIR/avbroot/}" ]; then
-    echo "Downloading ${filename}${extension}..."
-    curl -sL "${URL}" --output "${WORKDIR}/${filename}${extension}"
-    echo "${filename} downloaded to: ${WORKDIR}/${filename}${extension}"
+  local repositories="avbroot afsr custota msd bcr oemunlockonboot my-avbroot-setup"
 
-    if [[ "${extension}" == "*.zip" ]]; then
-      echo "Extracting ${filename}${extension}..."
-      echo N | unzip -q "${WORKDIR}/${filename}${extension}" -d "${WORKDIR}"
-      chmod +x "${WORKDIR}/${filename}"
-      echo "${filename}${extension} extracted to: ${WORKDIR}/${filename}"
+  VERSION[AVBROOT]="3.4.1"
+  VERSION[CUSTOTA]="4.7"
+  VERSION[MSD]="1.1"
+  VERSION[BCR]="1.69"
+  VERSION[OEMUNLOCKONBOOT]="1.1"
 
-      rm "${WORKDIR}/${filename}${extension}"
+  for repository in ${repositories}; do
+    if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
+      URL="${DOMAIN}/${user}/${repository}"
+    else
+
+      if [[ "${repository}" == "avbroot" || "${repository}" == "custota" ]]; then
+        local suffix="${arch}"
+      else
+        local suffix="release"
+      fi
+
+      repository=$(echo "$repository" | tr '[:lower:]' '[:upper:]')
+      URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository}]}/${repository}-${VERSION[${repository}]}-${suffix}.zip"
     fi
-  else
-    echo "${filename} is already installed in: ${WORKDIR}"
-  fi
-}
 
-download() {
-  if [ ADDITIONALS[root] ]; then
-    # This downloads an APK file
-    download_helper "magisk" ".apk" "${MAGISK[URL]}"
-  fi
-
-  # Iterate over each repository
-  for REPOSITORY in ${AVBROOT[REPOSITORIES]}; do
-
-    # Retrieve the flag for the current repository directly
     if [[ "${REPOSITORY}" == "my-avbroot-setup" ]]; then
       FLAG="${ADDITIONALS[my_avbroot_setup]}"
     else
       FLAG="${ADDITIONALS[$REPOSITORY]}"
     fi
-
-    # Handle case where the flag might not be set or missing
-    if [[ -z "$FLAG" ]]; then
-      echo "Warning: No flag found for repository '${REPOSITORY}' in ADDITIONALS array. Skipping."
-      continue
-    fi
-
-    # Check if the flag is set to 'true'
-    if [[ "$FLAG" == "true" ]]; then
-      if [[ "${REPOSITORY}" == "avbroot" ]]; then
-        download_helper "avbroot" ".zip" "${AVBROOT[URL]}"
-      else
-        URL="${DOMAIN}/${AVBROOT[USER]}/${REPOSITORY}"
-        download_helper "${REPOSITORY}" ".zip" "${URL}"
-      fi
+    if [[ "${FLAG}" == 'true' ]]; then
+      download "${repository}" "${URL}"
     fi
   done
+}
+
+download() {
+  local repository="${1}"
+  local URL="${2}"
+
+  if [ "${ADDITIONALS[root]}" ]; then
+    get "magisk" "${MAGISK[URL]}"
+  fi
+
+  get "${repository}" "${URL}"
+}
+
+get() {
+  local filename="${1}"
+  local url="${2}"
+
+  if [ -e "${WORKDIR}/${filename}" ]; then
+    echo "${filename} is already installed in: ${WORKDIR}"
+  else
+    echo "Downloading ${filename}..."
+    if [[ "${filename}" == "my-avbroot-setup" || "${filename}" == "afsr" ]]; then
+      git clone "${url}" "${WORKDIR}/${filename}"
+    else
+      curl -sL "${url}" --output "${WORKDIR}/${filename}"
+      curl -sL "${url}.sig" --output "${WORKDIR}/${filename}.sig"
+
+      echo N | unzip -q "${WORKDIR}/${filename}.zip" -d "${WORKDIR}"
+      echo N | unzip -q "${WORKDIR}/${filename}.sig" -d "${WORKDIR}/${filename}"
+
+      chmod +x "${WORKDIR}/${filename}"
+      rm "${WORKDIR}/${filename}.zip" "${WORKDIR}/${filename}.sig"
+    fi
+    echo "${filename} downloaded to: ${WORKDIR}/${filename}"
+  fi
 }

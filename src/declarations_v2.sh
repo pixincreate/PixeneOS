@@ -11,13 +11,6 @@ DEVICE_NAME="${DEVICE_NAME:-}"
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 WORKDIR="${HOME}/.tmp"
 
-# AVBRoot
-AVBROOT[ARCH]="x86_64-unknown-linux-gnu"
-AVBROOT[USER]='chenxiaolong'
-AVBROOT[REPOSITORIES]="avbroot afsr custota msd bcr oemunlockonboot my-avbroot-setup"
-AVBROOT[URL]="${DOMAIN}/${AVBROOT[REPOSITORY]}/releases/download/v${AVBROOT[VERSION]}/avbroot-${AVBROOT[VERSION]}-${ARCH}.zip"
-AVBROOT[VERSION]="3.4.1"
-
 # Magisk
 MAGISK[REPOSITORY]="pixincreate/Magisk"
 MAGISK[VERSION]="${MAGISK[VERSION]:-}"
@@ -40,7 +33,7 @@ ADDITIONALS[afsr]="${ADDITIONALS[afsr]:-true}"                         # Android
 ADDITIONALS[avbroot]="${ADDITIONALS[avbroot]:-true}"                   # Android Verified Boot Root
 ADDITIONALS[bcr]="${ADDITIONALS[bcr]:-true}"                           # Basic Call Recorder
 ADDITIONALS[custota]="${ADDITIONALS[custota]:-true}"                   # Custom OTA Updater app
-ADDITIONALS[msd]="${ADDITIONALS[msd]:-true}"                           # Mass Storage Device on USB
+ADDITIONALS[msd]="${ADDITIONALS[msd]:-false}"                          # Mass Storage Device on USB
 ADDITIONALS[my_avbroot_setup]="${ADDITIONALS[my_avbroot_setup]:-true}" # My AVBRoot setup
 ADDITIONALS[oemunlockonboot]="${ADDITIONALS[oemunlockonboot]:-true}"   # Unlock bootloader on boot
 ADDITIONALS[root]="${ADDITIONALS[root]:-false}"                        # Only Magisk is supported
