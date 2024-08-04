@@ -17,8 +17,8 @@ GrapheneOS with additionals:
 - [ ] Complete functions
 - [ ] Update README.md
 - [ ] Safe checks
-  - [ ] Check if files are already present. If yes, throw a warning and skip
+  - [x] Check if files are already present. If yes, throw a warning and skip
   - [ ] Check for untracked files and add `-dirty` suffix to the version
-  - [ ] Verify the source
+  - [x] Verify the source
   - [ ] Clean up
   - [x] Rewrite Downloader

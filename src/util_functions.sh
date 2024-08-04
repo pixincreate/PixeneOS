@@ -1,20 +1,31 @@
-. ./declarations.sh
-. ./downloader.sh
+. src/declarations.sh
+. src/downloader.sh
+. src/verifier.sh
 
 check_dependencies() {
   mkdir -p "${WORKDIR}"
 
+  # Fetch the latest version of GrapheneOS and Magisk
+  get_latest_version
+
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
-  local tools=("avbroot" "afsr" "custota" "msd" "bcr" "oemunlockonboot" "magisk" "my-avbroot-setup")
+  local tools=("avbroot" "afsr" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
-    if [ -e "${WORKDIR}/${tool}" ]; then
-      download_dependencies
+    if [ ! -e "${WORKDIR}/${tool}" ]; then
+      echo -e "${tool} is non-existent. Downloading..."
+      download_dependencies ${tool}
+    else
+      echo -e "${tool} is already installed in: ${WORKDIR}/${tool}"
+      continue
     fi
   done
 
-  # my-avbroot-setup has got it all covered
+  if [ "${ADDITIONALS[ROOT]}" ]; then
+    get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
+  fi
+
   verify_downloads
 }
 
@@ -27,8 +38,8 @@ create_and_make_release() {
 create_ota() {
   [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
 
-  get_latest_version
   download_ota
+  modify_setup_script
   patch_ota
 }
 
@@ -67,13 +78,14 @@ get_latest_version() {
       | sed 's/canary-//'
   )
 
-  OTA_TARGET="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
-  GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${OTA_TARGET}.zip"
+  GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
+  GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
+
   # e.g.  bluejay-ota_update-2024080200
-  echo -e "OTA target: ${OTA_TARGET}\nOTA URL: ${GRAPHENEOS[OTA_URL]}"
+  echo -e "GrapheneOS OTA target: ${OTA_TARGET}\nGrapeheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
 
   if [ -z "${latest_grapheneos_version}" ]; then
-    echo "Failed to get the latest version."
+    echo -e "Failed to get the latest version."
     exit 1
   fi
 
@@ -82,20 +94,39 @@ get_latest_version() {
   fi
 
   if [ -z "${latest_magisk_version}" ]; then
-    echo "Failed to get the latest Magisk version."
+    echo -e "Failed to get the latest Magisk version."
     exit 1
   fi
 
-  if [ -z "${MAGISK[VERSION]}" ]; then
-    MAGISK[VERSION]="${latest_magisk_version}"
+  if [ -z "${VERSION[MAGISK]}" ]; then
+    VERSION[MAGISK]="${latest_magisk_version}"
+  fi
+}
+
+modify_setup_script() {
+  local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
+  local magisk_path="${WORKDIR}\/magisk.apk"
+
+  if [ "${ADDITIONALS[ROOT]}" ]; then
+    sed -i \
+      "s/--rootless/--magisk ${magisk_path}/a --magisk-preinit-device ${MAGISK[PREINIT]}/" \
+      "${setup_script}"
   fi
 }
 
 patch_ota() {
+  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
+  local public_key_metadata='avb_pkmd.bin'
 
-  avbroot ota patch \
-    --input /path/to/ota.zip \
-    --key-avb /path/to/avb.key \
-    --key-ota /path/to/ota.key \
-    --cert-ota /path/to/ota.crt
+  python3 patch.py \
+    --input "${ota_zip}" \
+    --verify-public-key-avb "${public_key_metadata}" \
+    --verify-cert-ota "${KEY[CERT_OTA]}" \
+    --sign-key-avb "${KEYS[AVB]}" \
+    --sign-key-ota "${KEYS[OTA]}" \
+    --sign-cert-ota sign_cert.key \
+    --module-custota custota.zip \
+    --module-msd msd.zip \
+    --module-bcr bcr.zip \
+    --module-oemunlockonboot oemunlockonboot.zip
 }

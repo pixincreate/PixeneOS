@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./util_functions.sh
+. src/util_functions.sh
 
 main() {
   # Check for requirements
