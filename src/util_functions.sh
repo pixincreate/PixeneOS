@@ -29,13 +29,13 @@ check_dependencies() {
       echo -e "${tool} is already installed in: ${WORKDIR}/${tool}"
       continue
     fi
+    verify_downloads "${tool}"
   done
 
   if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
     get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
+    verify_downloads "magisk.apk"
   fi
-
-  verify_downloads
 }
 
 create_and_make_release() {
