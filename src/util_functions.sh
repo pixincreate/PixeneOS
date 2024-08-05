@@ -151,8 +151,8 @@ patch_ota() {
     --sign-key-avb "${KEYS[AVB]}" \
     --sign-key-ota "${KEYS[OTA]}" \
     --sign-cert-ota sign_cert.key \
-    --module-custota custota.zip \
-    --module-msd msd.zip \
-    --module-bcr bcr.zip \
-    --module-oemunlockonboot oemunlockonboot.zip
+    --module-custota "${WORKDIR}/custota.zip" \
+    --module-msd "${WORKDIR}/msd.zip" \
+    --module-bcr "${WORKDIR}/bcr.zip" \
+    --module-oemunlockonboot "${WORKDIR}/oemunlockonboot.zip"
 }
