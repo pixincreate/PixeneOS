@@ -107,10 +107,12 @@ modify_setup_script() {
   local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}\/magisk.apk"
 
-  if [ "${ADDITIONALS[ROOT]}" ]; then
-    sed -i \
-      "s/--rootless/--magisk ${magisk_path}/a --magisk-preinit-device ${MAGISK[PREINIT]}/" \
-      "${setup_script}"
+  if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
+    echo "Magisk is enabled. Modifying the setup script..."
+    sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
+    mv "${setup_script}.tmp" "${setup_script}"
+  else
+    echo "Magisk is not enabled. Skipping..."
   fi
 }
 
