@@ -6,7 +6,7 @@ url_constructor() {
   local arch="x86_64-unknown-linux-gnu"
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
-  echo -e "Constructing URL for ${repository}..."
+  echo -e "Constructing URL for ${repository} as ${repository} is non-existent at ${WORKDIR}..."
   if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
     URL="${DOMAIN}/${user}/${repository}"
   else
@@ -23,15 +23,8 @@ url_constructor() {
     SIGNATURE_URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}${file_addition}-${VERSION[${repository_upper_case}]}-${suffix}.zip.sig"
   fi
 
-  if [[ "${repository}" == "my-avbroot-setup" ]]; then
-    FLAG="${ADDITIONALS[MY_AVBROOT_SETUP]}"
-  else
-    FLAG="${ADDITIONALS[$repository_upper_case]}"
-  fi
-  if [[ "${FLAG}" == 'true' ]]; then
-    echo -e "URL for ${repository}: ${URL}"
-    get "${repository}" "${URL}" "${SIGNATURE_URL}"
-  fi
+  echo -e "URL for \`${repository}\`: ${URL}"
+  get "${repository}" "${URL}" "${SIGNATURE_URL}"
 }
 
 get() {

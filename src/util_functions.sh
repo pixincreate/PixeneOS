@@ -13,16 +13,25 @@ check_dependencies() {
   # Else, download them by checking version from declarations
   local tools=("avbroot" "afsr" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
+    local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
     if [ ! -e "${WORKDIR}/${tool}" ]; then
-      echo -e "${tool} is non-existent. Downloading..."
-      download_dependencies ${tool}
+
+      if [[ "${tool}" == "my-avbroot-setup" ]]; then
+        FLAG="${ADDITIONALS[MY_AVBROOT_SETUP]}"
+      else
+        FLAG="${ADDITIONALS[$tool_upper_case]}"
+      fi
+
+      if [[ "${FLAG}" == 'true' ]]; then
+        download_dependencies ${tool}
+      fi
     else
       echo -e "${tool} is already installed in: ${WORKDIR}/${tool}"
       continue
     fi
   done
 
-  if [ "${ADDITIONALS[ROOT]}" ]; then
+  if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
     get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
   fi
 
