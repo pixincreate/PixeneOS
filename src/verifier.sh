@@ -9,16 +9,16 @@ verify_downloads() {
   # Else, continue with the script
   local tool="${1}"
 
-  echo "Verifying ${tool}..."
+  echo "Verifying \`${tool}\`..."
   local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
   if [[ ! -d "${WORKDIR}/${tool}" && "${WORKDIR}/$tool}" != "magisk.apk" ]]; then
     tool="${tool}.zip"
   fi
   if [[ ! -e "${WORKDIR}/${tool}" ]]; then
-    echo "Error: ${tool} not found in ${WORKDIR}"
+    echo -e "Error: \`${tool}\` not found in \`${WORKDIR}\`\nExiting..."
     exit 1
   fi
 
-  echo "All tools are verified to be existent in ${WORKDIR}."
+  echo -e "\`${tool}\` is verified to be existent in \`${WORKDIR}\`.\n"
 }
