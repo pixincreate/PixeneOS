@@ -13,20 +13,21 @@ check_dependencies() {
   # Else, download them by checking version from declarations
   local tools=("avbroot" "afsr" "alterinstaller" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
-    local enabled_tool=$(flag_check "${tool}")
-    local tool_upper_case=$(echo "${enabled_tool}" | tr '[:lower:]' '[:upper:]')
-
-    if [ "${enabled_tool}" == 1 ]; then
+    local flag=$(flag_check "${tool}")
+    if [ "${flag}" == 'false' ]; then
+      echo -e "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
       continue
     fi
 
-    if [ ! -e "${WORKDIR}/${enabled_tool}" ]; then
-      download_dependencies "${enabled_tool}"
+    local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
+
+    if [ ! -e "${WORKDIR}/${tool}" ]; then
+      download_dependencies "${tool}"
     else
-      echo -e "${enabled_tool} is already installed in: ${WORKDIR}/${enabled_tool}"
+      echo -e "${tool} is already installed in: ${WORKDIR}/${tool}"
       continue
     fi
-    verify_downloads "${enabled_tool}"
+    verify_downloads "${tool}"
   done
 
   if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
@@ -46,10 +47,9 @@ flag_check() {
   fi
 
   if [[ "${FLAG}" == 'true' ]]; then
-    return ${tool}
+    echo 'true'
   else
-    echo -e "\`${tool}\` is not enabled in the configuration.\nSkipping..."
-    return 1
+    echo 'false'
   fi
 }
 
@@ -106,7 +106,7 @@ get_latest_version() {
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
   # e.g.  bluejay-ota_update-2024080200
-  echo -e "GrapheneOS OTA target: ${OTA_TARGET}\nGrapeheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
+  echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapeheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
 
   if [ -z "${latest_grapheneos_version}" ]; then
     echo -e "Failed to get the latest version."

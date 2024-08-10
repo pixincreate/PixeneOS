@@ -6,7 +6,7 @@ url_constructor() {
   local arch="x86_64-unknown-linux-gnu"
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
-  echo -e "Constructing URL for ${repository} as ${repository} is non-existent at ${WORKDIR}..."
+  echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
   if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
     URL="${DOMAIN}/${user}/${repository}"
   else
@@ -32,7 +32,7 @@ get() {
   local url="${2}"
   local signature_url="${3}"
 
-  echo "Downloading ${filename}..."
+  echo "Downloading \`${filename}\`..."
   if [[ "${filename}" == "my-avbroot-setup" || "${filename}" == "afsr" ]]; then
     git clone "${url}" "${WORKDIR}/${filename}"
   else
@@ -44,9 +44,10 @@ get() {
     curl -sL "${url}" --output "${WORKDIR}/${filename}.${suffix}"
 
     if [[ "${filename}" == "avbroot" ]]; then
+      # I do not find the need to verify signatures for tools other than AVBRoot
       curl -sL "${signature_url}" --output "${WORKDIR}/${filename}.zip.sig"
 
-      echo -e "Extracting and granting permissions for ${filename}..."
+      echo -e "Extracting and granting permissions for \`${filename}\`..."
       echo N | unzip -q "${WORKDIR}/${filename}.zip" -d "${WORKDIR}/${filename}"
       chmod +x "${WORKDIR}/${filename}"
 
@@ -54,7 +55,7 @@ get() {
       rm "${WORKDIR}/${filename}.zip"
     fi
   fi
-  echo -e "${filename} downloaded to: ${WORKDIR}/${filename}\n"
+  echo -e "\`${filename}\` downloaded to: \`${WORKDIR}/${filename}\`"
 }
 
 download_dependencies() {
