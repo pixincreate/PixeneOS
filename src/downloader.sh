@@ -3,7 +3,9 @@
 url_constructor() {
   local repository="${1}"
   local user='chenxiaolong'
-  local arch="x86_64-unknown-linux-gnu"
+  local arch="x86_64-unknown-linux-gnu" # for Linux
+  # local arch="universal-apple-darwin" # for macOS
+  # local arch="x86_64-pc-windows-msvc" # for Windows
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
   echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
