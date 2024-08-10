@@ -11,7 +11,7 @@ check_dependencies() {
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
-  local tools=("avbroot" "afsr" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
+  local tools=("avbroot" "afsr" "alterinstaller" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
     local enabled_tool=$(flag_check "${tool}")
     local tool_upper_case=$(echo "${enabled_tool}" | tr '[:lower:]' '[:upper:]')

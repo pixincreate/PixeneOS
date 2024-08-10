@@ -13,6 +13,7 @@ FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 WORKDIR="${HOME}/.tmp"
 
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.4.1}"
+VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
 VERSION[CUSTOTA]="${VERSION[CUSTOTA]:-4.7}"
 VERSION[MSD]="${VERSION[MSD]:-1.1}"
 VERSION[BCR]="${VERSION[BCR]:-1.69}"
@@ -32,13 +33,14 @@ KEYS[OTA]="${KEYS[OTA]:-ota.key}"
 # GrapheneOS
 GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"
 GRAPHENEOS[UPDATE_CHANNEL]="alpha"
-GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # 'ota_update' or 'factory'
+GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # 'ota_update' or 'install'
 GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-}"
 GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"       # Will be constructed from the latest version
 GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}" # Will be constructed from the latest version
 
 # Additionals
 ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack
+ADDITIONALS[ALTERINSTALLER]="${ADDITIONALS[ALTERINSTALLER]:-false}"    # Spoof Android package manager installer fields
 ADDITIONALS[AVBROOT]="${ADDITIONALS[AVBROOT]:-true}"                   # Android Verified Boot Root
 ADDITIONALS[BCR]="${ADDITIONALS[BCR]:-true}"                           # Basic Call Recorder
 ADDITIONALS[CUSTOTA]="${ADDITIONALS[CUSTOTA]:-true}"                   # Custom OTA Updater app
