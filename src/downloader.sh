@@ -49,7 +49,7 @@ get() {
 
       echo -e "Extracting and granting permissions for \`${filename}\`..."
       echo N | unzip -q "${WORKDIR}/${filename}.zip" -d "${WORKDIR}/${filename}"
-      chmod +x "${WORKDIR}/${filename}"
+      chmod +x "${WORKDIR}/${filename}/${filename}"
 
       echo -e "Cleaning up..."
       rm "${WORKDIR}/${filename}.zip"
