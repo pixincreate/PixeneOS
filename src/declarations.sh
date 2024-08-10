@@ -37,6 +37,7 @@ GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # 'ota_update' 
 GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-}"
 GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"       # Will be constructed from the latest version
 GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}" # Will be constructed from the latest version
+GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[ALLOWED_SIGNERS]:-}"
 
 # Additionals
 ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack

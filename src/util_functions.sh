@@ -104,6 +104,7 @@ get_latest_version() {
 
   GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
+  GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[OTA_BASE_URL]}/allowed_signers"
 
   # e.g.  bluejay-ota_update-2024080200
   echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapeheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"

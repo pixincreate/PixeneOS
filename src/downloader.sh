@@ -64,11 +64,16 @@ download_dependencies() {
 }
 
 download_ota() {
-  local ota_location="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
+  local ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
-  if [ -z "${ota_location}" ]; then
+  if [ -z "${ota}" ]; then
     echo -e "Downloading OTA from: $GRAPHENEOS[OTA_URL]...\nPlease be patient while the download happens."
-    curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota_location}
-    echo -e "OTA downloaded to: ${ota_location}"
+    curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota}
+    echo -e "OTA downloaded to: ${ota}"
+  fi
+  if [ -z "allowed_signers"]; then
+    echo -e "Downloading factory images public key from: $GRAPHENEOS[ALLOWED_SIGNERS_URL]...\nPlease be patient while the download happens."
+    curl -sL "${GRAPHENEOS[ALLOWED_SIGNERS_URL]}" --output ${WORKDIR}/allowed_signers
+    echo -e "Factory images public key has been downloaded to: ${WORKDIR}/allowed_signers"
   fi
 }
