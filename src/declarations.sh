@@ -10,7 +10,7 @@ CLEANUP="${CLEANUP:-''}" # Clean up after the script finishes
 DOMAIN="https://github.com"
 DEVICE_NAME="${DEVICE_NAME:-bluejay}" # Device name, passed from the CI environment
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
-WORKDIR="${HOME}/.tmp"
+WORKDIR=".tmp"
 
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.4.1}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
