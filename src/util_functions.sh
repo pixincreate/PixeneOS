@@ -169,35 +169,48 @@ patch_ota() {
 
   # Deactivate the virtual environment
   deactivate
+
+  cd -
 }
 
 env_setup() {
   afsr_setup
 
-  export AVBROOT="${WORKDIR}/avbroot/avbroot"
-  export AFSR="${WORKDIR}/afsr/target/release/afsr"
+  local avbroot="${WORKDIR}/avbroot"
+  local afsr="${WORKDIR}/afsr/target/release"
 
-  python3 -m venv venv
+  export PATH="afsr:avbroot:$PATH"
+
+  cd "${WORKDIR}/my-avbroot-setup"
+
+  if [ ! -d "venv" ]; then
+    python3 -m venv venv
+  fi
+
   source venv/bin/activate
 
   if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
     echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
-
     pip3 install tomlkit
   fi
 }
 
 afsr_setup() {
+  # This is necessary since the developer chose to not make releases of the tool yet
   cd "${WORKDIR}/afsr"
 
   if [[ $(detect_os) == 'Linux' ]]; then
     yes | apt-get update
     yes | apt-get install e2fsprogs
   elif [[ $(detect_os) == 'Mac' ]]; then
-    brew install pkg-config
+    brew install pkg-config e2fsprogs
+    echo '/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
+    source ~/.profile
   fi
 
   cargo build --release
+
+  cd -
 }
 
 detect_os() {
