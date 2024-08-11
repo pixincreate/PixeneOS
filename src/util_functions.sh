@@ -150,11 +150,12 @@ modify_setup_script() {
 patch_ota() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
   local public_key_metadata='avb_pkmd.bin'
+  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
   # Setup environment variables and paths
   env_setup
 
-  python3 patch.py \
+  python3 ${my_avbroot_setup}/patch.py \
     --input "${ota_zip}" \
     --output "${WORKDIR}/patched_ota.zip" \
     --verify-public-key-avb "${public_key_metadata}" \
@@ -170,8 +171,6 @@ patch_ota() {
 
   # Deactivate the virtual environment
   deactivate
-
-  cd -
 }
 
 env_setup() {
@@ -179,16 +178,17 @@ env_setup() {
 
   local avbroot="${WORKDIR}/avbroot"
   local afsr="${WORKDIR}/afsr/target/release"
+  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
-  export PATH="afsr:avbroot:$PATH"
-
-  cd "${WORKDIR}/my-avbroot-setup"
-
-  if [ ! -d "venv" ]; then
-    python3 -m venv venv
+  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null; then
+    export PATH="${afsr}:${avbroot}:$PATH"
   fi
 
-  source venv/bin/activate
+  if [ ! -d "venv" ]; then
+    python3 -m venv "${my_avbroot_setup}/venv"
+  fi
+
+  source ${my_avbroot_setup}/venv/bin/activate
 
   if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
     echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
@@ -198,7 +198,7 @@ env_setup() {
 
 afsr_setup() {
   # This is necessary since the developer chose to not make releases of the tool yet
-  cd "${WORKDIR}/afsr"
+  local afsr="${WORKDIR}/afsr"
 
   # By Linux, I mean Ubuntu, a Debian-based distro here
   if [[ $(detect_os) == 'Linux' ]]; then
@@ -222,9 +222,7 @@ afsr_setup() {
     fi
   fi
 
-  cargo build --release
-
-  cd -
+  cargo build --release --manifest-path "${afsr}/Cargo.toml"
 }
 
 detect_os() {
