@@ -165,7 +165,8 @@ patch_ota() {
     --module-custota "${WORKDIR}/custota.zip" \
     --module-msd "${WORKDIR}/msd.zip" \
     --module-bcr "${WORKDIR}/bcr.zip" \
-    --module-oemunlockonboot "${WORKDIR}/oemunlockonboot.zip"
+    --module-oemunlockonboot "${WORKDIR}/oemunlockonboot.zip" \
+    --module-alterinstaller "${WORKDIR}/alterinstaller.zip"
 
   # Deactivate the virtual environment
   deactivate
