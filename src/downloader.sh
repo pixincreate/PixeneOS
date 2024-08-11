@@ -2,10 +2,12 @@
 
 url_constructor() {
   local repository="${1}"
+  local automated="${2:-false}"
   local user='chenxiaolong'
-  local arch="x86_64-unknown-linux-gnu" # for Linux
-  # local arch="universal-apple-darwin" # for macOS
+  # local arch="x86_64-unknown-linux-gnu" # for Linux
+  local arch="universal-apple-darwin" # for macOS
   # local arch="x86_64-pc-windows-msvc" # for Windows
+
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
   echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
@@ -26,6 +28,16 @@ url_constructor() {
   fi
 
   echo -e "URL for \`${repository}\`: ${URL}"
+
+  if [[ "${automated}" == 'false' ]]; then
+    if [[ -e "${WORKDIR}/${repository}" ]]; then
+      echo -n "Warning: \`${repository}\` already exists in \`${WORKDIR}\`\nOverwrite? (y/n): "
+      read confirm
+      if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+        rm -rf "${WORKDIR}/${repository}"
+      fi
+    fi
+  fi
   get "${repository}" "${URL}" "${SIGNATURE_URL}"
 }
 
@@ -62,7 +74,15 @@ get() {
 
 download_dependencies() {
   local tool="${1}"
-  url_constructor "${tool}"
+  local automated='true'
+
+  if type url_constructor &> /dev/null; then
+    url_constructor "${tool}" "${automated}"
+  else
+    echo "Error: url_constructor function is not defined."
+    exit 1
+  fi
+
 }
 
 download_ota() {
