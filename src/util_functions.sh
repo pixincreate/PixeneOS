@@ -8,6 +8,12 @@ check_dependencies() {
   # Fetch the latest version of GrapheneOS and Magisk
   get_latest_version
 
+  # Check for Python requirements
+  if ! command -v python3 &> /dev/null; then
+    echo -e "Python 3 is required to run this script.\nExiting..."
+    exit 1
+  fi
+
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
