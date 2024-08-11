@@ -200,9 +200,13 @@ afsr_setup() {
   # This is necessary since the developer chose to not make releases of the tool yet
   cd "${WORKDIR}/afsr"
 
+  # By Linux, I mean Ubuntu, a Debian-based distro here
   if [[ $(detect_os) == 'Linux' ]]; then
-    yes | apt-get update
-    yes | apt-get install e2fsprogs
+    if ! dpkg -s e2fsprogs &> /dev/null; then
+      echo "e2fsprogs is not installed. Installing..."
+      yes | apt-get update
+      yes | apt-get install e2fsprogs
+    fi
   elif [[ $(detect_os) == 'Mac' ]]; then
     if ! brew list e2fsprogs &> /dev/null; then
       echo "e2fsprogs is not installed. Installing..."
