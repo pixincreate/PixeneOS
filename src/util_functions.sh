@@ -1,6 +1,6 @@
-. src/declarations.sh
-. src/downloader.sh
-. src/verifier.sh
+source src/declarations.sh
+source src/downloader.sh
+source src/verifier.sh
 
 check_dependencies() {
   mkdir -p "${WORKDIR}"
