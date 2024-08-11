@@ -22,5 +22,6 @@ GrapheneOS with additionals:
   - [x] Verify the source
   - [ ] Clean up
   - [x] Rewrite Downloader
+- [ ] Make functions independent such that they can be used separately
 
 Windows suck, so I chose not to support it. If you want to use this on Windows, you're on your own.
