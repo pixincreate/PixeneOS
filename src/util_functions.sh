@@ -20,23 +20,23 @@ check_dependencies() {
   local tools=("avbroot" "afsr" "alterinstaller" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
     local flag=$(flag_check "${tool}")
-    if [ "${flag}" == 'false' ]; then
+    if [[ "${flag}" == 'false' ]]; then
       echo -e "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
       continue
     fi
 
     local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-    if [ ! -e "${WORKDIR}/${tool}" ]; then
+    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}*" -print -quit | grep -q .; then
       download_dependencies "${tool}"
     else
-      echo -e "${tool} is already installed in: ${WORKDIR}/${tool}"
+      echo -e "\`${tool}\` is already installed in: \`${WORKDIR}/${tool}\`"
       continue
     fi
     verify_downloads "${tool}"
   done
 
-  if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
+  if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
     get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
     verify_downloads "magisk.apk"
   fi
