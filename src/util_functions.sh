@@ -153,6 +153,7 @@ patch_ota() {
 
   python3 patch.py \
     --input "${ota_zip}" \
+    --output "${WORKDIR}/patched_ota.zip" \
     --verify-public-key-avb "${public_key_metadata}" \
     --verify-cert-ota "${KEY[CERT_OTA]}" \
     --sign-key-avb "${KEYS[AVB]}" \
