@@ -151,6 +151,9 @@ patch_ota() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
   local public_key_metadata='avb_pkmd.bin'
 
+  # Setup environment variables and paths
+  env_setup
+
   python3 patch.py \
     --input "${ota_zip}" \
     --output "${WORKDIR}/patched_ota.zip" \
@@ -163,4 +166,54 @@ patch_ota() {
     --module-msd "${WORKDIR}/msd.zip" \
     --module-bcr "${WORKDIR}/bcr.zip" \
     --module-oemunlockonboot "${WORKDIR}/oemunlockonboot.zip"
+
+  # Deactivate the virtual environment
+  deactivate
+}
+
+env_setup() {
+  afsr_setup
+
+  export AVBROOT="${WORKDIR}/avbroot/avbroot"
+  export AFSR="${WORKDIR}/afsr/target/release/afsr"
+
+  python3 -m venv venv
+  source venv/bin/activate
+
+  if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
+    echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
+
+    pip3 install tomlkit
+  fi
+}
+
+afsr_setup() {
+  cd "${WORKDIR}/afsr"
+
+  if [[ $(detect_os) == 'Linux' ]]; then
+    yes | apt-get update
+    yes | apt-get install e2fsprogs
+  elif [[ $(detect_os) == 'Mac' ]]; then
+    brew install pkg-config
+  fi
+
+  cargo build --release
+}
+
+detect_os() {
+  # https://stackoverflow.com/a/68706298
+
+  unameOut=$(uname -a)
+  case "${unameOut}" in
+    *Microsoft*) OS="WSL" ;;  # must be first since Windows subsystem for linux will have Linux in the name too
+    *microsoft*) OS="WSL2" ;; # WARNING: My v2 uses ubuntu 20.4 at the moment slightly different name may not always work
+    Linux*) OS="Linux" ;;
+    Darwin*) OS="Mac" ;;
+    CYGWIN*) OS="Cygwin" ;;
+    MINGW*) OS="Windows" ;;
+    *Msys) OS="Windows" ;;
+    *) OS="UNKNOWN:${unameOut}" ;;
+  esac
+
+  echo ${OS}
 }
