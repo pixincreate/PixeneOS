@@ -79,7 +79,7 @@ download_dependencies() {
   if type url_constructor &> /dev/null; then
     url_constructor "${tool}" "${automated}"
   else
-    echo "Error: url_constructor function is not defined."
+    echo "Error: \`url_constructor\` function is not defined."
     exit 1
   fi
 
