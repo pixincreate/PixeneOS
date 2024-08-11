@@ -23,5 +23,4 @@ GrapheneOS with additionals:
   - [ ] Clean up
   - [x] Rewrite Downloader
 
-
 Windows suck, so I chose not to support it. If you want to use this on Windows, you're on your own.

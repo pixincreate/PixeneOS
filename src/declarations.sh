@@ -44,11 +44,11 @@ GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[ALLOWED_SIGNERS]:-}"
 
 # Additionals
 ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack
-ADDITIONALS[ALTERINSTALLER]="${ADDITIONALS[ALTERINSTALLER]:-false}"    # Spoof Android package manager installer fields
+ADDITIONALS[ALTERINSTALLER]="${ADDITIONALS[ALTERINSTALLER]:-true}"     # Spoof Android package manager installer fields
 ADDITIONALS[AVBROOT]="${ADDITIONALS[AVBROOT]:-true}"                   # Android Verified Boot Root
 ADDITIONALS[BCR]="${ADDITIONALS[BCR]:-true}"                           # Basic Call Recorder
 ADDITIONALS[CUSTOTA]="${ADDITIONALS[CUSTOTA]:-true}"                   # Custom OTA Updater app
-ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-false}"                          # Mass Storage Device on USB
+ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass Storage Device on USB
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
 ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock bootloader on boot
 ADDITIONALS[ROOT]="${ADDITIONALS[ROOT]:-false}"                        # Only Magisk is supported
