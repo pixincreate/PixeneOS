@@ -204,9 +204,18 @@ afsr_setup() {
     yes | apt-get update
     yes | apt-get install e2fsprogs
   elif [[ $(detect_os) == 'Mac' ]]; then
-    brew install pkg-config e2fsprogs
-    echo '/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
-    source ~/.profile
+    if ! brew list e2fsprogs &> /dev/null; then
+      echo "e2fsprogs is not installed. Installing..."
+      brew install pkg-config e2fsprogs
+
+      if [[ $(uname -m) == "x86_64" ]]; then
+        echo '/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
+      elif [[ $(uname -m) == "arm64" ]]; then
+        echo '/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
+      fi
+
+      source ~/.profile
+    fi
   fi
 
   cargo build --release
