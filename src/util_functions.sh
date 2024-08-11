@@ -113,7 +113,7 @@ get_latest_version() {
   GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[OTA_BASE_URL]}/allowed_signers"
 
   # e.g.  bluejay-ota_update-2024080200
-  echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapeheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
+  echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
 
   if [ -z "${latest_grapheneos_version}" ]; then
     echo -e "Failed to get the latest version."
