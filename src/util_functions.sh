@@ -141,6 +141,11 @@ patch_ota() {
   local public_key_metadata='avb_pkmd.bin'
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
+  # Activate the virtual environment
+  if -z "${VIRTUAL_ENV}"; then
+    enable_venv
+  fi
+
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
   python3 ${my_avbroot_setup}/patch.py \
@@ -233,14 +238,44 @@ env_setup() {
     export PATH="${afsr}:${avbroot}:$PATH"
   fi
 
-  if [ ! -d "venv" ]; then
-    python3 -m venv "${my_avbroot_setup}/venv"
-  fi
-
-  source ${my_avbroot_setup}/venv/bin/activate
+  enable_venv
 
   if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
     echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
     pip3 install tomlkit
+  fi
+}
+
+enable_venv() {
+  local dir_path='' # Default value is empty string
+  local base_path=$(basename "$(pwd)")
+  local venv_path=''
+
+  # Check presence of venv
+  if [[ "${base_path}" == "my-avbroot-setup" ]]; then
+    if [ ! -d "venv" ]; then
+      echo -e "Virtual environment not found. Creating..."
+      python3 -m venv venv
+    fi
+  else
+    echo -e "The script is not run from the \`my-avbroot-setup\` directory.\nSearching for the directory..."
+    dir_path=$(find . -type d -name "my-avbroot-setup" -print -quit)
+    if [ ! -d "${dir_path}/venv" ]; then
+      echo -e "Virtual environment not found in path ${dir_path}. Creating..."
+      python3 -m venv "${dir_path}/venv"
+    fi
+  fi
+
+  if [ -n "${dir_path}" ]; then
+    venv_path="${dir_path}/venv/bin/activate"
+  else
+    venv_path="venv/bin/activate"
+  fi
+
+  # Ensure venv_path is set correctly
+  if [ -f "${venv_path}" ]; then
+    source "${venv_path}"
+  else
+    echo -e "Virtual environment activation script not found at ${venv_path}."
   fi
 }
