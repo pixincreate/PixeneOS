@@ -2,11 +2,8 @@ source src/declarations.sh
 source src/downloader.sh
 source src/verifier.sh
 
-check_dependencies() {
+check_and_download_dependencies() {
   mkdir -p "${WORKDIR}"
-
-  # Fetch the latest version of GrapheneOS and Magisk
-  get_latest_version
 
   # Check for Python requirements
   if ! command -v python3 &> /dev/null; then
@@ -68,8 +65,11 @@ create_and_make_release() {
 create_ota() {
   [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
 
+  # Setup environment variables and paths
+  env_setup
+  # Download GrapheneOS OTA and Factory images allowed public keys
   download_ota
-  modify_setup_script
+  # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup
   patch_ota
 }
 
@@ -80,6 +80,8 @@ cleanup() {
   echo "Cleanup complete."
 }
 
+# Generate the AVB and OTA signing keys.
+# Has to be called manually.
 generate_keys() {
   local public_key_metadata='avb_pkmd.bin'
 
@@ -134,27 +136,13 @@ get_latest_version() {
   fi
 }
 
-modify_setup_script() {
-  local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
-  local magisk_path="${WORKDIR}\/magisk.apk"
-
-  if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
-    echo "Magisk is enabled. Modifying the setup script..."
-    sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
-    mv "${setup_script}.tmp" "${setup_script}"
-  else
-    echo "Magisk is not enabled. Skipping..."
-  fi
-}
-
 patch_ota() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
   local public_key_metadata='avb_pkmd.bin'
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
-  # Setup environment variables and paths
-  env_setup
-
+  # At present, the script lacks the ability to disable certain modules.
+  # Everything is hardcoded to be enabled by default.
   python3 ${my_avbroot_setup}/patch.py \
     --input "${ota_zip}" \
     --output "${WORKDIR}/patched_ota.zip" \
@@ -173,26 +161,34 @@ patch_ota() {
   deactivate
 }
 
-env_setup() {
-  afsr_setup
+detect_os() {
+  # https://stackoverflow.com/a/68706298
 
-  local avbroot="${WORKDIR}/avbroot"
-  local afsr="${WORKDIR}/afsr/target/release"
-  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
+  unameOut=$(uname -a)
+  case "${unameOut}" in
+    *Microsoft*) OS="WSL" ;;  # must be first since Windows subsystem for linux will have Linux in the name too
+    *microsoft*) OS="WSL2" ;; # WARNING: My v2 uses ubuntu 20.4 at the moment slightly different name may not always work
+    Linux*) OS="Linux" ;;
+    Darwin*) OS="Mac" ;;
+    CYGWIN*) OS="Cygwin" ;;
+    MINGW*) OS="Windows" ;;
+    *Msys) OS="Windows" ;;
+    *) OS="UNKNOWN:${unameOut}" ;;
+  esac
 
-  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null; then
-    export PATH="${afsr}:${avbroot}:$PATH"
-  fi
+  echo ${OS}
+}
 
-  if [ ! -d "venv" ]; then
-    python3 -m venv "${my_avbroot_setup}/venv"
-  fi
+my_avbroot_setup() {
+  local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
+  local magisk_path="${WORKDIR}\/magisk.apk"
 
-  source ${my_avbroot_setup}/venv/bin/activate
-
-  if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
-    echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
-    pip3 install tomlkit
+  if [ "${ADDITIONALS[ROOT]}" == 'true' ]; then
+    echo "Magisk is enabled. Modifying the setup script..."
+    sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
+    mv "${setup_script}.tmp" "${setup_script}"
+  else
+    echo "Magisk is not enabled. Skipping..."
   fi
 }
 
@@ -225,20 +221,26 @@ afsr_setup() {
   cargo build --release --manifest-path "${afsr}/Cargo.toml"
 }
 
-detect_os() {
-  # https://stackoverflow.com/a/68706298
+env_setup() {
+  my_avbroot_setup
+  afsr_setup
 
-  unameOut=$(uname -a)
-  case "${unameOut}" in
-    *Microsoft*) OS="WSL" ;;  # must be first since Windows subsystem for linux will have Linux in the name too
-    *microsoft*) OS="WSL2" ;; # WARNING: My v2 uses ubuntu 20.4 at the moment slightly different name may not always work
-    Linux*) OS="Linux" ;;
-    Darwin*) OS="Mac" ;;
-    CYGWIN*) OS="Cygwin" ;;
-    MINGW*) OS="Windows" ;;
-    *Msys) OS="Windows" ;;
-    *) OS="UNKNOWN:${unameOut}" ;;
-  esac
+  local avbroot="${WORKDIR}/avbroot"
+  local afsr="${WORKDIR}/afsr/target/release"
+  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
-  echo ${OS}
+  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null; then
+    export PATH="${afsr}:${avbroot}:$PATH"
+  fi
+
+  if [ ! -d "venv" ]; then
+    python3 -m venv "${my_avbroot_setup}/venv"
+  fi
+
+  source ${my_avbroot_setup}/venv/bin/activate
+
+  if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
+    echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
+    pip3 install tomlkit
+  fi
 }
