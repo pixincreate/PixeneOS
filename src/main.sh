@@ -2,7 +2,7 @@
 
 source src/util_functions.sh
 
-main() {
+function main() {
   local autorun="${1:-true}"
 
   if [[ "${autorun}" == 'true' ]]; then

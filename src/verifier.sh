@@ -3,7 +3,7 @@
 # There is no need for us to verify the signature of the tools as my-avbroot-setup
 # will do it for us at patch time
 
-verify_downloads() {
+function verify_downloads() {
   # Verify the downloaded tools
   # If the tools are not present, exit the script
   # Else, continue with the script

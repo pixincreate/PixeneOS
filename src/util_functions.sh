@@ -2,7 +2,7 @@ source src/declarations.sh
 source src/fetcher.sh
 source src/verifier.sh
 
-check_and_download_dependencies() {
+function check_and_download_dependencies() {
   mkdir -p "${WORKDIR}"
 
   # Check for Python requirements
@@ -39,7 +39,7 @@ check_and_download_dependencies() {
   fi
 }
 
-flag_check() {
+function flag_check() {
   local tool="${1}"
   local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
@@ -56,13 +56,13 @@ flag_check() {
   fi
 }
 
-create_and_make_release() {
+function create_and_make_release() {
   create_ota
   release_ota
   push_to_server
 }
 
-create_ota() {
+function create_ota() {
   [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
 
   # Setup environment variables and paths
@@ -73,7 +73,7 @@ create_ota() {
   patch_ota
 }
 
-cleanup() {
+function cleanup() {
   echo "Cleaning up..."
   rm -rf "${WORKDIR}"
   unset "${KEYS[@]}"
@@ -82,7 +82,7 @@ cleanup() {
 
 # Generate the AVB and OTA signing keys.
 # Has to be called manually.
-generate_keys() {
+function generate_keys() {
   local public_key_metadata='avb_pkmd.bin'
 
   # Generate the AVB and OTA signing keys
@@ -98,7 +98,7 @@ generate_keys() {
   avbroot key generate-cert -k "${KEY_OTA}" -o "${CERT_OTA}"
 }
 
-patch_ota() {
+function patch_ota() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
   local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="extracted/extracts/avb_pkmd.bin"
@@ -135,7 +135,7 @@ patch_ota() {
   deactivate
 }
 
-detect_os() {
+function detect_os() {
   # https://stackoverflow.com/a/68706298
 
   unameOut=$(uname -a)
@@ -153,7 +153,7 @@ detect_os() {
   echo ${OS}
 }
 
-my_avbroot_setup() {
+function my_avbroot_setup() {
   local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}\/magisk.apk"
 
@@ -166,7 +166,7 @@ my_avbroot_setup() {
   fi
 }
 
-afsr_setup() {
+function afsr_setup() {
   # This is necessary since the developer chose to not make releases of the tool yet
   local afsr="${WORKDIR}/afsr"
 
@@ -195,7 +195,7 @@ afsr_setup() {
   cargo build --release --manifest-path "${afsr}/Cargo.toml"
 }
 
-env_setup() {
+function env_setup() {
   my_avbroot_setup
   afsr_setup
 
@@ -215,7 +215,7 @@ env_setup() {
   fi
 }
 
-enable_venv() {
+function enable_venv() {
   local dir_path='' # Default value is empty string
   local base_path=$(basename "$(pwd)")
   local venv_path=''
@@ -249,7 +249,7 @@ enable_venv() {
   fi
 }
 
-url_constructor() {
+function url_constructor() {
   local repository="${1}"
   local automated="${2:-false}"
   local user='chenxiaolong'
@@ -290,7 +290,7 @@ url_constructor() {
   get "${repository}" "${URL}" "${SIGNATURE_URL}"
 }
 
-download_dependencies() {
+function download_dependencies() {
   local tool="${1}"
   local automated='true'
 
@@ -302,7 +302,7 @@ download_dependencies() {
   fi
 }
 
-extract_official_keys() {
+function extract_official_keys() {
   # https://github.com/chenxiaolong/my-avbroot-setup/issues/1#issuecomment-2270286453
   # AVB: Extract vbmeta.img, run avbroot avb info -i vbmeta.img.
   #   The public_key field is avb_pkmd.bin encoded as hex.

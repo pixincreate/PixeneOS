@@ -1,6 +1,6 @@
 source src/declarations.sh
 
-get_latest_version() {
+function get_latest_version() {
   local latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
   local latest_magisk_version=$(
     git ls-remote --tags "${DOMAIN}/${MAGISK[REPOSITORY]}.git" \
@@ -38,7 +38,7 @@ get_latest_version() {
   fi
 }
 
-get() {
+function get() {
   local filename="${1}"
   local url="${2}"
   local signature_url="${3}"
@@ -73,7 +73,7 @@ get() {
   echo -e "\`${filename}\` downloaded."
 }
 
-download_ota() {
+function download_ota() {
   local ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
   if [ ! -z "${GRAPHENEOS[OTA_URL]}" ]; then
