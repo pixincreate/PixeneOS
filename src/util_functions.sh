@@ -67,8 +67,6 @@ function create_ota() {
 
   # Setup environment variables and paths
   env_setup
-  # Download GrapheneOS OTA and Factory images allowed public keys
-  download_ota
   # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup
   patch_ota
 }
@@ -328,4 +326,25 @@ function extract_official_keys() {
 
   # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
   unzip "${ota_zip}" -d "extracted/ota"
+}
+
+function release_ota() {
+  local patched_ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched.zip"
+  local release_name="${GRAPHENEOS[OTA_TARGET]}-patched.zip"
+
+  if [[ -e "${patched_ota}" ]]; then
+    echo "Creating release..."
+    mv "${patched_ota}" "${release_name}$(dirty_suffix)"
+  else
+    echo "Error: Patched OTA not found."
+    exit 1
+  fi
+}
+
+function dirty_suffix() {
+  if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+    echo "-dirty"
+  else
+    echo ""
+  fi
 }
