@@ -307,6 +307,35 @@ function download_dependencies() {
   fi
 }
 
+function generate_csig() {
+  local csig_path="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.csig"
+  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched$(dirty_suffix).zip"
+
+  if ls "${csig_path}" 1> /dev/null 2>&1; then
+    echo -e "File ${csig_path} already exists in local. Generation skipped."
+  else
+    local args=()
+
+    args+=("--input" "${ota_zip}.zip")
+    args+=("--output" "${csig_path}")
+
+    args+=(--key "${KEYS[OTA]}")
+    args+=(--cert "${KEYS[CERT_OTA]}")
+
+    custota-tool gen-csig "${args[@]}"
+  fi
+}
+
+function generate_update_info() {
+  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched$(dirty_suffix).zip"
+  local args=()
+  
+  args+=("--file" "${WORKDIR}/ota_update/${DEVICE_NAME}.json")
+  args+=("--location" "https://github.com/$USER/releases/download/$GRAPHENEOS[VERSION]/${GRAPHENEOS[OTA_TARGET]}.zip")
+
+  custota-tool gen-update-info "${args[@]}"
+}
+
 function extract_official_keys() {
   # https://github.com/chenxiaolong/my-avbroot-setup/issues/1#issuecomment-2270286453
   # AVB: Extract vbmeta.img, run avbroot avb info -i vbmeta.img.
@@ -319,33 +348,20 @@ function extract_official_keys() {
   # Extract OTA
   avbroot ota extract \
     --input "${ota_zip}" \
-    --directory extracted/extracts \
+    --directory "${WORKDIR}/extracted/extracts" \
     --all
 
   # Extract vbmeta.img
   # To verify, execute sha256sum avb_pkmd.bin in terminal
   # compare the output with base16-encoded verified boot key fingerprints
   # mentioned at https://grapheneos.org/articles/attestation-compatibility-guide for the respective device
-  avbroot avb info -i extracted/extracts/vbmeta.img \
+  avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" \
     | grep 'public_key' \
     | sed -n 's/.*public_key: "\(.*\)".*/\1/p' \
-    | tr -d '[:space:]' | xxd -r -p > extracted/extracts/avb_pkmd.bin
+    | tr -d '[:space:]' | xxd -r -p > "${WORKDIR}/extracted/extracts/avb_pkmd.bin"
 
   # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
-  unzip "${ota_zip}" -d "extracted/ota"
-}
-
-function release_ota() {
-  local patched_ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched.zip"
-  local release_name="${GRAPHENEOS[OTA_TARGET]}-patched.zip"
-
-  if [[ -e "${patched_ota}" ]]; then
-    echo "Creating release..."
-    mv "${patched_ota}" "${release_name}$(dirty_suffix)"
-  else
-    echo "Error: Patched OTA not found."
-    exit 1
-  fi
+  unzip "${ota_zip}" -d "${WORKDIR}/extracted/ota"
 }
 
 function dirty_suffix() {
@@ -354,4 +370,9 @@ function dirty_suffix() {
   else
     echo ""
   fi
+}
+
+function release_ota() {
+  generate_csig
+  generate_update_info
 }
