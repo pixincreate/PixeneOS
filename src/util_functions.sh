@@ -115,19 +115,29 @@ function patch_ota() {
 
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
-  python3 ${my_avbroot_setup}/patch.py \
-    --input "${ota_zip}.zip" \
-    --output "${ota_zip}.patched.zip" \
-    --verify-public-key-avb "${grapheneos_pkmd}" \
-    --verify-cert-ota "${grapheneos_otacert}" \
-    --sign-key-avb "${KEYS[AVB]}" \
-    --sign-key-ota "${KEYS[OTA]}" \
-    --sign-cert-ota "${KEYS[CERT_OTA]}" \
-    --module-custota "${WORKDIR}/modules/custota.zip" \
-    --module-msd "${WORKDIR}/modules/msd.zip" \
-    --module-bcr "${WORKDIR}/modules/bcr.zip" \
-    --module-oemunlockonboot "${WORKDIR}/modules/oemunlockonboot.zip" \
-    --module-alterinstaller "${WORKDIR}/modules/alterinstaller.zip"
+  if [[ -e "${ota_zip}.patched.zip" ]]; then
+    echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
+  else
+    local args=()
+
+    args+=("--input" "${ota_zip}.zip")
+    args+=("--output" "${ota_zip}.patched.zip")
+
+    args+=(--verify-public-key-avb "${grapheneos_pkmd}")
+    args+=(--verify-cert-ota "${grapheneos_otacert}")
+
+    args+=(--sign-key-avb "${KEYS[AVB]}")
+    args+=(--sign-key-ota "${KEYS[OTA]}")
+    args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
+
+    args+=(--module-custota "${WORKDIR}/modules/custota.zip")
+    args+=(--module-msd "${WORKDIR}/modules/msd.zip")
+    args+=(--module-bcr "${WORKDIR}/modules/bcr.zip")
+    args+=(--module-oemunlockonboot "${WORKDIR}/modules/oemunlockonboot.zip")
+    args+=(--module-alterinstaller "${WORKDIR}/modules/alterinstaller.zip")
+
+    python3 ${my_avbroot_setup}/patch.py "${args[@]}"
+  fi
 
   # Deactivate the virtual environment
   deactivate
