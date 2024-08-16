@@ -52,7 +52,7 @@ get() {
     else
       suffix="zip"
     fi
-    curl -sL "${url}" --output "${WORKDIR}/${filename}.${suffix}"
+    curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" == "avbroot" ]]; then
       # I do not find the need to verify signatures for tools other than AVBRoot
@@ -65,8 +65,12 @@ get() {
       echo -e "Cleaning up..."
       rm "${WORKDIR}/${filename}.zip"
     fi
+
+    if [[ "${filename}" == "custota" ]]; then
+      curl -sL "${signature_url}" --output "${WORKDIR}/modules/${filename}.zip.sig"
+    fi
   fi
-  echo -e "\`${filename}\` downloaded to: \`${WORKDIR}/${filename}\`"
+  echo -e "\`${filename}\` downloaded."
 }
 
 download_ota() {
@@ -82,12 +86,5 @@ download_ota() {
     echo -e "OTA downloaded to: \`${ota}\`\n"
   else
     echo -e "OTA is already downloaded in: \`${ota}\`\n"
-  fi
-  if [ ! -f "${WORKDIR}/allowed_signers" ]; then
-    echo -e "Downloading factory images public key from: "${GRAPHENEOS[ALLOWED_SIGNERS_URL]}"...\nPlease be patient while the download happens."
-    curl -sL "${GRAPHENEOS[ALLOWED_SIGNERS_URL]}" --output ${WORKDIR}/allowed_signers
-    echo -e "Factory images public key has been downloaded to: ${WORKDIR}/allowed_signers\n"
-  else
-    echo -e "Factory images public key is already downloaded in: \`${WORKDIR}/allowed_signers\`\n"
   fi
 }

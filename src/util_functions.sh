@@ -99,8 +99,10 @@ generate_keys() {
 }
 
 patch_ota() {
-  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
-  local public_key_metadata='avb_pkmd.bin'
+  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
+  local pkmd="${KEYS[PKMD]}"
+  local grapheneos_pkmd="extracted/extracts/avb_pkmd.bin"
+  local grapheneos_otacert="extracted/ota/META-INF/com/android/otacert"
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
   # Activate the virtual environment
@@ -108,21 +110,26 @@ patch_ota() {
     enable_venv
   fi
 
+  if [[ ! -e "${grapheneos_pkmd}" || ! -e "${grapheneos_otacert}" ]]; then
+    echo "Extracting official keys..."
+    extract_official_keys
+  fi
+
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
   python3 ${my_avbroot_setup}/patch.py \
-    --input "${ota_zip}" \
-    --output "${WORKDIR}/patched_ota.zip" \
-    --verify-public-key-avb "${public_key_metadata}" \
-    --verify-cert-ota "${KEY[CERT_OTA]}" \
+    --input "${ota_zip}.zip" \
+    --output "${ota_zip}.patched.zip" \
+    --verify-public-key-avb "${grapheneos_pkmd}" \
+    --verify-cert-ota "${grapheneos_otacert}" \
     --sign-key-avb "${KEYS[AVB]}" \
     --sign-key-ota "${KEYS[OTA]}" \
-    --sign-cert-ota sign_cert.key \
-    --module-custota "${WORKDIR}/custota.zip" \
-    --module-msd "${WORKDIR}/msd.zip" \
-    --module-bcr "${WORKDIR}/bcr.zip" \
-    --module-oemunlockonboot "${WORKDIR}/oemunlockonboot.zip" \
-    --module-alterinstaller "${WORKDIR}/alterinstaller.zip"
+    --sign-cert-ota "${KEYS[CERT_OTA]}" \
+    --module-custota "${WORKDIR}/modules/custota.zip" \
+    --module-msd "${WORKDIR}/modules/msd.zip" \
+    --module-bcr "${WORKDIR}/modules/bcr.zip" \
+    --module-oemunlockonboot "${WORKDIR}/modules/oemunlockonboot.zip" \
+    --module-alterinstaller "${WORKDIR}/modules/alterinstaller.zip"
 
   # Deactivate the virtual environment
   deactivate
@@ -197,7 +204,7 @@ env_setup() {
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
   if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null; then
-    export PATH="${afsr}:${avbroot}:$PATH"
+    export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$PATH"
   fi
 
   enable_venv
@@ -293,4 +300,32 @@ download_dependencies() {
     echo "Error: \`url_constructor\` function is not defined."
     exit 1
   fi
+}
+
+extract_official_keys() {
+  # https://github.com/chenxiaolong/my-avbroot-setup/issues/1#issuecomment-2270286453
+  # AVB: Extract vbmeta.img, run avbroot avb info -i vbmeta.img.
+  #   The public_key field is avb_pkmd.bin encoded as hex.
+  #   Verify that the key is official by comparing its sha256 checksum with grapheneos.org/articles/attestation-compatibility-guide.
+  # OTA: Extract META-INF/com/android/otacert from the OTA.
+  #   (Or from otacerts.zip inside system.img or vendor_boot.img. All 3 files are identical.)
+  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
+
+  # Extract OTA
+  avbroot ota extract \
+    --input "${ota_zip}" \
+    --directory extracted/extracts \
+    --all
+
+  # Extract vbmeta.img
+  # To verify, execute sha256sum avb_pkmd.bin in terminal
+  # compare the output with base16-encoded verified boot key fingerprints
+  # mentioned at https://grapheneos.org/articles/attestation-compatibility-guide for the respective device
+  avbroot avb info -i extracted/extracts/vbmeta.img \
+    | grep 'public_key' \
+    | sed -n 's/.*public_key: "\(.*\)".*/\1/p' \
+    | tr -d '[:space:]' | xxd -r -p > extracted/extracts/avb_pkmd.bin
+
+  # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
+  unzip "${ota_zip}" -d "extracted/ota"
 }
