@@ -14,7 +14,7 @@ function check_and_download_dependencies() {
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
-  local tools=("avbroot" "afsr" "alterinstaller" "custota" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
+  local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
     local flag=$(flag_check "${tool}")
     if [[ "${flag}" == 'false' ]]; then
@@ -209,10 +209,11 @@ function env_setup() {
 
   local avbroot="${WORKDIR}/avbroot"
   local afsr="${WORKDIR}/afsr/target/release"
+  local custota_tool="${WORKDIR}/custota_tool"
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
-  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null; then
-    export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$PATH"
+  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null && ! command -v custota-tool &> /dev/null; then
+    export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$(realpath ${custota_tool}):$PATH"
   fi
 
   enable_venv
@@ -271,17 +272,14 @@ function url_constructor() {
   if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
     URL="${DOMAIN}/${user}/${repository}"
   else
-    if [[ "${repository}" == "avbroot" || "${repository}" == "custota" ]]; then
-      if [[ "${repository}" == "custota" ]]; then
-        local file_addition="-tool"
-      fi
+    if [[ "${repository}" == "avbroot" || "${repository}" == "custota-tool" ]]; then
       local suffix="${arch}"
     else
       local suffix="release"
     fi
 
-    URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}${file_addition}-${VERSION[${repository_upper_case}]}-${suffix}.zip"
-    SIGNATURE_URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}${file_addition}-${VERSION[${repository_upper_case}]}-${suffix}.zip.sig"
+    URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}-${VERSION[${repository_upper_case}]}-${suffix}.zip"
+    SIGNATURE_URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}-${VERSION[${repository_upper_case}]}-${suffix}.zip.sig"
   fi
 
   echo -e "URL for \`${repository}\`: ${URL}"

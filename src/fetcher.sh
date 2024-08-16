@@ -52,22 +52,19 @@ function get() {
     else
       suffix="zip"
     fi
+
     curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
-    if [[ "${filename}" == "avbroot" ]]; then
+    if [[ "${filename}" == "avbroot" || "$filename" == "custota-tool" ]]; then
       # I do not find the need to verify signatures for tools other than AVBRoot
       curl -sL "${signature_url}" --output "${WORKDIR}/${filename}.zip.sig"
 
       echo -e "Extracting and granting permissions for \`${filename}\`..."
-      echo N | unzip -q "${WORKDIR}/${filename}.zip" -d "${WORKDIR}/${filename}"
+      echo N | unzip -q "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/${filename}"
       chmod +x "${WORKDIR}/${filename}/${filename}"
 
       echo -e "Cleaning up..."
       rm "${WORKDIR}/${filename}.zip"
-    fi
-
-    if [[ "${filename}" == "custota" ]]; then
-      curl -sL "${signature_url}" --output "${WORKDIR}/modules/${filename}.zip.sig"
     fi
   fi
   echo -e "\`${filename}\` downloaded."
