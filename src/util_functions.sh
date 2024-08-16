@@ -1,5 +1,5 @@
 source src/declarations.sh
-source src/downloader.sh
+source src/fetcher.sh
 source src/verifier.sh
 
 check_and_download_dependencies() {
@@ -96,44 +96,6 @@ generate_keys() {
   # Generate a self-signed certificate for the OTA signing key
   # This is used by recovery to verify OTA updates when sideloading
   avbroot key generate-cert -k "${KEY_OTA}" -o "${CERT_OTA}"
-}
-
-get_latest_version() {
-  local latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
-  local latest_magisk_version=$(
-    git ls-remote --tags "${DOMAIN}/${MAGISK[REPOSITORY]}.git" \
-      | awk -F'\t' '{print $2}' \
-      | grep -E 'refs/tags/' \
-      | sed 's/refs\/tags\///' \
-      | sort -V \
-      | tail -n1 \
-      | sed 's/canary-//'
-  )
-
-  GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
-  GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
-  GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[OTA_BASE_URL]}/allowed_signers"
-
-  # e.g.  bluejay-ota_update-2024080200
-  echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
-
-  if [ -z "${latest_grapheneos_version}" ]; then
-    echo -e "Failed to get the latest version."
-    exit 1
-  fi
-
-  if [ -z "${GRAPHENEOS[VERSION]}" ]; then
-    GRAPHENEOS[VERSION]="${latest_grapheneos_version}"
-  fi
-
-  if [ -z "${latest_magisk_version}" ]; then
-    echo -e "Failed to get the latest Magisk version."
-    exit 1
-  fi
-
-  if [ -z "${VERSION[MAGISK]}" ]; then
-    VERSION[MAGISK]="${latest_magisk_version}"
-  fi
 }
 
 patch_ota() {
@@ -277,5 +239,58 @@ enable_venv() {
     source "${venv_path}"
   else
     echo -e "Virtual environment activation script not found at ${venv_path}."
+  fi
+}
+
+url_constructor() {
+  local repository="${1}"
+  local automated="${2:-false}"
+  local user='chenxiaolong'
+  # local arch="x86_64-unknown-linux-gnu" # for Linux
+  local arch="universal-apple-darwin" # for macOS
+  # local arch="x86_64-pc-windows-msvc" # for Windows
+
+  local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
+
+  echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
+  if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
+    URL="${DOMAIN}/${user}/${repository}"
+  else
+    if [[ "${repository}" == "avbroot" || "${repository}" == "custota" ]]; then
+      if [[ "${repository}" == "custota" ]]; then
+        local file_addition="-tool"
+      fi
+      local suffix="${arch}"
+    else
+      local suffix="release"
+    fi
+
+    URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}${file_addition}-${VERSION[${repository_upper_case}]}-${suffix}.zip"
+    SIGNATURE_URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}${file_addition}-${VERSION[${repository_upper_case}]}-${suffix}.zip.sig"
+  fi
+
+  echo -e "URL for \`${repository}\`: ${URL}"
+
+  if [[ "${automated}" == 'false' ]]; then
+    if [[ -e "${WORKDIR}/${repository}" ]]; then
+      echo -n "Warning: \`${repository}\` already exists in \`${WORKDIR}\`\nOverwrite? (y/n): "
+      read confirm
+      if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+        rm -rf "${WORKDIR}/${repository}"
+      fi
+    fi
+  fi
+  get "${repository}" "${URL}" "${SIGNATURE_URL}"
+}
+
+download_dependencies() {
+  local tool="${1}"
+  local automated='true'
+
+  if type url_constructor &> /dev/null; then
+    url_constructor "${tool}" "${automated}"
+  else
+    echo "Error: \`url_constructor\` function is not defined."
+    exit 1
   fi
 }
