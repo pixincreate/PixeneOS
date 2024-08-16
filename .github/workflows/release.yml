@@ -1,0 +1,32 @@
+name: Release OTA
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      device-id:
+        description: Device ID
+        required: true
+      ota-version:
+        description: OTA version
+        required: false
+      force-ota-server-upload:
+        description: Force OTA server upload
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Allow for switching to github-pages branch
+          fetch-depth: 0
+      - name: Run
+        run: |
+          echo "Hello World"
