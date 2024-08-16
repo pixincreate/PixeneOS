@@ -14,14 +14,16 @@ GrapheneOS with additionals:
 
 ## TO-DO
 
-- [ ] Complete functions
+- [x] Complete functions
 - [ ] Update README.md
 - [ ] Safe checks
   - [x] Check if files are already present. If yes, throw a warning and skip
-  - [ ] Check for untracked files and add `-dirty` suffix to the version
+  - [x] Check for untracked files and add `-dirty` suffix to the version
   - [x] Verify the source
   - [ ] Clean up
   - [x] Rewrite Downloader
 - [ ] Make functions independent such that they can be used separately
+- [ ] Setup Bot (renovate?) for updating dependencies
+- [ ] CI/CD pipeline
 
 Windows suck, so I chose not to support it. If you want to use this on Windows, you're on your own.
