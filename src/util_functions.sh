@@ -59,7 +59,6 @@ function flag_check() {
 function create_and_make_release() {
   create_ota
   release_ota
-  push_to_server
 }
 
 function create_ota() {
@@ -115,13 +114,13 @@ function patch_ota() {
 
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
-  if [[ -e "${ota_zip}.patched.zip" ]]; then
+  if ls "${ota_zip}.patched*.zip" 1> /dev/null 2>&1; then
     echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
   else
     local args=()
 
     args+=("--input" "${ota_zip}.zip")
-    args+=("--output" "${ota_zip}.patched.zip")
+    args+=("--output" "${ota_zip}.patched$(dirty_suffix).zip")
 
     args+=(--verify-public-key-avb "${grapheneos_pkmd}")
     args+=(--verify-cert-ota "${grapheneos_otacert}")
