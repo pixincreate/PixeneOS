@@ -12,13 +12,22 @@ function verify_downloads() {
   echo "Verifying \`${tool}\`..."
   local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-  if [[ ! -d "${WORKDIR}/${tool}" && "${WORKDIR}/$tool}" != "magisk.apk" ]]; then
-    tool="${tool}.zip"
+  # Check if the file exists in the modules directory and is not a directory
+  if [[ -f "${WORKDIR}/modules/${tool}.zip" && ! -d "${WORKDIR}/modules/${tool}" ]]; then
+    base_name=$(basename "${WORKDIR}/modules/${tool}")
+
+    if [[ "${base_name}" != "magisk.apk" || "${base_name}" =~ \.zip$ ]]; then
+      tool="${tool}.zip"
+    fi
   fi
-  if [[ ! -e "${WORKDIR}/${tool}" ]]; then
-    echo -e "Error: \`${tool}\` not found in \`${WORKDIR}\`\nExiting..."
+
+  if [[ -d "${WORKDIR}/${tool}" ]]; then
+    echo -e "Tool ${tool} is a directory in \`${WORKDIR}\`. Verified.\n"
+  elif [[ -f "${WORKDIR}/modules/${tool}" ]]; then
+    echo -e "Tool \`${tool}\` found and verified.\n"
+  else
+    echo -e "Error: \`${tool}\` not found in \`${WORKDIR}\`\nExiting...\n"
     exit 1
   fi
 
-  echo -e "\`${tool}\` is verified to be existent in \`${WORKDIR}\`.\n"
 }
