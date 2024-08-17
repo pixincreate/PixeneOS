@@ -24,10 +24,10 @@ function check_and_download_dependencies() {
 
     local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}*" -print -quit | grep -q .; then
+    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}" -print -quit | grep -q .; then
       download_dependencies "${tool}"
     else
-      echo -e "\`${tool}\` is already installed in: \`${WORKDIR}/${tool}\`"
+      echo -e "\`${tool}\` already exists."
       continue
     fi
     verify_downloads "${tool}"
@@ -57,6 +57,7 @@ function flag_check() {
 }
 
 function create_and_make_release() {
+  download_ota
   create_ota
   release_ota
 }
@@ -98,12 +99,12 @@ function generate_keys() {
 function patch_ota() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
   local pkmd="${KEYS[PKMD]}"
-  local grapheneos_pkmd="extracted/extracts/avb_pkmd.bin"
-  local grapheneos_otacert="extracted/ota/META-INF/com/android/otacert"
+  local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"
+  local grapheneos_otacert="${WORKDIR}/extracted/ota/META-INF/com/android/otacert"
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
   # Activate the virtual environment
-  if -z "${VIRTUAL_ENV}"; then
+  if [ -z "${VIRTUAL_ENV}" ]; then
     enable_venv
   fi
 
@@ -329,7 +330,7 @@ function generate_csig() {
 function generate_update_info() {
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched$(dirty_suffix).zip"
   local args=()
-  
+
   args+=("--file" "${WORKDIR}/ota_update/${DEVICE_NAME}.json")
   args+=("--location" "https://github.com/$USER/releases/download/$GRAPHENEOS[VERSION]/${GRAPHENEOS[OTA_TARGET]}.zip")
 
