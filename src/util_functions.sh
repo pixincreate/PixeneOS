@@ -3,7 +3,7 @@ source src/fetcher.sh
 source src/verifier.sh
 
 function check_and_download_dependencies() {
-  mkdir -p "${WORKDIR}"
+  mkdir -p "${WORKDIR}" "${WORKDIR}/modules" "${WORKDIR}/signatures" "${WORKDIR}/extracted/extracts" "${WORKDIR}/extracted/ota"
 
   # Check for Python requirements
   if ! command -v python3 &> /dev/null; then
