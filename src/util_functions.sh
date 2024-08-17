@@ -61,7 +61,6 @@ function flag_check() {
 function create_and_make_release() {
   download_ota
   create_ota
-  release_ota
 }
 
 function create_ota() {
@@ -133,7 +132,7 @@ function patch_ota() {
     args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
 
     args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
-    
+
     args+=(--module-custota "${WORKDIR}/modules/custota.zip")
     args+=(--module-msd "${WORKDIR}/modules/msd.zip")
     args+=(--module-bcr "${WORKDIR}/modules/bcr.zip")
@@ -387,6 +386,7 @@ function dirty_suffix() {
   fi
 }
 
+# my-avbroot-setup takes care of release_ota
 function release_ota() {
   generate_csig
   generate_update_info
