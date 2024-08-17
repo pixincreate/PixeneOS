@@ -45,6 +45,8 @@ function flag_check() {
 
   if [[ "${tool}" == "my-avbroot-setup" ]]; then
     FLAG="${ADDITIONALS[MY_AVBROOT_SETUP]}"
+  elif [[ "${tool}" == "custota-tool" ]]; then
+    FLAG="${ADDITIONALS[CUSTOTA_TOOL]}"
   else
     FLAG="${ADDITIONALS[$tool_upper_case]}"
   fi
@@ -130,6 +132,8 @@ function patch_ota() {
     args+=(--sign-key-ota "${KEYS[OTA]}")
     args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
 
+    args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
+    
     args+=(--module-custota "${WORKDIR}/modules/custota.zip")
     args+=(--module-msd "${WORKDIR}/modules/msd.zip")
     args+=(--module-bcr "${WORKDIR}/modules/bcr.zip")
@@ -209,7 +213,7 @@ function env_setup() {
 
   local avbroot="${WORKDIR}/avbroot"
   local afsr="${WORKDIR}/afsr/target/release"
-  local custota_tool="${WORKDIR}/custota_tool"
+  local custota_tool="${WORKDIR}/custota-tool"
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
   if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null && ! command -v custota-tool &> /dev/null; then
@@ -278,8 +282,18 @@ function url_constructor() {
       local suffix="release"
     fi
 
-    URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}-${VERSION[${repository_upper_case}]}-${suffix}.zip"
-    SIGNATURE_URL="${DOMAIN}/${user}/${repository}/releases/download/v${VERSION[${repository_upper_case}]}/${repository}-${VERSION[${repository_upper_case}]}-${suffix}.zip.sig"
+    if [[ "${repository}" == "custota-tool" ]]; then
+      local download_page="${DOMAIN}/${user}/Custota/releases/download"
+      local version="v${VERSION[CUSTOTA]}"
+      local application="${repository}-${VERSION[CUSTOTA]}-${suffix}.zip"
+    else
+      local download_page="${DOMAIN}/${user}/${repository}/releases/download"
+      local version="v${VERSION[${repository_upper_case}]}"
+      local application="${repository}-${VERSION[${repository_upper_case}]}-${suffix}.zip"
+    fi
+
+    URL="${download_page}/${version}/${application}"
+    SIGNATURE_URL="${download_page}/${version}/${application}.sig"
   fi
 
   echo -e "URL for \`${repository}\`: ${URL}"
