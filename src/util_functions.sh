@@ -190,22 +190,18 @@ function afsr_setup() {
 
   # By Linux, I mean Ubuntu, a Debian-based distro here
   if [[ $(detect_os) == 'Linux' ]]; then
-    if ! dpkg -s e2fsprogs &> /dev/null; then
-      echo "e2fsprogs is not installed. Installing..."
-      yes | apt-get update
-      yes | apt-get install e2fsprogs pkg-config comerr-dev libext2fs-dev
-      export PKG_CONFIG_PATH='/usr/lib/x86_64-linux-gnu/pkgconfig'
-    fi
+    echo "Installing packages..."
+    yes | apt-get update
+    yes | apt-get install e2fsprogs pkg-config comerr-dev libext2fs-dev
+    export PKG_CONFIG_PATH='/usr/lib/x86_64-linux-gnu/pkgconfig'
   elif [[ $(detect_os) == 'Mac' ]]; then
-    if ! brew list e2fsprogs &> /dev/null; then
-      echo "e2fsprogs is not installed. Installing..."
-      brew install pkg-config e2fsprogs
+    echo "Installing packages..."
+    brew install pkg-config e2fsprogs
 
-      if [[ $(uname -m) == "x86_64" ]]; then
-        export PKG_CONFIG_PATH='/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
-      elif [[ $(uname -m) == "arm64" ]]; then
-        export PKG_CONFIG_PATH='/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
-      fi
+    if [[ $(uname -m) == "x86_64" ]]; then
+      export PKG_CONFIG_PATH='/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
+    elif [[ $(uname -m) == "arm64" ]]; then
+      export PKG_CONFIG_PATH='/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
     fi
   fi
 
