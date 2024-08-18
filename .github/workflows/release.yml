@@ -2,7 +2,7 @@ name: Release OTA
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 */6 * * *' # Every 6 hours (UTC)
   
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -11,12 +11,15 @@ on:
         description: Device ID
         required: true
       ota-version:
-        description: OTA version
+        description: OTA version. By default, runs against latest version
         required: false
       force-ota-server-upload:
         description: Force OTA server upload
         required: false
         type: boolean
+      magisk-preinit-device:
+        description: Magisk preinit device. For example, "sda8"
+        required: false
 
 jobs:
   build:
@@ -28,5 +31,17 @@ jobs:
           # Allow for switching to github-pages branch
           fetch-depth: 0
       - name: Run
+        shell: bash
+        env:
+          DEVICE_NAME: ${{ github.event.inputs.device-id }}
+          GRAPHENEOS[VERSION]: ${{ github.event.inputs.ota-version }}
+          FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
+          ADDITIONALS[ROOT]: ${{ github.event.inputs.root }}
+          MAGISK[PREINTI]: ${{ github.event.inputs.magisk-preinit-device }}
         run: |
-          echo "Hello World"
+          echo "Running release script"
+          src/main.sh
+
+          echo "${WORKDIR}"
+          ls -la ".tmp"
+          ls -la ".tmp/*.patched*.zip"
