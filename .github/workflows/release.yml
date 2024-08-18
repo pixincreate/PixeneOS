@@ -17,6 +17,10 @@ on:
         description: Force OTA server upload
         required: false
         type: boolean
+      root:
+        description: Add root to the build
+        required: false
+        type: boolean
       magisk-preinit-device:
         description: Magisk preinit device. For example, "sda8"
         required: false
