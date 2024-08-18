@@ -17,7 +17,7 @@ FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 USER="pixincreate"                    # GitHub username
 WORKDIR=".tmp"
 
-VERSION[AFSR]="${VERSION[AFSR]:-77a8c83d52ffb3177eb398bcf53c14459583ce11}" # Commit hash
+VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.5.0}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
 VERSION[CUSTOTA]="${VERSION[CUSTOTA]:-4.8}"

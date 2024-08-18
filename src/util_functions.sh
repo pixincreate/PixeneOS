@@ -186,36 +186,11 @@ function my_avbroot_setup() {
   fi
 }
 
-function afsr_setup() {
-  # This is necessary since the developer chose to not make releases of the tool yet
-  local afsr="${WORKDIR}/afsr"
-
-  # By Linux, I mean Ubuntu, a Debian-based distro here
-  if [[ $(detect_os) == 'Linux' ]]; then
-    echo "Installing packages..."
-    yes | apt-get update
-    yes | apt-get install e2fsprogs pkg-config comerr-dev libext2fs-dev
-    export PKG_CONFIG_PATH='/usr/lib/x86_64-linux-gnu/pkgconfig'
-  elif [[ $(detect_os) == 'Mac' ]]; then
-    echo "Installing packages..."
-    brew install pkg-config e2fsprogs
-
-    if [[ $(uname -m) == "x86_64" ]]; then
-      export PKG_CONFIG_PATH='/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
-    elif [[ $(uname -m) == "arm64" ]]; then
-      export PKG_CONFIG_PATH='/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
-    fi
-  fi
-
-  cargo build --release --manifest-path "${afsr}/Cargo.toml"
-}
-
 function env_setup() {
   my_avbroot_setup
-  afsr_setup
 
   local avbroot="${WORKDIR}/avbroot"
-  local afsr="${WORKDIR}/afsr/target/release"
+  local afsr="${WORKDIR}/afsr/"
   local custota_tool="${WORKDIR}/custota-tool"
   local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
 
@@ -273,10 +248,10 @@ function url_constructor() {
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
   echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
-  if [[ "${repository}" == "afsr" || "${repository}" == "my-avbroot-setup" ]]; then
+  if [[ "${repository}" == "my-avbroot-setup" ]]; then
     URL="${DOMAIN}/${user}/${repository}"
   else
-    if [[ "${repository}" == "avbroot" || "${repository}" == "custota-tool" ]]; then
+    if [[ "${repository}" == "afsr" || "${repository}" == "avbroot" || "${repository}" == "custota-tool" ]]; then
       local suffix="${ARCH}"
     else
       local suffix="release"
