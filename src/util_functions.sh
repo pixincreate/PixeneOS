@@ -270,9 +270,6 @@ function url_constructor() {
   local repository="${1}"
   local automated="${2:-false}"
   local user='chenxiaolong'
-  local arch="x86_64-unknown-linux-gnu" # for Linux
-  # local arch="universal-apple-darwin" # for macOS
-  # local arch="x86_64-pc-windows-msvc" # for Windows
 
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
@@ -281,7 +278,7 @@ function url_constructor() {
     URL="${DOMAIN}/${user}/${repository}"
   else
     if [[ "${repository}" == "avbroot" || "${repository}" == "custota-tool" ]]; then
-      local suffix="${arch}"
+      local suffix="${ARCH}"
     else
       local suffix="release"
     fi

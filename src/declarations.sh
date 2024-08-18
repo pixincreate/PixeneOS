@@ -6,9 +6,13 @@ declare -A ADDITIONALS
 declare -A VERSION
 
 # Specifications
-CLEANUP="${CLEANUP:-'false'}" # Clean up after the script finishes
+ARCH="x86_64-unknown-linux-gnu" # for Linux
+# ARCH="universal-apple-darwin" # for macOS
+# ARCH="x86_64-pc-windows-msvc" # for Windows
+
+CLEANUP="${CLEANUP:-'false'}"  # Clean up after the script finishes
+DEVICE_NAME="${DEVICE_NAME:-}" # Device name, passed from the CI environment
 DOMAIN="https://github.com"
-DEVICE_NAME="${DEVICE_NAME:-}"        # Device name, passed from the CI environment
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 USER="pixincreate"                    # GitHub username
 WORKDIR=".tmp"
