@@ -1,4 +1,5 @@
 source src/declarations.sh
+source src/exchange.sh
 source src/fetcher.sh
 source src/verifier.sh
 
@@ -97,19 +98,24 @@ function generate_keys() {
   local public_key_metadata='avb_pkmd.bin'
 
   # Generate the AVB and OTA signing keys
-  avbroot key generate-key -o "${KEY_AVB}"
-  avbroot key generate-key -o "${KEY_OTA}"
+  avbroot key generate-key -o "${KEYS[AVB]}"
+  avbroot key generate-key -o "${KEYS[OTA]}"
 
   # Convert the public key portion of the AVB signing key to the AVB public key metadata format
   # This is the format that the bootloader requires when setting the custom root of trust
-  avbroot key extract-avb -k "${KEY_AVB}" -o "${public_key_metadata}"
+  avbroot key extract-avb -k "${KEYS[AVB]}" -o "${public_key_metadata}"
 
   # Generate a self-signed certificate for the OTA signing key
   # This is used by recovery to verify OTA updates when sideloading
-  avbroot key generate-cert -k "${KEY_OTA}" -o "${CERT_OTA}"
+  avbroot key generate-cert -k "${KEYS[OTA]}" -o "${KEYS[CERT_OTA]}"
+
+  # Convert the keys to base64
+  base64_encode
 }
 
 function patch_ota() {
+  base64_decode
+
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
   local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"

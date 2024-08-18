@@ -33,8 +33,11 @@ MAGISK[PREINIT]="${MAGISK[PREINIT]:-}"
 
 # Keys
 KEYS[AVB]="${KEYS[AVB]:-avb.key}"
+KEYS[AVB_BASE64]="${KEYS[AVB_BASE64]:-''}"
 KEYS[CERT_OTA]="${KEYS[CERT_OTA]:-ota.crt}"
+KEYS[CERT_OTA_BASE64]="${KEYS[CERT_OTA_BASE64]:-''}"
 KEYS[OTA]="${KEYS[OTA]:-ota.key}"
+KEYS[OTA_BASE64]="${KEYS[OTA_BASE64]:-''}"
 KEYS[PKMD]="${KEYS[PKMD]:-avb_pkmd.bin}"
 
 # GrapheneOS
