@@ -48,6 +48,7 @@ TBU
 ## TO-DO
 
 - [ ] Update README.md
+- [ ] Refactor afsr setup once upstream is updated
 - [ ] Safe checks
   - [ ] Add documentation in code
   - [ ] Make code more robust and safe
