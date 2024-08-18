@@ -52,6 +52,12 @@ jobs:
       - name: Build and Cache Rust Dependencies
         uses: Swatinem/rust-cache@v2.7.0
 
+      - name: Setup Environment variables
+        run: |
+          echo "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
+          echo "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
+          echo "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
+
       - name: Patch OTA
         shell: bash
         env:
@@ -60,10 +66,6 @@ jobs:
           GRAPHENEOS[VERSION]: ${{ github.event.inputs.ota-version }}
           FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
           MAGISK[PREINTI]: ${{ github.event.inputs.magisk-preinit-device }}
-          #-----------------------------------------------------------------
-          KEYS[AVB_BASE64]: ${{ secrets.AVB_KEY }}
-          KEYS[CERT_OTA_BASE64]: ${{ secrets.CERT_OTA }}
-          KEYS[OTA_BASE64]: ${{ secrets.OTA_KEY }}
         run: |
           echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
           echo "Running release script"
