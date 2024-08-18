@@ -137,6 +137,10 @@ function patch_ota() {
     args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
 
     args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
+    args+=(--module-msd-sig "${WORKDIR}/signatures/msd.zip.sig")
+    args+=(--module-bcr-sig "${WORKDIR}/signatures/bcr.zip.sig")
+    args+=(--module-oemunlockonboot-sig "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
+    args+=(--module-alterinstaller-sig "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
     args+=(--module-custota "${WORKDIR}/modules/custota.zip")
     args+=(--module-msd "${WORKDIR}/modules/msd.zip")
