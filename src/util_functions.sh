@@ -24,7 +24,7 @@ function check_and_download_dependencies() {
 
     local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}" -print -quit | grep -q .; then
+    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}" -print -quit | grep -q . || ! find "${WORKDIR}/modules" -maxdepth 1 -name "${tool}" -print -quit | grep -q .; then
       download_dependencies "${tool}"
     else
       echo -e "\`${tool}\` already exists."
@@ -64,8 +64,6 @@ function create_and_make_release() {
 }
 
 function create_ota() {
-  [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
-
   # Setup environment variables and paths
   env_setup
   # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup

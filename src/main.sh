@@ -4,6 +4,8 @@ source src/fetcher.sh
 source src/util_functions.sh
 
 function main() {
+  [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
+
   local autorun="${1:-true}"
 
   if [[ "${autorun}" == 'true' ]]; then
@@ -26,8 +28,6 @@ function main() {
   check_and_download_dependencies
   # Patch the OTA, sign it, make a release and push it to the server
   create_and_make_release
-  # Perform cleanup
-  cleanup
 }
 
 main "$@"
