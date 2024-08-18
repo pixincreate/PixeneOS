@@ -24,12 +24,19 @@ function check_and_download_dependencies() {
 
     local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-    if ! find "${WORKDIR}" -maxdepth 1 -name "${tool}" -print -quit | grep -q . || ! find "${WORKDIR}/modules" -maxdepth 1 -name "${tool}" -print -quit | grep -q .; then
-      download_dependencies "${tool}"
-    else
-      echo -e "\`${tool}\` already exists."
+    if [ -d "${WORKDIR}/${tool}" ]; then
+      echo -e "\`${tool}\` directory already exists in \`${WORKDIR}\`."
       continue
     fi
+
+    if [ -f "${WORKDIR}/modules/${tool}.zip" ]; then
+      echo -e "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
+      continue
+    fi
+
+    # If neither condition is met, download dependencies
+    download_dependencies "${tool}"
+
     verify_downloads "${tool}"
   done
 
