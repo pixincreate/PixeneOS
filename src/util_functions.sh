@@ -173,7 +173,7 @@ function my_avbroot_setup() {
     sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
     mv "${setup_script}.tmp" "${setup_script}"
   else
-    echo "Magisk is not enabled. Skipping..."
+    echo "Magisk is not enabled. Skipping...\n"
   fi
 }
 
@@ -372,7 +372,7 @@ function extract_official_keys() {
   avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" \
     | grep 'public_key' \
     | sed -n 's/.*public_key: "\(.*\)".*/\1/p' \
-    | tr -d '[:space:]' | xxd -r -p > "${WORKDIR}/extracted/extracts/avb_pkmd.bin"
+    | tr -d '[:space:]' | xxd -r -p > "${WORKDIR}/extracted/avb_pkmd.bin"
 
   # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
   unzip "${ota_zip}" -d "${WORKDIR}/extracted/ota"
