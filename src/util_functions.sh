@@ -186,7 +186,7 @@ function afsr_setup() {
     if ! dpkg -s e2fsprogs &> /dev/null; then
       echo "e2fsprogs is not installed. Installing..."
       yes | apt-get update
-      yes | apt-get install e2fsprogs
+      yes | apt-get install e2fsprogs pkg-config
     fi
   elif [[ $(detect_os) == 'Mac' ]]; then
     if ! brew list e2fsprogs &> /dev/null; then
