@@ -29,5 +29,4 @@ function verify_downloads() {
     echo -e "Error: \`${tool}\` not found in \`${WORKDIR}\`\nExiting...\n"
     exit 1
   fi
-
 }
