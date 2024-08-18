@@ -191,7 +191,8 @@ function afsr_setup() {
     if ! dpkg -s e2fsprogs &> /dev/null; then
       echo "e2fsprogs is not installed. Installing..."
       yes | apt-get update
-      yes | apt-get install e2fsprogs pkg-config
+      yes | apt-get install e2fsprogs pkg-config comerr-dev libext2fs-dev
+      export PKG_CONFIG_PATH='/usr/lib/x86_64-linux-gnu/pkgconfig'
     fi
   elif [[ $(detect_os) == 'Mac' ]]; then
     if ! brew list e2fsprogs &> /dev/null; then
@@ -199,12 +200,10 @@ function afsr_setup() {
       brew install pkg-config e2fsprogs
 
       if [[ $(uname -m) == "x86_64" ]]; then
-        echo '/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
+        export PKG_CONFIG_PATH='/usr/local/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
       elif [[ $(uname -m) == "arm64" ]]; then
-        echo '/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig' >> ~/.profile
+        export PKG_CONFIG_PATH='/opt/homebrew/Cellar/e2fsprogs/1.47.1/lib/pkgconfig'
       fi
-
-      source ~/.profile
     fi
   fi
 
