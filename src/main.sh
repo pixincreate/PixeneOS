@@ -4,8 +4,6 @@ source src/fetcher.sh
 source src/util_functions.sh
 
 function main() {
-  [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
-
   local autorun="${1:-true}"
 
   if [[ "${autorun}" == 'true' ]]; then

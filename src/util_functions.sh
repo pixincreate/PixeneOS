@@ -64,6 +64,8 @@ function create_and_make_release() {
 }
 
 function create_ota() {
+  [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
+
   # Setup environment variables and paths
   env_setup
   # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup
