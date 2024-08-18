@@ -8,7 +8,7 @@ declare -A VERSION
 # Specifications
 CLEANUP="${CLEANUP:-''}" # Clean up after the script finishes
 DOMAIN="https://github.com"
-DEVICE_NAME="${DEVICE_NAME:-bluejay}" # Device name, passed from the CI environment
+DEVICE_NAME="${DEVICE_NAME:-}"        # Device name, passed from the CI environment
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 USER="pixincreate"                    # GitHub username
 WORKDIR=".tmp"
@@ -25,7 +25,7 @@ VERSION[MAGISK]="${VERSION[MAGISK]:-}"
 # Magisk
 MAGISK[REPOSITORY]="${USER}/Magisk"
 MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
-MAGISK[PREINIT]="${MAGISK[PREINIT]:-sda8}"
+MAGISK[PREINIT]="${MAGISK[PREINIT]:-}"
 
 # Keys
 KEYS[AVB]="${KEYS[AVB]:-avb.key}"
@@ -37,10 +37,9 @@ KEYS[PKMD]="${KEYS[PKMD]:-avb_pkmd.bin}"
 GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"
 GRAPHENEOS[UPDATE_CHANNEL]="alpha"
 GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # 'ota_update' or 'install'
-GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-latest}"
+GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-}"
 GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"       # Will be constructed from the latest version
 GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}" # Will be constructed from the latest version
-GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[ALLOWED_SIGNERS]:-}"
 
 # Additionals
 ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack
