@@ -174,11 +174,11 @@ function my_avbroot_setup() {
   local magisk_path="${WORKDIR}\/magisk.apk"
 
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-    echo "Magisk is enabled. Modifying the setup script..."
+    echo -e "Magisk is enabled. Modifying the setup script..."
     sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
     mv "${setup_script}.tmp" "${setup_script}"
   else
-    echo "Magisk is not enabled. Skipping...\n"
+    echo -e "Magisk is not enabled. Skipping...\n"
   fi
 }
 
@@ -318,7 +318,7 @@ function download_dependencies() {
   if type url_constructor &> /dev/null; then
     url_constructor "${tool}" "${automated}"
   else
-    echo "Error: \`url_constructor\` function is not defined."
+    echo -e "Error: \`url_constructor\` function is not defined."
     exit 1
   fi
 }

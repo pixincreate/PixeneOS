@@ -1,4 +1,4 @@
-name: Release OTA
+name: Patch and Release OTA
 
 on:
   schedule:
@@ -28,25 +28,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      DEVICE_NAME: "bluejay"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           # Allow for switching to github-pages branch
           fetch-depth: 0
-      - name: Run
+
+      - name: Patch OTA
         shell: bash
         env:
           ADDITIONALS[ROOT]: ${{ github.event.inputs.root }}
           CLEANUP: true
-          DEVICE_NAME: ${{ github.event.inputs.device-id }}
           GRAPHENEOS[VERSION]: ${{ github.event.inputs.ota-version }}
           FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
           MAGISK[PREINTI]: ${{ github.event.inputs.magisk-preinit-device }}
         run: |
+          echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
           echo "Running release script"
           src/main.sh
-
-          echo "${WORKDIR}"
-          ls -la ".tmp"
-          ls -la ".tmp/*.patched*.zip"
