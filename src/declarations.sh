@@ -6,7 +6,7 @@ declare -A ADDITIONALS
 declare -A VERSION
 
 # Specifications
-CLEANUP="${CLEANUP:-''}" # Clean up after the script finishes
+CLEANUP="${CLEANUP:-'false'}" # Clean up after the script finishes
 DOMAIN="https://github.com"
 DEVICE_NAME="${DEVICE_NAME:-}"        # Device name, passed from the CI environment
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully

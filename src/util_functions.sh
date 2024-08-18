@@ -73,6 +73,11 @@ function create_ota() {
 }
 
 function cleanup() {
+  if [[ "${CLEANUP}" != 'true' ]]; then
+    echo -e "Cleanup is disabled. Exiting...\n"
+    return
+  fi
+
   echo "Cleaning up..."
   rm -rf "${WORKDIR}"
   unset "${KEYS[@]}"
