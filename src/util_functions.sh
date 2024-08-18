@@ -265,8 +265,8 @@ function url_constructor() {
   local repository="${1}"
   local automated="${2:-false}"
   local user='chenxiaolong'
-  # local arch="x86_64-unknown-linux-gnu" # for Linux
-  local arch="universal-apple-darwin" # for macOS
+  local arch="x86_64-unknown-linux-gnu" # for Linux
+  # local arch="universal-apple-darwin" # for macOS
   # local arch="x86_64-pc-windows-msvc" # for Windows
 
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
