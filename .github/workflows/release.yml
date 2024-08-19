@@ -52,6 +52,11 @@ jobs:
       - name: Build and Cache Rust Dependencies
         uses: Swatinem/rust-cache@v2.7.0
 
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12-dev'
+
       - name: Setup Environment variables
         run: |
           echo "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV

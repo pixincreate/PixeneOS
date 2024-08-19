@@ -137,6 +137,7 @@ function patch_ota() {
   if ls "${ota_zip}.patched*.zip" 1> /dev/null 2>&1; then
     echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
   else
+    echo -e "Patching OTA..."
     local args=()
 
     args+=("--input" "${ota_zip}.zip")
@@ -149,19 +150,19 @@ function patch_ota() {
     args+=(--sign-key-ota "${KEYS[OTA]}")
     args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
 
-    args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
-    args+=(--module-msd-sig "${WORKDIR}/signatures/msd.zip.sig")
-    args+=(--module-bcr-sig "${WORKDIR}/signatures/bcr.zip.sig")
-    args+=(--module-oemunlockonboot-sig "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
-    args+=(--module-alterinstaller-sig "${WORKDIR}/signatures/alterinstaller.zip.sig")
-
     args+=(--module-custota "${WORKDIR}/modules/custota.zip")
     args+=(--module-msd "${WORKDIR}/modules/msd.zip")
     args+=(--module-bcr "${WORKDIR}/modules/bcr.zip")
     args+=(--module-oemunlockonboot "${WORKDIR}/modules/oemunlockonboot.zip")
     args+=(--module-alterinstaller "${WORKDIR}/modules/alterinstaller.zip")
 
-    python3 ${my_avbroot_setup}/patch.py "${args[@]}"
+    args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
+    args+=(--module-msd-sig "${WORKDIR}/signatures/msd.zip.sig")
+    args+=(--module-bcr-sig "${WORKDIR}/signatures/bcr.zip.sig")
+    args+=(--module-oemunlockonboot-sig "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
+    args+=(--module-alterinstaller-sig "${WORKDIR}/signatures/alterinstaller.zip.sig")
+
+    python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
 
   # Deactivate the virtual environment
