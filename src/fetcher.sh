@@ -45,7 +45,7 @@ function get() {
 
   echo "Downloading \`${filename}\`..."
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
-    git clone "${url}" "${WORKDIR}/${filename}"
+    git clone "${url}" "${WORKDIR}/tools/${filename}"
   else
     if [[ "${filename}" == "magisk" ]]; then
       suffix="apk"
@@ -61,8 +61,8 @@ function get() {
 
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
         echo -e "Extracting and granting permissions for \`${filename}\`..."
-        echo N | unzip -q "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/${filename}"
-        chmod +x "${WORKDIR}/${filename}/${filename}"
+        echo N | unzip -q "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
+        chmod +x "${WORKDIR}/tools/${filename}/${filename}"
 
         echo -e "Cleaning up..."
         rm "${WORKDIR}/modules/${filename}.zip"

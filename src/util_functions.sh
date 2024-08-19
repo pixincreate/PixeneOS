@@ -4,7 +4,7 @@ source src/fetcher.sh
 source src/verifier.sh
 
 function check_and_download_dependencies() {
-  mkdir -p "${WORKDIR}" "${WORKDIR}/modules" "${WORKDIR}/signatures" "${WORKDIR}/extracted/extracts" "${WORKDIR}/extracted/ota"
+  make_directories
 
   # Check for Python requirements
   if ! command -v python3 &> /dev/null; then
@@ -25,13 +25,13 @@ function check_and_download_dependencies() {
 
     local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
-    if [ -d "${WORKDIR}/${tool}" ]; then
-      echo -e "\`${tool}\` directory already exists in \`${WORKDIR}\`."
+    if [ -f "${WORKDIR}/modules/${tool}.zip" ]; then
+      echo -e "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
       continue
     fi
 
-    if [ -f "${WORKDIR}/modules/${tool}.zip" ]; then
-      echo -e "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
+    if [ -f "${WORKDIR}/tools/${tool}.zip" ]; then
+      echo -e "\`${tool}\` file already exists in \`${WORKDIR}/tools\`."
       continue
     fi
 
@@ -120,7 +120,7 @@ function patch_ota() {
   local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"
   local grapheneos_otacert="${WORKDIR}/extracted/ota/META-INF/com/android/otacert"
-  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
+  local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
 
   # Activate the virtual environment
   if [ -z "${VIRTUAL_ENV}" ]; then
@@ -203,10 +203,10 @@ function my_avbroot_setup() {
 function env_setup() {
   my_avbroot_setup
 
-  local avbroot="${WORKDIR}/avbroot"
-  local afsr="${WORKDIR}/afsr/"
-  local custota_tool="${WORKDIR}/custota-tool"
-  local my_avbroot_setup="${WORKDIR}/my-avbroot-setup"
+  local avbroot="${WORKDIR}/tools/avbroot"
+  local afsr="${WORKDIR}/tools/afsr"
+  local custota_tool="${WORKDIR}/tools/custota-tool"
+  local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
 
   if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null && ! command -v custota-tool &> /dev/null; then
     export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$(realpath ${custota_tool}):$PATH"
@@ -380,4 +380,15 @@ function dirty_suffix() {
 function release_ota() {
   generate_csig
   generate_update_info
+}
+
+function make_directories() {
+  mkdir -p \
+    "${WORKDIR}" \
+    "${WORKDIR}/extracted/extracts" \
+    "${WORKDIR}/extracted/ota" \
+    "${WORKDIR}/keys" \
+    "${WORKDIR}/modules" \
+    "${WORKDIR}/signatures" \
+    "${WORKDIR}/tools"
 }

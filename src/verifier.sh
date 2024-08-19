@@ -21,7 +21,7 @@ function verify_downloads() {
     fi
   fi
 
-  if [[ -d "${WORKDIR}/${tool}" ]]; then
+  if [[ -d "${WORKDIR}/tools/${tool}" ]]; then
     echo -e "Tool ${tool} is a directory in \`${WORKDIR}\`. Verified.\n"
   elif [[ -f "${WORKDIR}/modules/${tool}" ]]; then
     echo -e "Tool \`${tool}\` found and verified.\n"

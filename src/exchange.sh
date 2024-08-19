@@ -25,7 +25,7 @@ function base64_decode() {
 
     if [[ -n "${base64_key}" ]]; then
       # Generate output file name based on key name
-      local output_file="${KEYS[$(echo ${key} | sed 's/_BASE64$//')]}"
+      local output_file="${WORKDIR}/keys/${KEYS[$(echo ${key} | sed 's/_BASE64$//')]}"
 
       # Decode bas64 and write to a file
       echo "${base64_key}" | base64 --decode > "${output_file}" 2> /dev/null
