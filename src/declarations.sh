@@ -29,7 +29,7 @@ VERSION[MAGISK]="${VERSION[MAGISK]:-}"
 # Magisk
 MAGISK[REPOSITORY]="${USER}/Magisk"
 MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
-MAGISK[PREINIT]="${MAGISK[PREINIT]:-}"
+MAGISK[PREINIT]="${MAGISK_PREINIT:-}"
 
 # Keys
 KEYS[AVB]="${KEYS[AVB]:-avb.key}"
@@ -58,4 +58,4 @@ ADDITIONALS[CUSTOTA_TOOL]="${ADDITIONALS[CUSTOTA_TOOL]:-true}"         # Custom 
 ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass Storage Device on USB
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
 ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock bootloader on boot
-ADDITIONALS[ROOT]="${ADDITIONALS[ROOT]:-false}"                        # Only Magisk is supported
+ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported

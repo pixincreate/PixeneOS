@@ -9,7 +9,7 @@ function base64_encode() {
 
   export "${KEYS[AVB_BASE64]}}" "${KEYS[OTA_BASE64]}" "${KEYS[CERT_OTA_BASE64]}"
 
-  echo -e "Encoded keys to base64."
+  echo -e "Encoded keys to base64.\n"
 }
 
 function base64_decode() {
@@ -24,8 +24,6 @@ function base64_decode() {
     local base64_key="${KEYS[$key]}"
 
     if [[ -n "${base64_key}" ]]; then
-      base64_key=$(echo "${base64_key}" | tr -d '\n' | tr -d ' ')
-
       # Generate output file name based on key name
       local output_file="${KEYS[$(echo ${key} | sed 's/_BASE64$//')]}"
 
@@ -43,5 +41,5 @@ function base64_decode() {
     fi
   done
 
-  echo -e "Decoded keys from base64."
+  echo -e "Decoded keys from base64.\n"
 }

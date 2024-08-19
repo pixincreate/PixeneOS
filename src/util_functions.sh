@@ -143,24 +143,24 @@ function patch_ota() {
     args+=("--input" "${ota_zip}.zip")
     args+=("--output" "${ota_zip}.patched$(dirty_suffix).zip")
 
-    args+=(--verify-public-key-avb "${grapheneos_pkmd}")
-    args+=(--verify-cert-ota "${grapheneos_otacert}")
+    args+=("--verify-public-key-avb" "${grapheneos_pkmd}")
+    args+=("--verify-cert-ota" "${grapheneos_otacert}")
 
-    args+=(--sign-key-avb "${KEYS[AVB]}")
-    args+=(--sign-key-ota "${KEYS[OTA]}")
-    args+=(--sign-cert-ota "${KEYS[CERT_OTA]}")
+    args+=("--sign-key-avb" "${KEYS[AVB]}")
+    args+=("--sign-key-ota" "${KEYS[OTA]}")
+    args+=("--sign-cert-ota" "${KEYS[CERT_OTA]}")
 
-    args+=(--module-custota "${WORKDIR}/modules/custota.zip")
-    args+=(--module-msd "${WORKDIR}/modules/msd.zip")
-    args+=(--module-bcr "${WORKDIR}/modules/bcr.zip")
-    args+=(--module-oemunlockonboot "${WORKDIR}/modules/oemunlockonboot.zip")
-    args+=(--module-alterinstaller "${WORKDIR}/modules/alterinstaller.zip")
+    args+=("--module-custota" "${WORKDIR}/modules/custota.zip")
+    args+=("--module-msd" "${WORKDIR}/modules/msd.zip")
+    args+=("--module-bcr" "${WORKDIR}/modules/bcr.zip")
+    args+=("--module-oemunlockonboot" "${WORKDIR}/modules/oemunlockonboot.zip")
+    args+=("--module-alterinstaller" "${WORKDIR}/modules/alterinstaller.zip")
 
-    args+=(--module-custota-sig "${WORKDIR}/signatures/custota.zip.sig")
-    args+=(--module-msd-sig "${WORKDIR}/signatures/msd.zip.sig")
-    args+=(--module-bcr-sig "${WORKDIR}/signatures/bcr.zip.sig")
-    args+=(--module-oemunlockonboot-sig "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
-    args+=(--module-alterinstaller-sig "${WORKDIR}/signatures/alterinstaller.zip.sig")
+    args+=("--module-custota-sig" "${WORKDIR}/signatures/custota.zip.sig")
+    args+=("--module-msd-sig" "${WORKDIR}/signatures/msd.zip.sig")
+    args+=("--module-bcr-sig" "${WORKDIR}/signatures/bcr.zip.sig")
+    args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
+    args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
     python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
@@ -192,7 +192,7 @@ function my_avbroot_setup() {
   local magisk_path="${WORKDIR}\/magisk.apk"
 
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-    echo -e "Magisk is enabled. Modifying the setup script..."
+    echo -e "Magisk is enabled. Modifying the setup script...\n"
     sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
     mv "${setup_script}.tmp" "${setup_script}"
   else

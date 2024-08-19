@@ -66,11 +66,11 @@ jobs:
       - name: Patch OTA
         shell: bash
         env:
-          ADDITIONALS[ROOT]: ${{ github.event.inputs.root }}
+          ADDITIONALS_ROOT: ${{ github.event.inputs.root }}
           CLEANUP: true
-          GRAPHENEOS[VERSION]: ${{ github.event.inputs.ota-version }}
+          GRAPHENEOS_VERSION: ${{ github.event.inputs.ota-version }}
           FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
-          MAGISK[PREINTI]: ${{ github.event.inputs.magisk-preinit-device }}
+          MAGISK_PREINTI: ${{ github.event.inputs.magisk-preinit-device }}
         run: |
           echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
           echo "Running release script"
