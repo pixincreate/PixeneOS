@@ -191,6 +191,10 @@ function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}\/magisk.apk"
 
+  # Add support to pass env-vars to the setup script
+  sed -e "s/\'avbroot\', \'ota\', \'patch\',/\'avbroot\', \'ota\', \'patch\',\n\t\t\'--pass-avb-env-var\', \'${PASSPHRASE_AVB}\',\n\t\t\'--pass-ota-env-var\',\'${PASSPHRASE_OTA}\'/" "${setup_script}" > "${setup_script}.tmp"
+  mv "${setup_script}.tmp" "${setup_script}"
+
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
     echo -e "Magisk is enabled. Modifying the setup script...\n"
     sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"

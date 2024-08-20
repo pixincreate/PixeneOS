@@ -71,6 +71,8 @@ jobs:
           GRAPHENEOS_VERSION: ${{ github.event.inputs.ota-version }}
           FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
           MAGISK_PREINTI: ${{ github.event.inputs.magisk-preinit-device }}
+          PASSPHRASE_AVB: ${{ secrets.AVB_PASSPHRASE }}
+          PASSPHRASE_OTA: ${{ secrets.OTA_PASSPHRASE }}
         run: |
           echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
           echo "Running release script"
