@@ -162,7 +162,7 @@ function patch_ota() {
     args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
     args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
-    python ${my_avbroot_setup}/patch.py "${args[@]}"
+    python "${my_avbroot_setup}/patch.py" "${args[@]}"
   fi
 
   # Deactivate the virtual environment
@@ -188,7 +188,7 @@ function detect_os() {
 }
 
 function my_avbroot_setup() {
-  local setup_script="${WORKDIR}/my-avbroot-setup/patch.py"
+  local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}\/magisk.apk"
 
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
