@@ -12,6 +12,11 @@ function get_latest_version() {
       | sed 's/canary-//'
   )
 
+  if [[ GRAPHENEOS[UPDATE_TYPE] == "install" ]]; then
+    echo -e "The update type is set to \`install\` which is not supported by AVBRoot.\nExiting..."
+    exit 1
+  fi
+
   GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
   GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[OTA_BASE_URL]}/allowed_signers"
