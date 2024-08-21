@@ -1,19 +1,25 @@
 source src/declarations.sh
 
 function base64_encode() {
-  echo -e "Encoding keys to base64..."
+  local success_status=false
+  echo -e "\nEncoding keys to base64..."
 
-  KEYS[AVB_BASE64]=$(base64 -w0 "${KEYS[AVB]}") && echo "KEYS[AVB_BASE64]=${KEYS[AVB_BASE64]}"
-  KEYS[OTA_BASE64]=$(base64 -w0 "${KEYS[OTA]}") && echo "KEYS[OTA_BASE64]=${KEYS[OTA_BASE64]}"
-  KEYS[CERT_OTA_BASE64]=$(base64 -w0 "${KEYS[CERT_OTA]}") && echo "KEYS[CERT_OTA_BASE64]=${KEYS[CERT_OTA_BASE64]}"
+  KEYS[AVB_BASE64]=$(base64 -w0 "${KEYS[AVB]}") && echo "KEYS[AVB_BASE64]=${KEYS[AVB_BASE64]}" && success_status=true
+  KEYS[OTA_BASE64]=$(base64 -w0 "${KEYS[OTA]}") && echo "KEYS[OTA_BASE64]=${KEYS[OTA_BASE64]}" && success_status=true
+  KEYS[CERT_OTA_BASE64]=$(base64 -w0 "${KEYS[CERT_OTA]}") && echo "KEYS[CERT_OTA_BASE64]=${KEYS[CERT_OTA_BASE64]}" && success_status=true
 
-  export "${KEYS[AVB_BASE64]}}" "${KEYS[OTA_BASE64]}" "${KEYS[CERT_OTA_BASE64]}"
-
-  echo -e "Encoded keys to base64.\n"
+  if [[ "${success_status}" == true ]]; then
+    export "${KEYS[AVB_BASE64]}}" "${KEYS[OTA_BASE64]}" "${KEYS[CERT_OTA_BASE64]}"
+    echo -e "Encoded keys to base64.\n"
+  else
+    echo "Failed to encode keys to base64.\n"
+    exit 1
+  fi
 }
 
 function base64_decode() {
-  echo -e "Decoding keys from base64..."
+  local success_status=false
+  echo -e "\nDecoding keys from base64..."
 
   KEYS[AVB_BASE64]="${KEYS_AVB_BASE64:-${KEYS[AVB_BASE64]}}"
   KEYS[CERT_OTA_BASE64]="${KEYS_CERT_OTA_BASE64:-${KEYS[CERT_OTA_BASE64]}}"
@@ -32,14 +38,22 @@ function base64_decode() {
 
       if [[ $? -ne 0 ]]; then
         echo "Error decoding base64 for ${key}"
+        success_status=false
       else
-        echo "Successfully decoded ${key} to ${output_file}"
+        # Decodes ${key} to ${output_file}"
         KEYS[$(echo ${key} | sed 's/_BASE64$//')]="${output_file}"
+        success_status=true
       fi
     else
       echo "No base64 data found for ${key}"
+      success_status=false
     fi
   done
 
-  echo -e "Decoded keys from base64.\n"
+  if [[ "${success_status}" == true ]]; then
+    echo -e "Decoded keys from base64.\n"
+  else
+    echo "Failed to decode keys from base64.\n"
+    exit 1
+  fi
 }
