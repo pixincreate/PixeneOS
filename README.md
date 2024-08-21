@@ -49,18 +49,6 @@ In order to use this project, you need the following (most of them will be taken
 
 TBU
 
-## TO-DO
-
-- [ ] Update README.md
-- [x] Refactor afsr setup once upstream is updated
-- [ ] Safe checks
-  - [ ] Add documentation in code
-  - [ ] Make code more robust and safe
-  - [ ] Make functions independent such that they can be used separately if needed
-- [ ] CI/CD pipeline
-  - [ ] Setup Bot (renovate?) for updating dependencies
-  - [x] GitHub pages for deployments
-
 ## License
 
 This project is licensed under the `MIT`. For more information, please refer to the [LICENSE](LICENSE) file.
