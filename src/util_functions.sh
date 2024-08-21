@@ -189,7 +189,8 @@ function detect_os() {
 
 function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
-  local magisk_path="${WORKDIR}\/modules\/magisk.apk"
+  local magisk_path="${WORKDIR}/modules/magisk.apk"
+  local location_path="${DOMAIN}/${USER}/releases/download/${GRAPHENEOS[VERSION]}/${GRAPHENEOS[OTA_TARGET]}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
 
   # Add support to pass env-vars to the setup script
   echo "Running script modifications..."
@@ -200,10 +201,12 @@ function my_avbroot_setup() {
   sed -i -e "/custota-tool', 'gen-csig',/a \\
   \t\t'--passphrase-env-var', 'PASSPHRASE_OTA'," "${setup_script}"
 
+  sed -i -e "s|generate_update_info(update_info, args.output.name)|generate_update_info(update_info, '${location_path}')|" "${setup_script}"
+
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
     echo -e "Magisk is enabled. Modifying the setup script...\n"
-    sed -i -e "s/'--rootless'/'--magisk', '${magisk_path}',\\
-    \t\t'--magisk-preinit-device', '${MAGISK[PREINIT]}'/" "${setup_script}"
+    sed -i -e "s|'--rootless'|'--magisk', '${magisk_path}',\\
+    \t\t'--magisk-preinit-device', '${MAGISK[PREINIT]}'|" "${setup_script}"
   else
     echo -e "Magisk is not enabled. Skipping...\n"
   fi
@@ -244,7 +247,7 @@ function enable_venv() {
     echo -e "The script is not run from the \`my-avbroot-setup\` directory.\nSearching for the directory..."
     dir_path=$(find . -type d -name "my-avbroot-setup" -print -quit)
     if [ ! -d "${dir_path}/venv" ]; then
-      echo -e "Virtual environment not found in path ${dir_path}. Creating..."
+      echo -e "Virtual environment not found in path \`${dir_path}\`. Creating..."
       python3 -m venv "${dir_path}/venv"
     fi
   fi
@@ -259,7 +262,7 @@ function enable_venv() {
   if [ -f "${venv_path}" ]; then
     source "${venv_path}"
   else
-    echo -e "Virtual environment activation script not found at ${venv_path}."
+    echo -e "Virtual environment activation script not found at \`${venv_path}\`."
   fi
 }
 
