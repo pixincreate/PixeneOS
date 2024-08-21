@@ -162,7 +162,7 @@ function patch_ota() {
     args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
     args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
-    python "${my_avbroot_setup}/patch.py" "${args[@]}"
+    python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
 
   # Deactivate the virtual environment
@@ -189,16 +189,21 @@ function detect_os() {
 
 function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
-  local magisk_path="${WORKDIR}\/magisk.apk"
+  local magisk_path="${WORKDIR}\/modules\/magisk.apk"
 
   # Add support to pass env-vars to the setup script
-  sed -e "s/\'avbroot\', \'ota\', \'patch\',/\'avbroot\', \'ota\', \'patch\',\n\t\t\'--pass-avb-env-var\', \'${PASSPHRASE_AVB}\',\n\t\t\'--pass-ota-env-var\',\'${PASSPHRASE_OTA}\'/" "${setup_script}" > "${setup_script}.tmp"
-  mv "${setup_script}.tmp" "${setup_script}"
+  echo "Running script modifications..."
+  sed -i -e "/'avbroot', 'ota', 'patch',/a \\
+  \t\t'--pass-avb-env-var', 'PASSPHRASE_AVB',\\
+  \t\t'--pass-ota-env-var', 'PASSPHRASE_OTA'," "${setup_script}"
+
+  sed -i -e "/custota-tool', 'gen-csig',/a \\
+  \t\t'--passphrase-env-var', 'PASSPHRASE_OTA'," "${setup_script}"
 
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
     echo -e "Magisk is enabled. Modifying the setup script...\n"
-    sed -e "s/\'--rootless\'/\'--magisk\', \'${magisk_path}\',\n\t\t\'--magisk-preinit-device\', \'${MAGISK[PREINIT]}\'/" "${setup_script}" > "${setup_script}.tmp"
-    mv "${setup_script}.tmp" "${setup_script}"
+    sed -i -e "s/'--rootless'/'--magisk', '${magisk_path}',\\
+    \t\t'--magisk-preinit-device', '${MAGISK[PREINIT]}'/" "${setup_script}"
   else
     echo -e "Magisk is not enabled. Skipping...\n"
   fi
