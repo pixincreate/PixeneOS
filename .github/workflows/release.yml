@@ -77,7 +77,7 @@ jobs:
           CLEANUP: true
           GRAPHENEOS_VERSION: ${{ github.event.inputs.ota-version }}
           FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
-          MAGISK_PREINTI: ${{ github.event.inputs.magisk-preinit-device }}
+          MAGISK_PREINIT: ${{ github.event.inputs.magisk-preinit-device }}
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
         run: |
