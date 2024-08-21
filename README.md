@@ -1,5 +1,9 @@
 # PixeneOS (GrapheneOS++)
 
+## CAUTION
+
+THIS PROJECT IS IN ITS EARLY STAGES. USE AT YOUR OWN RISK. THE AUTHOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THE USAGE OF THIS PROJECT.
+
 ## Description
 
 PixeneOS (the name of this project) is GrapheneOS patched with additional features.
@@ -48,14 +52,14 @@ TBU
 ## TO-DO
 
 - [ ] Update README.md
-- [ ] Refactor afsr setup once upstream is updated
+- [x] Refactor afsr setup once upstream is updated
 - [ ] Safe checks
   - [ ] Add documentation in code
   - [ ] Make code more robust and safe
   - [ ] Make functions independent such that they can be used separately if needed
 - [ ] CI/CD pipeline
   - [ ] Setup Bot (renovate?) for updating dependencies
-  - [ ] GitHub pages for deployments
+  - [x] GitHub pages for deployments
 
 ## License
 
