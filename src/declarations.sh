@@ -20,7 +20,7 @@ USER="pixincreate"                           # GitHub username
 WORKDIR=".tmp"
 
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
-VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.7.0}"
+VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.6.0}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
 VERSION[CUSTOTA]="${VERSION[CUSTOTA]:-4.8}"
 VERSION[MSD]="${VERSION[MSD]:-1.2}"
@@ -46,7 +46,7 @@ KEYS[PKMD]="${KEYS[PKMD]:-avb_pkmd.bin}"
 # GrapheneOS
 GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"
 GRAPHENEOS[UPDATE_CHANNEL]="alpha"
-GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-'ota_update'}" # avbroot supports only `ota_update` and not `install` (factory images)
+GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # avbroot supports only `ota_update` and not `install` (factory images)
 GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"                   # Will be constructed from the latest version
 GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}"             # Will be constructed from the latest version
 

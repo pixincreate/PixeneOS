@@ -272,8 +272,8 @@ function enable_venv() {
 
 function url_constructor() {
   local repository="${1}"
-  local automated="${2:-false}"
   local user='chenxiaolong'
+  INTERACTIVE_MODE="${2:-true}"
 
   local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
@@ -303,25 +303,29 @@ function url_constructor() {
 
   echo -e "URL for \`${repository}\`: ${URL}"
 
-  if [[ "${automated}" == 'false' ]]; then
-    if [[ -e "${WORKDIR}/${repository}" ]]; then
-      echo -n "Warning: \`${repository}\` already exists in \`${WORKDIR}\`\nOverwrite? (y/n): "
-      read -r -p "Overwrite? (y/n) [default: yes]: " confirm
+  if [[ "${INTERACTIVE_MODE}" == 'true' ]]; then
+    if [[ -e "${WORKDIR}/tools/${repository}" || -e "${WORKDIR}/modules/${repository}.zip" || -e "${WORKDIR}/signatures/${repository}.zip.sig" ]]; then
+      echo -n "Warning: \`${repository}\` already exists in \`${WORKDIR}\`\nOverwrite? (y/n) [default: yes]: "
+      read -r confirm
       confirm=${confirm:-"yes"}
-      if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-        rm -rf "${WORKDIR}/${repository}"
+      if [[ $confirm =~ ^[yY](es|ES)?$ ]]; then
+        echo "Removing existing files..."
+        rm -rf "${WORKDIR}/tools/${repository}" "${WORKDIR}/modules/${repository}.zip" "${WORKDIR}/signatures/${repository}.zip.sig"
+      else
+        echo "Aborted."
       fi
     fi
   fi
+
   get "${repository}" "${URL}" "${SIGNATURE_URL}"
 }
 
 function download_dependencies() {
   local tool="${1}"
-  local automated='true'
+  INTERACTIVE_MODE='false'
 
   if type url_constructor &> /dev/null; then
-    url_constructor "${tool}" "${automated}"
+    url_constructor "${tool}" "${INTERACTIVE_MODE}"
   else
     echo -e "Error: \`url_constructor\` function is not defined."
     exit 1
