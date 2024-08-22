@@ -76,6 +76,8 @@ function create_ota() {
 
   # Setup environment variables and paths
   env_setup
+  # Generate output file names
+  generate_ota_info
   # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup
   patch_ota
 }
@@ -143,7 +145,7 @@ function patch_ota() {
     local args=()
 
     args+=("--input" "${ota_zip}.zip")
-    args+=("--output" "${ota_zip}.patched$(dirty_suffix).zip")
+    args+=("--output" "${OUTPUT[PATCHED_OTA]}")
 
     args+=("--verify-public-key-avb" "${grapheneos_pkmd}")
     args+=("--verify-cert-ota" "${grapheneos_otacert}")
@@ -405,4 +407,17 @@ function make_directories() {
     "${WORKDIR}/modules" \
     "${WORKDIR}/signatures" \
     "${WORKDIR}/tools"
+}
+
+function generate_ota_info() {
+  local flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
+  OUTPUT[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
+}
+
+function export_necessities() {
+  # since exporting cannot be done for associative arrays, we only export the necessities that allows deployment to happen
+  echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> .env
+  echo "GRAPHENEOS_VERSION=${GRAPHENEOS[VERSION]}" >> .env
+  echo "OUTPUT_PATCHED_OTA=${OUTPUT[PATCHED_OTA]}" >> .env
+  echo "WORKDIR=${WORKDIR}" >> .env
 }
