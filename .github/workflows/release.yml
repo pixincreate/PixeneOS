@@ -13,8 +13,8 @@ on:
       ota-version:
         description: OTA version. By default, runs against latest version
         required: false
-      force-ota-server-upload:
-        description: Force OTA server upload
+      force-update:
+        description: Forcefully upload OTA to the server
         required: false
         type: boolean
       root:
@@ -52,6 +52,11 @@ jobs:
           # Allow for switching to github-pages branch
           fetch-depth: 0
 
+      - name: Check if a build exist already
+        shell: bash
+        run: |
+          echo "HI, TBU"
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
@@ -76,8 +81,8 @@ jobs:
         env:
           ADDITIONALS_ROOT: ${{ github.event.inputs.root }}
           CLEANUP: true
+          FORCE_UPDATE: ${{ github.event.inputs.force-update }}
           GRAPHENEOS_VERSION: ${{ github.event.inputs.ota-version }}
-          FORCE_UPDATE: ${{ github.event.inputs.force-ota-server-upload }}
           MAGISK_PREINIT: ${{ github.event.inputs.magisk-preinit-device }}
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
@@ -85,3 +90,51 @@ jobs:
           echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
           echo "Running release script"
           src/main.sh
+
+      - name: Access envs
+        run: |
+          if [ -f .env ]; then
+            export $(grep -v '^#' .env | xargs)
+          fi
+          echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
+          echo "GRAPHENEOS_VERSION=${GRAPHENEOS_VERSION}" >> $GITHUB_ENV
+          echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
+          
+      - name: Make Release
+        uses: "dciborow/action-github-releases@v1.0.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ env.GRAPHENEOS_VERSION }}"
+          prerelease: false
+          title: "GrapheneOS v${{ env.GRAPHENEOS_VERSION }}\nSee [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})."
+          files: |
+            "${{ env.WORKDIR }}/${{ env.GRAPHENEOS_OTA_TARGET }}.patched*.zip"
+            "${{ env.WORKDIR }}/${{ env.GRAPHENEOS_OTA_TARGET }}.patched*.zip.csig"
+            
+      - name: Publish OTA to server
+        shell: bash
+        run: |
+          local current_commit=$(git rev-parse --short HEAD)
+          
+          local flavor=("magisk" "rootless")
+          local target_file
+          mkdir -p "${flavor}"
+          
+          git checkout gh-pages
+          echo "Updating Configs for the new release"
+
+          if [[ ${{ env.ADDITIONALS_ROOT }} == true ]]; then
+            target_file="${flavor[magisk]}/${{ env.DEVICE_NAME }}.json"
+            cp "${{ env.WORKDIR }}/${{ env.DEVICE_NAME }}.json" "${target_file}"
+          else
+            target_file="${flavor[rootless]}/${{ env.DEVICE_NAME }}.json"
+            cp "${{ env.WORKDIR }}/${{ env.DEVICE_NAME }}.json"  "${target_file}"
+          fi
+          
+          # Stage, commit, and push changes
+          git add "${target_file}"
+          git commit -m "release("${current_commit}"): bump GrapheneOS version to ${{ env.GRAPHENEOS_VERSION }}"
+          if ! git diff-index --quiet HEAD; then
+            git push origin gh-pages
+          fi
+          git checkout main
