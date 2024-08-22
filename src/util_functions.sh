@@ -327,35 +327,6 @@ function download_dependencies() {
   fi
 }
 
-function generate_csig() {
-  local csig_path="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.csig"
-  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched$(dirty_suffix).zip"
-
-  if ls "${csig_path}" 1> /dev/null 2>&1; then
-    echo -e "File ${csig_path} already exists in local. Generation skipped."
-  else
-    local args=()
-
-    args+=("--input" "${ota_zip}.zip")
-    args+=("--output" "${csig_path}")
-
-    args+=(--key "${KEYS[OTA]}")
-    args+=(--cert "${KEYS[CERT_OTA]}")
-
-    custota-tool gen-csig "${args[@]}"
-  fi
-}
-
-function generate_update_info() {
-  local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.patched$(dirty_suffix).zip"
-  local args=()
-
-  args+=("--file" "${WORKDIR}/ota_update/${DEVICE_NAME}.json")
-  args+=("--location" "https://github.com/$USER/releases/download/$GRAPHENEOS[VERSION]/${GRAPHENEOS[OTA_TARGET]}.zip")
-
-  custota-tool gen-update-info "${args[@]}"
-}
-
 function extract_official_keys() {
   # https://github.com/chenxiaolong/my-avbroot-setup/issues/1#issuecomment-2270286453
   # AVB: Extract vbmeta.img, run avbroot avb info -i vbmeta.img.
@@ -390,12 +361,6 @@ function dirty_suffix() {
   else
     echo ""
   fi
-}
-
-# my-avbroot-setup takes care of release_ota
-function release_ota() {
-  generate_csig
-  generate_update_info
 }
 
 function make_directories() {
