@@ -36,8 +36,8 @@ function get_latest_version() {
     exit 1
   fi
 
-  if [[ -z "${GRAPHENEOS[VERSION]}" ]]; then
-    GRAPHENEOS[VERSION]="${GRAPHENEOS_VERSION:-${latest_grapheneos_version}}"
+  if [[ -z "${VERSION[GRAPHENEOS]}" ]]; then
+    VERSION[GRAPHENEOS]="${GRAPHENEOS_VERSION:-${latest_grapheneos_version}}"
   fi
 
   if [[ -z "${latest_magisk_version}" ]]; then
