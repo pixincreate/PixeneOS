@@ -306,7 +306,8 @@ function url_constructor() {
   if [[ "${automated}" == 'false' ]]; then
     if [[ -e "${WORKDIR}/${repository}" ]]; then
       echo -n "Warning: \`${repository}\` already exists in \`${WORKDIR}\`\nOverwrite? (y/n): "
-      read confirm
+      read -r -p "Overwrite? (y/n) [default: yes]: " confirm
+      confirm=${confirm:-"yes"}
       if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
         rm -rf "${WORKDIR}/${repository}"
       fi
