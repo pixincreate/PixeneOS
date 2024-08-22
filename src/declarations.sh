@@ -1,8 +1,9 @@
-declare -A AVBROOT
-declare -A MAGISK
-declare -A KEYS
-declare -A GRAPHENEOS
 declare -A ADDITIONALS
+declare -A AVBROOT
+declare -A GRAPHENEOS
+declare -A KEYS
+declare -A MAGISK
+declare -A OUTPUTS
 declare -A VERSION
 
 # Specifications
@@ -13,10 +14,10 @@ ARCH="x86_64-unknown-linux-gnu" # for Linux
 CLEANUP="${CLEANUP:-'false'}"  # Clean up after the script finishes
 DEVICE_NAME="${DEVICE_NAME:-}" # Device name, passed from the CI environment
 DOMAIN="https://github.com"
-FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
-USER="pixincreate"                    # GitHub username
-WORKDIR=".tmp"
+FORCE_UPDATE="${FORCE_UPDATE:-false}"        # Push update to device forcefully
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
+USER="pixincreate"                           # GitHub username
+WORKDIR=".tmp"
 
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.7.0}"
@@ -26,6 +27,7 @@ VERSION[MSD]="${VERSION[MSD]:-1.2}"
 VERSION[BCR]="${VERSION[BCR]:-1.69}"
 VERSION[OEMUNLOCKONBOOT]="${VERSION[OEMUNLOCKONBOOT]:-1.1}"
 VERSION[MAGISK]="${VERSION[MAGISK]:-}"
+VERSION[GRAPHENEOS]="${VERSION[GRAPHENEOS]:-}"
 
 # Magisk
 MAGISK[REPOSITORY]="${USER}/Magisk"
@@ -44,10 +46,9 @@ KEYS[PKMD]="${KEYS[PKMD]:-avb_pkmd.bin}"
 # GrapheneOS
 GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"
 GRAPHENEOS[UPDATE_CHANNEL]="alpha"
-GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-ota_update}" # avbroot supports only `ota_update` and not `install` (factory images)
-GRAPHENEOS[VERSION]="${GRAPHENEOS[VERSION]:-}"
-GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"       # Will be constructed from the latest version
-GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}" # Will be constructed from the latest version
+GRAPHENEOS[UPDATE_TYPE]="${GRAPHENEOS[UPDATE_TYPE]:-'ota_update'}" # avbroot supports only `ota_update` and not `install` (factory images)
+GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"                   # Will be constructed from the latest version
+GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}"             # Will be constructed from the latest version
 
 # Additionals
 ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack
@@ -60,3 +61,6 @@ ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass St
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
 ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock bootloader on boot
 ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported
+
+# Outputs
+OUTPUTS[PATCHED_OTA]="${OUTPUTS[PATCHED_OTA]:-${PATCHED_OTA}}"
