@@ -36,6 +36,7 @@ jobs:
 
     env:
       DEVICE_NAME: "bluejay"
+      INTERACTIVE_MODE: "false"
 
     steps:
       - name: Check if `root` is true and `magisk-preinit-device` is set

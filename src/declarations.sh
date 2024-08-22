@@ -16,6 +16,7 @@ DOMAIN="https://github.com"
 FORCE_UPDATE="${FORCE_UPDATE:-false}" # Push update to device forcefully
 USER="pixincreate"                    # GitHub username
 WORKDIR=".tmp"
+INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
 
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.7.0}"

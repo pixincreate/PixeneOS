@@ -109,12 +109,14 @@ function generate_keys() {
   # This is used by recovery to verify OTA updates when sideloading
   avbroot key generate-cert -k "${KEYS[OTA]}" -o "${KEYS[CERT_OTA]}"
 
-  # Convert the keys to base64
+  # Convert the keys to base64 which can be used in CI/CD pipeline environment
   base64_encode
 }
 
 function patch_ota() {
-  base64_decode
+  if [[ "${INTERACTIVE_MODE}" != 'true' ]]; then
+    base64_decode
+  fi
 
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
   local pkmd="${KEYS[PKMD]}"
