@@ -38,6 +38,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: write-all
 
     env:
       DEVICE_NAME: "bluejay"
@@ -128,27 +129,39 @@ jobs:
       - name: Publish OTA to server
         shell: bash
         run: |
-          local current_commit=$(git rev-parse --short HEAD)
+          CURRENT_COMMIT=$(git rev-parse --short HEAD)
+          FLAVOR=("magisk" "rootless")
+          root=${{ github.event.inputs.root }}
           
-          local flavor=("magisk" "rootless")
-          local target_file
-          mkdir -p "${flavor}"
+          mkdir -p "${FLAVOR}"
           
           git checkout gh-pages
-          echo "Updating Configs for the new release"
-
-          if [[ ${{ env.ADDITIONALS_ROOT }} == true ]]; then
-            target_file="${flavor[magisk]}/${{ env.DEVICE_NAME }}.json"
-            cp "${{ env.WORKDIR }}/${{ env.DEVICE_NAME }}.json" "${target_file}"
+          echo "Updating Configs for the new release..."
+          
+          if [ "${root}" = "true" ] || grep -q magisk "${DEVICE_NAME}.json"; then
+            TARGET_FILE="${FLAVOR[0]}/${DEVICE_NAME}.json"
           else
-            target_file="${flavor[rootless]}/${{ env.DEVICE_NAME }}.json"
-            cp "${{ env.WORKDIR }}/${{ env.DEVICE_NAME }}.json"  "${target_file}"
+            TARGET_FILE="${FLAVOR[1]}/${DEVICE_NAME}.json"
           fi
           
-          # Stage, commit, and push changes
-          git add "${target_file}"
-          git commit -m "release("${current_commit}"): bump GrapheneOS version to ${{ env.GRAPHENEOS_VERSION }}"
+          echo "Updating Configs for the new release..."
+
+          # Check if the target file exists, if not create an empty one
+          if [ ! -f "${TARGET_FILE}" ]; then
+            echo "touching ${TARGET_FILE}..."
+            touch "${TARGET_FILE}"
+          fi
+
+          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}" || [[ "${{ github.event.inputs.force-update || false }}" == 'true' ]]; then
+            echo "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
+            cp "${{ env.DEVICE_NAME }}.json" "${TARGET_FILE}"
+            git add "${TARGET_FILE}"
+          else
+            echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.REMOTE_GRAPHENEOS_VERSION }}) and \`FORCE_UPDATE\` is \`false\`.\nUpdate skipped."
+          fi
+
           if ! git diff-index --quiet HEAD; then
+            git commit -m "release("${CURRENT_COMMIT}"): bump GrapheneOS version to ${{ env.GRAPHENEOS_VERSION }}"
             git push origin gh-pages
           fi
           git checkout main
