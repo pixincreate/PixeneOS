@@ -25,6 +25,10 @@ on:
       magisk-preinit-device:
         description: Magisk preinit device. For example, "sda8"
         required: false
+      update-channel:
+        description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `alpha`
+        required: false
+        default: "alpha"
 
 env:
   CARGO_INCREMENTAL: 1
