@@ -69,15 +69,16 @@ function flag_check() {
 function create_and_make_release() {
   download_ota
   create_ota
+  export_necessities
 }
 
 function create_ota() {
   [[ "${CLEANUP}" != 'true' ]] && trap cleanup EXIT ERR
 
-  # Setup environment variables and paths
-  env_setup
   # Generate output file names
   generate_ota_info
+  # Setup environment variables and paths
+  env_setup
   # Patch OTA with avbroot and afsr by leveraging my-avbroot-setup
   patch_ota
 }
@@ -371,9 +372,9 @@ function dirty_suffix() {
 function make_directories() {
   mkdir -p \
     "${WORKDIR}" \
+    "${WORKDIR}/.keys" \
     "${WORKDIR}/extracted/extracts" \
     "${WORKDIR}/extracted/ota" \
-    "${WORKDIR}/keys" \
     "${WORKDIR}/modules" \
     "${WORKDIR}/signatures" \
     "${WORKDIR}/tools"
@@ -387,7 +388,7 @@ function generate_ota_info() {
 function export_necessities() {
   # since exporting cannot be done for associative arrays, we only export the necessities that allows deployment to happen
   echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> .env
-  echo "GRAPHENEOS_VERSION=${GRAPHENEOS[VERSION]}" >> .env
+  echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> .env
   echo "OUTPUT_PATCHED_OTA=${OUTPUT[PATCHED_OTA]}" >> .env
   echo "WORKDIR=${WORKDIR}" >> .env
 }
