@@ -63,11 +63,79 @@ jobs:
         with:
           # Allow for switching to github-pages branch
           fetch-depth: 0
-
-      - name: Check if a build exist already
+      
+      - name: Check if a build exists already and verify assets
         shell: bash
         run: |
-          echo "HI, TBU"
+          url="https://releases.grapheneos.org/${{ env.DEVICE_NAME }}-${{ github.event.inputs.update-channel || 'alpha' }}"
+          latest_grapheneos_version=$(curl -sL ${url} | sed 's/ .*//')
+          echo "REMOTE_GRAPHENEOS_VERSION=${latest_grapheneos_version}" >> $GITHUB_ENV
+      
+          # Determine if the build is based on magisk or rootless
+          build_flavor=$([[ ${{ github.event.inputs.root == 'true' }} == 'true' ]] && echo 'magisk' || echo 'rootless')
+      
+          # Check if the tag exists
+          if git show-ref --tags ${latest_grapheneos_version} --quiet; then
+            echo "Tag with GrapheneOS version ${latest_grapheneos_version} already exists. Looking for assets..."
+            # Fetch the release information for the tag
+            repo_url="https://api.github.com/repos/${{ github.repository }}/releases/tags/${latest_grapheneos_version}"
+            release_info=$(curl -sL "$repo_url")
+            
+            # Define required assets
+            required_assets=(
+              "${{ env.DEVICE_NAME }}-${latest_grapheneos_version}-magisk-*.zip"
+              "${{ env.DEVICE_NAME }}-${latest_grapheneos_version}-magisk-*.zip.csig"
+              "${{ env.DEVICE_NAME }}-${latest_grapheneos_version}-rootless-*.zip"
+              "${{ env.DEVICE_NAME }}-${latest_grapheneos_version}-rootless-*.zip.csig"
+            )
+      
+            existing_assets=$(echo "$release_info" | jq -r '.assets[].name')
+            missing_assets=()
+
+            for required_asset in "${required_assets[@]}"; do
+              # Convert wildcard pattern to regex
+              regex="${required_asset//\*/.*}"
+            
+              for asset in "${existing_assets[@]}"; do
+                if ! [[ $asset =~ $regex ]]; then
+                  missing_assets+=("$required_asset")
+                  break
+                fi
+              done
+            done
+            
+            if [ ${#missing_assets[@]} -eq 0 ]; then
+              echo "All required assets are present. Exiting."
+              exit 0
+            else
+              echo -e "Missing assets:"
+              for missing_asset in "${missing_assets[@]}"; do
+                echo -e "  - $missing_asset"
+              done
+
+              # Grep always throws an error stating it cannot find the file or directory
+              valid_build=""
+              for missing_asset in "${missing_assets[@]}"; do
+                if [[ $missing_asset == *"$build_flavor"* ]]; then
+                  valid_build="$build_flavor"
+                  break
+                fi
+              done
+              
+              # Check if valid_build is either "magisk" or "rootless"
+              if [[ "$valid_build" == "magisk" ]] || [[ "$valid_build" == "rootless" ]]; then
+                echo -e "Proceeding with build to create missing assets..."
+              else
+                echo -e "::error::Asset with \`$build_flavor\` flavor already exists!"
+                exit 1
+              fi
+            fi
+          else
+            echo "Tag with GrapheneOS version ${latest_grapheneos_version} does not exist. Creating one..."
+          fi
+
+      - name: Setup Git
+        run: git config --global user.email ${{ secrets.EMAIL }} && git config --global user.name PiX
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
