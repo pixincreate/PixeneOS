@@ -21,6 +21,7 @@ on:
         description: Add root to the build
         required: false
         type: boolean
+        default: false
       magisk-preinit-device:
         description: Magisk preinit device. For example, "sda8"
         required: false
@@ -40,9 +41,15 @@ jobs:
 
     steps:
       - name: Check if `root` is true and `magisk-preinit-device` is set
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          if [ "${{ github.event.inputs.root }}" == "true" ] && [ -z "${{ github.event.inputs.magisk-preinit-device }}" ]; then
-            echo "Error: magisk-preinit-device is required when root is true."
+          # Convert inputs to proper boolean values
+          root=${{ github.event.inputs.root }}
+          magisk_preinit_device=${{ github.event.inputs.magisk-preinit-device }}
+          
+          # Ensure that the boolean comparison is correctly handled
+          if [ "$root" == "true" ] && [ -z "$magisk_preinit_device" ]; then
+            echo "::error:: magisk-preinit-device is required when root is true."
             exit 1
           fi
 
