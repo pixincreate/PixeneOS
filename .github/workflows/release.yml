@@ -109,18 +109,21 @@ jobs:
           fi
           echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
           echo "GRAPHENEOS_VERSION=${GRAPHENEOS_VERSION}" >> $GITHUB_ENV
+          echo "OUTPUT_PATCHED_OTA=${OUTPUT_PATCHED_OTA}" >> $GITHUB_ENV
           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
-          
+
+      - name: Generate Changelog
+        run: echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
+        
       - name: Make Release
-        uses: "dciborow/action-github-releases@v1.0.1"
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ env.GRAPHENEOS_VERSION }}"
-          prerelease: false
-          title: "GrapheneOS v${{ env.GRAPHENEOS_VERSION }}\nSee [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})."
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
-            "${{ env.WORKDIR }}/${{ env.GRAPHENEOS_OTA_TARGET }}.patched*.zip"
-            "${{ env.WORKDIR }}/${{ env.GRAPHENEOS_OTA_TARGET }}.patched*.zip.csig"
+            ${{ env.OUTPUT_PATCHED_OTA }}
+            ${{ env.OUTPUT_PATCHED_OTA }}.csig
+          name: "${{ env.GRAPHENEOS_VERSION }}"
+          tag_name: "${{ env.GRAPHENEOS_VERSION }}"
             
       - name: Publish OTA to server
         shell: bash
