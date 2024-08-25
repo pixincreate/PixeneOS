@@ -195,7 +195,7 @@ function detect_os() {
 function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}/modules/magisk.apk"
-  local location_path="${DOMAIN}/${USER}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUT[PATCHED_OTA]}"
+  local location_path="${DOMAIN}/${USER}/${REPOSITORY}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUT[PATCHED_OTA]}"
 
   # Add support to pass env-vars to the setup script
   echo "Running script modifications..."
