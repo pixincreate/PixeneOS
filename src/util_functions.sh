@@ -146,7 +146,7 @@ function patch_ota() {
     local args=()
 
     args+=("--input" "${ota_zip}.zip")
-    args+=("--output" "${OUTPUT[PATCHED_OTA]}")
+    args+=("--output" "${OUTPUTS[PATCHED_OTA]}")
 
     args+=("--verify-public-key-avb" "${grapheneos_pkmd}")
     args+=("--verify-cert-ota" "${grapheneos_otacert}")
@@ -195,7 +195,7 @@ function detect_os() {
 function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}/modules/magisk.apk"
-  local location_path="${DOMAIN}/${USER}/${REPOSITORY}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUT[PATCHED_OTA]}"
+  local location_path="${DOMAIN}/${USER}/${REPOSITORY}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUTS[PATCHED_OTA]}"
 
   # Add support to pass env-vars to the setup script
   echo "Running script modifications..."
@@ -314,6 +314,7 @@ function url_constructor() {
         rm -rf "${WORKDIR}/tools/${repository}" "${WORKDIR}/modules/${repository}.zip" "${WORKDIR}/signatures/${repository}.zip.sig"
       else
         echo "Aborted."
+        exit 1
       fi
     fi
   fi
@@ -382,13 +383,13 @@ function make_directories() {
 
 function generate_ota_info() {
   local flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
-  OUTPUT[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
+  OUTPUTS[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
 }
 
 function export_necessities() {
   # since exporting cannot be done for associative arrays, we only export the necessities that allows deployment to happen
   echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> .env
   echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> .env
-  echo "OUTPUT_PATCHED_OTA=${OUTPUT[PATCHED_OTA]}" >> .env
+  echo "OUTPUTS_PATCHED_OTA=${OUTPUTS[PATCHED_OTA]}" >> .env
   echo "WORKDIR=${WORKDIR}" >> .env
 }

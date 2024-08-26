@@ -18,7 +18,7 @@ INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
 WORKDIR=".tmp"
 
 DOMAIN="https://github.com"
-REPORITORY="PixeneOS" # GitHub repository name
+REPOSITORY="PixeneOS" # GitHub repository name
 USER="pixincreate"    # GitHub username
 
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
@@ -65,4 +65,4 @@ ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock 
 ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported
 
 # Outputs
-OUTPUTS[PATCHED_OTA]="${OUTPUTS[PATCHED_OTA]:-${PATCHED_OTA}}"
+OUTPUTS[PATCHED_OTA]="${OUTPUTS[PATCHED_OTA]:-}"

@@ -178,7 +178,7 @@ jobs:
           fi
           echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
           echo "GRAPHENEOS_VERSION=${GRAPHENEOS_VERSION}" >> $GITHUB_ENV
-          echo "OUTPUT_PATCHED_OTA=${OUTPUT_PATCHED_OTA}" >> $GITHUB_ENV
+          echo "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
 
       - name: Generate Changelog
@@ -189,8 +189,8 @@ jobs:
         with:
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
-            ${{ env.OUTPUT_PATCHED_OTA }}
-            ${{ env.OUTPUT_PATCHED_OTA }}.csig
+            ${{ env.OUTPUTS_PATCHED_OTA }}
+            ${{ env.OUTPUTS_PATCHED_OTA }}.csig
           name: "${{ env.GRAPHENEOS_VERSION }}"
           tag_name: "${{ env.GRAPHENEOS_VERSION }}"
             
