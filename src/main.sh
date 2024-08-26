@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o nounset -o pipefail -o errexit
+
 source src/fetcher.sh
 source src/util_functions.sh
 
