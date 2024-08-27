@@ -385,11 +385,3 @@ function generate_ota_info() {
   local flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
   OUTPUTS[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
 }
-
-function export_necessities() {
-  # since exporting cannot be done for associative arrays, we only export the necessities that allows deployment to happen
-  echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> .env
-  echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> .env
-  echo "OUTPUTS_PATCHED_OTA=${OUTPUTS[PATCHED_OTA]}" >> .env
-  echo "WORKDIR=${WORKDIR}" >> .env
-}
