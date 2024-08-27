@@ -52,7 +52,7 @@ jobs:
           
           # Ensure that the boolean comparison is correctly handled
           if [ "$root" == "true" ] && [ -z "$magisk_preinit_device" ]; then
-            echo "::error:: magisk-preinit-device is required when root is true."
+            echo -e "::error:: magisk-preinit-device is required when root is true."
             exit 1
           fi
 
@@ -107,7 +107,7 @@ jobs:
               "${{ env.DEVICE_NAME }}-${VERSION[GRAPHENEOS]}-rootless-*.zip.csig"
             )
       
-            existing_assets=$(echo "$release_info" | jq -r '.assets[].name')
+            existing_assets=$(echo -e "$release_info" | jq -r '.assets[].name')
             missing_assets=()
 
             for required_asset in "${required_assets[@]}"; do
@@ -123,7 +123,7 @@ jobs:
             done
             
             if [ ${#missing_assets[@]} -eq 0 ]; then
-              echo "All required assets are present. Exiting."
+              echo -e "All required assets are present. Exiting."
               exit 0
             else
               echo -e "Missing assets:"
@@ -149,7 +149,7 @@ jobs:
               fi
             fi
           else
-            echo "Tag with GrapheneOS version ${latest_grapheneos_version} does not exist. Creating one..."
+            echo -e "Tag with GrapheneOS version ${VERSION[GRAPHENEOS]} does not exist. Creating one..."
           fi
 
       - name: Setup Git
@@ -170,17 +170,15 @@ jobs:
 
       - name: Setup Environment variables
         run: |
-          echo "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
-          echo "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
-          echo "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
+          echo -e "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
+          echo -e "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
+          echo -e "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
 
       - name: Patch OTA
         shell: bash
         env:
           ADDITIONALS_ROOT: ${{ github.event.inputs.root }}
           CLEANUP: true
-          FORCE_UPDATE: ${{ github.event.inputs.force-update }}
-          GRAPHENEOS_VERSION: ${{ github.event.inputs.ota-version }}
           MAGISK_PREINIT: ${{ github.event.inputs.magisk-preinit-device }}
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
@@ -218,28 +216,28 @@ jobs:
           mkdir -p "${FLAVOR}"
           
           git checkout gh-pages
-          echo "Updating Configs for the new release..."
+          echo -e "Updating Configs for the new release..."
           
-          if [ "${root}" = "true" ] || grep -q magisk "${DEVICE_NAME}.json"; then
-            TARGET_FILE="${FLAVOR[0]}/${DEVICE_NAME}.json"
+          if [ "${root}" = "true" ] || grep -q magisk "${{ env.DEVICE_NAME }}.json"; then
+            TARGET_FILE="${FLAVOR[0]}/${{ env.DEVICE_NAME }}.json"
           else
-            TARGET_FILE="${FLAVOR[1]}/${DEVICE_NAME}.json"
+            TARGET_FILE="${FLAVOR[1]}/${{ env.DEVICE_NAME }}.json"
           fi
           
-          echo "Updating Configs for the new release..."
+          echo -e "Updating Configs for the new release..."
 
           # Check if the target file exists, if not create an empty one
           if [ ! -f "${TARGET_FILE}" ]; then
-            echo "touching ${TARGET_FILE}..."
+            echo -e "touching ${TARGET_FILE}..."
             touch "${TARGET_FILE}"
           fi
 
-          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}" || [[ "${{ github.event.inputs.force-update || false }}" == 'true' ]]; then
-            echo "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
+          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}" || [[ "${{ env.FORCE_UPDATE }}" == 'true' ]]; then
+            echo -e "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
             cp "${{ env.DEVICE_NAME }}.json" "${TARGET_FILE}"
             git add "${TARGET_FILE}"
           else
-            echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.REMOTE_GRAPHENEOS_VERSION }}) and \`FORCE_UPDATE\` is \`false\`.\nUpdate skipped."
+            echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.GRAPHENEOS_VERSION }}) and \`FORCE_UPDATE\` is \`false\`.\nUpdate skipped."
           fi
 
           if ! git diff-index --quiet HEAD; then
