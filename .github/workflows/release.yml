@@ -185,19 +185,15 @@ jobs:
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
         run: |
-          echo "DEVICE_NAME=${{ github.event.inputs.device-id || env.DEVICE_NAME }}" >> $GITHUB_ENV
-          echo "Running release script"
-          src/main.sh
+          echo -e "Running release script"
 
-      - name: Access envs
-        run: |
-          if [ -f .env ]; then
-            export $(grep -v '^#' .env | xargs)
-          fi
-          echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
-          echo "GRAPHENEOS_VERSION=${GRAPHENEOS_VERSION}" >> $GITHUB_ENV
-          echo "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
-          echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
+          # Instead of running the script directly,
+          # we source it to get the variables in the current shell and use them in the next steps by exporting them
+          source src/main.sh
+          
+          echo -e "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
+          echo -e "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
+          echo -e "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
 
       - name: Generate Changelog
         run: echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
