@@ -26,9 +26,8 @@ on:
         description: Magisk preinit device. For example, "sda8"
         required: false
       update-channel:
-        description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `alpha`
+        description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
         required: false
-        default: "alpha"
 
 env:
   CARGO_INCREMENTAL: 1
@@ -41,8 +40,10 @@ jobs:
     permissions: write-all
 
     env:
-      DEVICE_NAME: "bluejay"
-      INTERACTIVE_MODE: "false"
+      DEVICE_NAME: ${{ github.event.inputs.device-id }}
+      FORCE_UPDATE: ${{ github.event.inputs.force-update || false }}
+      INTERACTIVE_MODE: false
+      UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
 
     steps:
       - name: Check if `root` is true and `magisk-preinit-device` is set
