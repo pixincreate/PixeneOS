@@ -46,7 +46,7 @@ function get_latest_version() {
 function get() {
   local filename="${1}"
   local url="${2}"
-  local signature_url="${3}"
+  local signature_url="${3:-}"
 
   echo "Downloading \`${filename}\`..."
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
@@ -61,8 +61,11 @@ function get() {
     curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
-      # I do not find the need to verify signatures for tools other than AVBRoot
-      curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
+      # I do not find the need to verify signatures for tools other than AVBRoot and Magisk
+      if [ -n "${signature_url}" ]; then
+        echo "Downloading signature for \`${filename}\`..."
+        curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
+      fi
 
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
         echo -e "Extracting and granting permissions for \`${filename}\`..."
