@@ -13,7 +13,6 @@ ARCH="x86_64-unknown-linux-gnu" # for Linux
 
 CLEANUP="${CLEANUP:-'false'}"                # Clean up after the script finishes
 DEVICE_NAME="${DEVICE_NAME:-}"               # Device name, passed from the CI environment
-FORCE_UPDATE="${FORCE_UPDATE:-false}"        # Push update to device forcefully
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
 WORKDIR=".tmp"
 
