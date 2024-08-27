@@ -10,9 +10,6 @@ on:
       device-id:
         description: Device ID
         required: true
-      ota-version:
-        description: OTA version. By default, runs against latest version
-        required: false
       force-update:
         description: Forcefully upload OTA to the server
         required: false
@@ -23,7 +20,7 @@ on:
         type: boolean
         default: false
       magisk-preinit-device:
-        description: Magisk preinit device. For example, "sda8"
+        description: Magisk preinit device. For example, "sda8", "sda15" etc.,
         required: false
       update-channel:
         description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
