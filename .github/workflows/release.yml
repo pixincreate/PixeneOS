@@ -97,7 +97,7 @@ jobs:
             echo -e "Tag with GrapheneOS version ${VERSION[GRAPHENEOS]} already exists. Looking for assets..."
             # Fetch the release information for the tag
             repo_url="https://api.github.com/repos/${{ github.repository }}/releases/tags/${VERSION[GRAPHENEOS]}"
-            release_info=$(curl -sL -H "Authorization: token ${{ secrets.PAT_TEST }}" "$repo_url")
+            release_info=$(curl -sL "$repo_url")
             
             # Define required assets
             required_assets=(
