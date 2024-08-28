@@ -40,7 +40,7 @@ jobs:
       DEVICE_NAME: ${{ github.event.inputs.device-id }}
       FORCE_UPDATE: ${{ github.event.inputs.force-update || false }}
       INTERACTIVE_MODE: false
-      UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
+      GRAPHENEOS_UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
 
     steps:
       - name: Check if `root` is true and `magisk-preinit-device` is set
@@ -68,14 +68,14 @@ jobs:
           toml_file="env.toml"
           if [ -f "$toml_file" ]; then
             DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/')
-            UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
+            GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
         
             # Export the variables
             echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
-            echo "UPDATE_CHANNEL=${UPDATE_CHANNEL}" >> $GITHUB_ENV
+            echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}" >> $GITHUB_ENV
         
             echo "DEVICE_NAME: $DEVICE_NAME"
-            echo "UPDATE_CHANNEL: $UPDATE_CHANNEL"
+            echo "GRAPHENEOS_UPDATE_CHANNEL: $GRAPHENEOS_UPDATE_CHANNEL"
           fi
           
       - name: Check if a build exists already and verify assets
