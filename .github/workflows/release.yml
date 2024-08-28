@@ -71,11 +71,11 @@ jobs:
             UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
         
             # Export the variables
-            echo -e "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
-            echo -e "UPDATE_CHANNEL=${UPDATE_CHANNEL}" >> $GITHUB_ENV
+            echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
+            echo "UPDATE_CHANNEL=${UPDATE_CHANNEL}" >> $GITHUB_ENV
         
-            echo -e "DEVICE_NAME: $DEVICE_NAME"
-            echo -e "UPDATE_CHANNEL: $UPDATE_CHANNEL"
+            echo "DEVICE_NAME: $DEVICE_NAME"
+            echo "UPDATE_CHANNEL: $UPDATE_CHANNEL"
           fi
           
       - name: Check if a build exists already and verify assets
@@ -87,7 +87,7 @@ jobs:
           fi
           
           source src/fetcher.sh && get_latest_version
-          echo -e "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> $GITHUB_ENV
+          echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> $GITHUB_ENV
           
           # Determine if the build is based on magisk or rootless
           build_flavor=$([[ ${{ github.event.inputs.root == 'true' }} == 'true' ]] && echo 'magisk' || echo 'rootless')
@@ -107,7 +107,7 @@ jobs:
               "${{ env.DEVICE_NAME }}-${VERSION[GRAPHENEOS]}-rootless-*.zip.csig"
             )
       
-            existing_assets=$(echo -e "$release_info" | jq -r '.assets[].name')
+            existing_assets=$(echo "$release_info" | jq -r '.assets[].name')
             missing_assets=()
 
             for required_asset in "${required_assets[@]}"; do
@@ -123,7 +123,7 @@ jobs:
             done
             
             if [ ${#missing_assets[@]} -eq 0 ]; then
-              echo -e "All required assets are present. Exiting."
+              echo -e "All required assets are present. Exiting..."
               exit 0
             else
               echo -e "Missing assets:"
@@ -170,9 +170,9 @@ jobs:
 
       - name: Setup Environment variables
         run: |
-          echo -e "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
-          echo -e "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
-          echo -e "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
+          echo "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
+          echo "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
+          echo "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
 
       - name: Patch OTA
         shell: bash
@@ -183,15 +183,15 @@ jobs:
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
         run: |
-          echo -e "Running release script"
+          echo -e "Running release script.."
 
           # Instead of running the script directly,
           # we source it to get the variables in the current shell and use them in the next steps by exporting them
           source src/main.sh
           
-          echo -e "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
-          echo -e "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
-          echo -e "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
+          echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
+          echo "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
+          echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
 
       - name: Generate Changelog
         run: echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
