@@ -18,10 +18,11 @@ on:
         description: Add root to the build
         required: false
         type: boolean
-        default: false
+        default: true
       magisk-preinit-device:
         description: Magisk preinit device. For example, "sda8", "sda15" etc.,
         required: false
+        default: "sda15"
       update-channel:
         description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
         required: false
