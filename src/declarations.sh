@@ -62,6 +62,7 @@ ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass St
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
 ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock bootloader on boot
 ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported
+ADDITIONALS[RETRY]="${ADDITIONALS[RETRY]:-true}"                       # Auto download signatures
 
 # Outputs
 OUTPUTS[PATCHED_OTA]="${OUTPUTS[PATCHED_OTA]:-}"

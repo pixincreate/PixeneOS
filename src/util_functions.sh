@@ -12,18 +12,23 @@ function check_and_download_dependencies() {
     exit 1
   fi
 
+  if [[ "${ADDITIONALS[RETRY]}" == "true" ]]; then
+    RETRY="true"
+  else
+    RETRY="false"
+  fi
+
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
   local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
   for tool in "${tools[@]}"; do
     local flag=$(flag_check "${tool}")
+
     if [[ "${flag}" == 'false' ]]; then
       echo -e "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
       continue
     fi
-
-    local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
     if [ -f "${WORKDIR}/modules/${tool}.zip" ]; then
       echo -e "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
@@ -35,15 +40,23 @@ function check_and_download_dependencies() {
       continue
     fi
 
-    # If neither condition is met, download dependencies
-    download_dependencies "${tool}"
-
-    verify_downloads "${tool}"
+    RETRY_COUNT=0 # Reset retry count for each tool
+    while true; do
+      download_dependencies "${tool}"
+      verify_downloads "${tool}"
+      [[ "${ADDITIONALS[RETRY]}" == "true" ]] && [[ "${RETRY}" == "true" ]] || break
+    done
   done
 
+  # Retry logic for magisk
   if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-    get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
-    verify_downloads "magisk.apk"
+    RETRY_COUNT=0 # Reset retry count for magisk
+    while true; do
+      get "magisk" "${MAGISK[URL]}/releases/download/canary-${VERSION[MAGISK]}/app-release.apk"
+      verify_downloads "magisk"
+
+      [[ "${ADDITIONALS[RETRY]}" == "true" ]] && [[ "${RETRY}" == "true" ]] || break
+    done
   fi
 }
 
@@ -69,7 +82,6 @@ function flag_check() {
 function create_and_make_release() {
   download_ota
   create_ota
-  export_necessities
 }
 
 function create_ota() {

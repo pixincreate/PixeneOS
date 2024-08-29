@@ -68,7 +68,7 @@ function get() {
 
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
         echo -e "Extracting and granting permissions for \`${filename}\`..."
-        echo N | unzip -q "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
+        echo N | unzip -q -o "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
         chmod +x "${WORKDIR}/tools/${filename}/${filename}"
 
         echo -e "Cleaning up..."
