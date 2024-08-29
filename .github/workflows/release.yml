@@ -3,7 +3,7 @@ name: Patch and Release OTA
 on:
   schedule:
     - cron: '0 */6 * * *' # Every 6 hours (UTC)
-  
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -61,7 +61,7 @@ jobs:
         with:
           # Allow for switching to github-pages branch
           fetch-depth: 0
-      
+
       - name: Read from `env.toml` if exist
         if: ${{ github.event_name == 'schedule' }}
         run: |
@@ -69,15 +69,15 @@ jobs:
           if [ -f "$toml_file" ]; then
             DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/')
             GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
-        
+
             # Export the variables
             echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
             echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}" >> $GITHUB_ENV
-        
+
             echo "DEVICE_NAME: $DEVICE_NAME"
             echo "GRAPHENEOS_UPDATE_CHANNEL: $GRAPHENEOS_UPDATE_CHANNEL"
           fi
-          
+
       - name: Check if a build exists already and verify assets
         shell: bash
         run: |
@@ -85,20 +85,20 @@ jobs:
             echo -e "::error::Missing required param \`DEVICE_NAME\`"
             exit 1
           fi
-          
+
           source src/fetcher.sh && get_latest_version
           echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> $GITHUB_ENV
-          
+
           # Determine if the build is based on magisk or rootless
           build_flavor=$([[ ${{ github.event.inputs.root == 'true' }} == 'true' ]] && echo 'magisk' || echo 'rootless')
-      
+
           # Check if the tag exists
           if git show-ref --tags ${VERSION[GRAPHENEOS]} --quiet; then
             echo -e "Tag with GrapheneOS version ${VERSION[GRAPHENEOS]} already exists. Looking for assets..."
             # Fetch the release information for the tag
             repo_url="https://api.github.com/repos/${{ github.repository }}/releases/tags/${VERSION[GRAPHENEOS]}"
             release_info=$(curl -sL "$repo_url")
-            
+
             # Define required assets
             required_assets=(
               "${{ env.DEVICE_NAME }}-${VERSION[GRAPHENEOS]}-magisk-*.zip"
@@ -106,7 +106,7 @@ jobs:
               "${{ env.DEVICE_NAME }}-${VERSION[GRAPHENEOS]}-rootless-*.zip"
               "${{ env.DEVICE_NAME }}-${VERSION[GRAPHENEOS]}-rootless-*.zip.csig"
             )
-      
+
             existing_assets=$(echo "$release_info" | jq -r '.assets[].name')
             missing_assets=()
 
@@ -121,10 +121,10 @@ jobs:
                 fi
               done
             done
-            
+
             if [ ${#missing_assets[@]} -eq 0 ]; then
-              echo -e "All required assets are present. Exiting..."
-              exit 0
+              echo -e "::error::All required assets are present. Exiting..."
+              exit 1
             else
               echo -e "Missing assets:"
               for missing_asset in "${missing_assets[@]}"; do
@@ -159,7 +159,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable 2 weeks ago
-                
+
       - name: Build and Cache Rust Dependencies
         uses: Swatinem/rust-cache@v2.7.0
 
@@ -189,13 +189,13 @@ jobs:
           # we source it to get the variables in the current shell and use them in the next steps by exporting them
           source src/main.sh
           
-          echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS_OTA_TARGET}" >> $GITHUB_ENV
-          echo "OUTPUTS_PATCHED_OTA=${OUTPUTS_PATCHED_OTA}" >> $GITHUB_ENV
+          echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> $GITHUB_ENV
+          echo "OUTPUTS_PATCHED_OTA=${OUTPUTS[PATCHED_OTA]}" >> $GITHUB_ENV
           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
 
       - name: Generate Changelog
         run: echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
-        
+
       - name: Make Release
         uses: softprops/action-gh-release@v2
         with:
@@ -205,7 +205,7 @@ jobs:
             ${{ env.OUTPUTS_PATCHED_OTA }}.csig
           name: "${{ env.GRAPHENEOS_VERSION }}"
           tag_name: "${{ env.GRAPHENEOS_VERSION }}"
-            
+
       - name: Publish OTA to server
         shell: bash
         run: |

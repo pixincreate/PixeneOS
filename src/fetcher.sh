@@ -61,7 +61,6 @@ function get() {
     curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
-      # I do not find the need to verify signatures for tools other than AVBRoot and Magisk
       if [ -n "${signature_url}" ]; then
         echo "Downloading signature for \`${filename}\`..."
         curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
