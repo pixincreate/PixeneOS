@@ -10,10 +10,6 @@ on:
       device-id:
         description: Device ID
         required: true
-      force-update:
-        description: Forcefully upload OTA to the server
-        required: false
-        type: boolean
       root:
         description: Add root to the build
         required: false
@@ -38,13 +34,11 @@ jobs:
 
     env:
       DEVICE_NAME: ${{ github.event.inputs.device-id }}
-      FORCE_UPDATE: ${{ github.event.inputs.force-update || false }}
       INTERACTIVE_MODE: false
       GRAPHENEOS_UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
 
     steps:
-      - name: Check if `root` is true and `magisk-preinit-device` is set
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+      - name: Check if `magisk-preinit-device` is set when `root` is true
         run: |
           # Convert inputs to proper boolean values
           root=${{ github.event.inputs.root }}
@@ -232,12 +226,12 @@ jobs:
             touch "${TARGET_FILE}"
           fi
 
-          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}" || [[ "${{ env.FORCE_UPDATE }}" == 'true' ]]; then
+          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}"; then
             echo -e "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
             cp "${{ env.DEVICE_NAME }}.json" "${TARGET_FILE}"
             git add "${TARGET_FILE}"
           else
-            echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.GRAPHENEOS_VERSION }}) and \`FORCE_UPDATE\` is \`false\`.\nUpdate skipped."
+            echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.GRAPHENEOS_VERSION }}).\nUpdate skipped."
           fi
 
           if ! git diff-index --quiet HEAD; then
