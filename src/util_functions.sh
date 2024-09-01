@@ -186,24 +186,7 @@ function patch_ota() {
   deactivate
 }
 
-function detect_os() {
-  # https://stackoverflow.com/a/68706298
-
-  unameOut=$(uname -a)
-  case "${unameOut}" in
-    *Microsoft*) OS="WSL" ;;  # must be first since Windows subsystem for linux will have Linux in the name too
-    *microsoft*) OS="WSL2" ;; # WARNING: My v2 uses ubuntu 20.4 at the moment slightly different name may not always work
-    Linux*) OS="Linux" ;;
-    Darwin*) OS="Mac" ;;
-    CYGWIN*) OS="Cygwin" ;;
-    MINGW*) OS="Windows" ;;
-    *Msys) OS="Windows" ;;
-    *) OS="UNKNOWN:${unameOut}" ;;
-  esac
-
-  echo ${OS}
-}
-
+# Function to setup the environment for the my-avbroot-setup script
 function my_avbroot_setup() {
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}/modules/magisk.apk"
