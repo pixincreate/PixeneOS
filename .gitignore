@@ -1,5 +1,14 @@
+# MacOS specific
 .DS_Store
+
+# All the files are generated during run time reside in `.tmp` folder
 .tmp
+
+# OTA files
 *.zip
+
+# Keys and secrets
 .keys
+
+# Python virtual environment
 venv
