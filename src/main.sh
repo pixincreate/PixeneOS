@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This project is highly dependent on chenxiaolong's projects.
+# Project PixeneOS needs to be up-to-date with chenxiaolong's projects
+
+# make code more robust by catching unset variables, detecting errors in pipelines, and halting execution upon encountering errors
 set -o nounset -o pipefail -o errexit
 
 source src/fetcher.sh
@@ -10,7 +14,7 @@ function main() {
   get_latest_version
   # Check for requirements and download them accordingly
   check_and_download_dependencies
-  # Patch the OTA, sign it, make a release and push it to the server
+  # Patch the OTA, sign it
   create_and_make_release
 }
 

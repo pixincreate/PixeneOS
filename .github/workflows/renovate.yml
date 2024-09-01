@@ -1,6 +1,8 @@
-# Why? https://www.jvt.me/posts/2024/04/12/use-renovate/
+# Why?
+# https://www.jvt.me/posts/2024/04/12/use-renovate/
 
 name: Renovate
+
 on:
   schedule:
     - cron: '0 0 * * *'

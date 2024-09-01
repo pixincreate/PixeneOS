@@ -1,5 +1,10 @@
+# This file consists of functions to encode and decode keys to and from base64
+
 source src/declarations.sh
 
+# This function is called once after the keys are generated
+# It encodes the keys to base64 and exports them as environment variables
+# The encoded keys can be used in the CI pipelines
 function base64_encode() {
   local success_status=false
   echo -e "\nEncoding keys to base64..."
@@ -17,6 +22,7 @@ function base64_encode() {
   fi
 }
 
+# This function is called in CI workflows to decode the base64 keys to files (avb.key, ota.key, ota.crt)
 function base64_decode() {
   local success_status=false
   echo -e "\nDecoding keys from base64..."
