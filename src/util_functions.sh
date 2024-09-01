@@ -188,6 +188,10 @@ function patch_ota() {
     args+=("--sign-key-ota" "${KEYS[OTA]}")
     args+=("--sign-cert-ota" "${KEYS[CERT_OTA]}")
 
+    # Passphrases for AVB and OTA keys
+    args+=("--pass-avb-env-var" "PASSPHRASE_AVB")
+    args+=("--pass-ota-env-var" "PASSPHRASE_OTA")
+
     # Modules
     args+=("--module-custota" "${WORKDIR}/modules/custota.zip")
     args+=("--module-msd" "${WORKDIR}/modules/msd.zip")
@@ -218,13 +222,7 @@ function my_avbroot_setup() {
   local location_path="${DOMAIN}/${USER}/${REPOSITORY}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUTS[PATCHED_OTA]}"
 
   # Add support to pass env-vars to the setup script for passphrase in the CI/CD pipeline
-  echo "Running script modifications..."
-  sed -i -e "/'avbroot', 'ota', 'patch',/a \\
-  \t\t'--pass-avb-env-var', 'PASSPHRASE_AVB',\\
-  \t\t'--pass-ota-env-var', 'PASSPHRASE_OTA'," "${setup_script}"
-
-  sed -i -e "/custota-tool', 'gen-csig',/a \\
-  \t\t'--passphrase-env-var', 'PASSPHRASE_OTA'," "${setup_script}"
+  echo -e "Running script modifications..."
 
   # Update location path to use GitHub releases
   sed -i -e "s|generate_update_info(update_info, args.output.name)|generate_update_info(update_info, '${location_path}')|" "${setup_script}"
