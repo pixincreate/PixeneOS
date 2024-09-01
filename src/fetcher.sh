@@ -19,8 +19,7 @@ function get_latest_version() {
 
   GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
-  GRAPHENEOS[ALLOWED_SIGNERS_URL]="${GRAPHENEOS[OTA_BASE_URL]}/allowed_signers"
-
+  
   # e.g.  bluejay-ota_update-2024080200
   echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
 
@@ -36,9 +35,7 @@ function get_latest_version() {
   if [[ -z "${latest_magisk_version}" ]]; then
     echo -e "Failed to get the latest Magisk version."
     exit 1
-  fi
-
-  if [[ -z "${VERSION[MAGISK]}" ]]; then
+  else
     VERSION[MAGISK]="${latest_magisk_version}"
   fi
 }
@@ -87,7 +84,7 @@ function download_ota() {
   fi
 
   if [ ! -f "${ota}" ]; then
-    echo -e "Downloading OTA from: "${GRAPHENEOS[OTA_URL]}"...\nPlease be patient while the download happens."
+    echo -e "Downloading OTA from: ${GRAPHENEOS[OTA_URL]}...\nPlease be patient while the download happens."
     curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota}
     echo -e "OTA downloaded to: \`${ota}\`\n"
   else
