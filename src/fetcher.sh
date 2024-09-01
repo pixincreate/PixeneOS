@@ -61,7 +61,6 @@ function get() {
     curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
-      # I do not find the need to verify signatures for tools other than AVBRoot and Magisk
       if [ -n "${signature_url}" ]; then
         echo "Downloading signature for \`${filename}\`..."
         curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
@@ -69,7 +68,7 @@ function get() {
 
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
         echo -e "Extracting and granting permissions for \`${filename}\`..."
-        echo N | unzip -q "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
+        echo N | unzip -q -o "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
         chmod +x "${WORKDIR}/tools/${filename}/${filename}"
 
         echo -e "Cleaning up..."
