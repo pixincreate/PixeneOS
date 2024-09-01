@@ -1,5 +1,8 @@
+# Contains the functions to fetch the required files. In short, this takes care of downloading the OTA, Magisk, and other dependencies.
+
 source src/declarations.sh
 
+# Fetch the latest version of GrapheneOS and Magisk and sets up the OTA URL
 function get_latest_version() {
   local latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
   local latest_magisk_version=$(
@@ -17,7 +20,9 @@ function get_latest_version() {
     exit 1
   fi
 
+  # Construct the URLs
   GRAPHENEOS[OTA_TARGET]="${DEVICE_NAME}-${GRAPHENEOS[UPDATE_TYPE]}-${latest_grapheneos_version}"
+  # e.g. https://releases.grapheneos.org/bluejay-stable
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
   
   # e.g.  bluejay-ota_update-2024080200
@@ -40,12 +45,15 @@ function get_latest_version() {
   fi
 }
 
+# Getter function to download the magisk, modules, signatures and tools
 function get() {
   local filename="${1}"
   local url="${2}"
   local signature_url="${3:-}"
 
   echo "Downloading \`${filename}\`..."
+
+  # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
     git clone "${url}" "${WORKDIR}/tools/${filename}"
   else
@@ -55,14 +63,17 @@ function get() {
       suffix="zip"
     fi
 
+    # Download the files directly to modules directory
     curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
+      # Download signatures
       if [ -n "${signature_url}" ]; then
         echo "Downloading signature for \`${filename}\`..."
         curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
       fi
 
+      # afsr, avbroot and custota-tool are binaries that need to be extracted and granted permissions
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
         echo -e "Extracting and granting permissions for \`${filename}\`..."
         echo N | unzip -q -o "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
@@ -76,13 +87,16 @@ function get() {
   echo -e "\`${filename}\` downloaded."
 }
 
+# Function to check and download the dependencies
 function download_ota() {
   local ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
+  # Set the URLs if not set
   if [ ! -z "${GRAPHENEOS[OTA_URL]}" ]; then
     get_latest_version
   fi
 
+  # Download if not downloaded already
   if [ ! -f "${ota}" ]; then
     echo -e "Downloading OTA from: ${GRAPHENEOS[OTA_URL]}...\nPlease be patient while the download happens."
     curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota}

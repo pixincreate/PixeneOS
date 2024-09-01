@@ -2,13 +2,13 @@ name: Patch and Release OTA
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Every 6 hours (UTC)
+    - cron: '0 */6 * * *' # Check for update every 6 hours (UTC). GrapheneOS checks every 6 hours.
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       device-id:
-        description: Device ID
+        description: Device code name
         required: true
       root:
         description: Add root to the build
@@ -24,18 +24,18 @@ on:
 
 env:
   CARGO_INCREMENTAL: 1
+  DEVICE_NAME: ${{ github.event.inputs.device-id }}
+  INTERACTIVE_MODE: false
+  GRAPHENEOS_UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
   RUST_BACKTRACE: short
   RUSTUP_MAX_RETRIES: 10
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
 
-    env:
-      DEVICE_NAME: ${{ github.event.inputs.device-id }}
-      INTERACTIVE_MODE: false
-      GRAPHENEOS_UPDATE_CHANNEL: ${{ github.event.inputs.update-channel }}
+    # Required by publisher step
+    permissions: write-all
 
     steps:
       - name: Check if `magisk-preinit-device` is set when `root` is true
@@ -61,6 +61,8 @@ jobs:
         run: |
           toml_file="env.toml"
           if [ -f "$toml_file" ]; then
+
+            # Read the toml file and extract the required variables
             DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/')
             GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
 
@@ -68,6 +70,7 @@ jobs:
             echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
             echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}" >> $GITHUB_ENV
 
+            # Print the variables for user reference
             echo "DEVICE_NAME: $DEVICE_NAME"
             echo "GRAPHENEOS_UPDATE_CHANNEL: $GRAPHENEOS_UPDATE_CHANNEL"
           fi
@@ -75,15 +78,17 @@ jobs:
       - name: Check if a build exists already and verify assets
         shell: bash
         run: |
+          # Device name is a required parameter
           if [[ -z "${DEVICE_NAME}" ]]; then
             echo -e "::error::Missing required param \`DEVICE_NAME\`"
             exit 1
           fi
 
+          # Fetch the latest GrapheneOS version and set up the environment
           source src/fetcher.sh && get_latest_version
           echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> $GITHUB_ENV
 
-          # Determine if the build is based on magisk or rootless
+          # Determine if the build is based on magisk or rootless (build flavor)
           build_flavor=$([[ ${{ github.event.inputs.root == 'true' }} == 'true' ]] && echo 'magisk' || echo 'rootless')
 
           # Check if the tag exists
@@ -109,6 +114,7 @@ jobs:
               regex="${required_asset//\*/.*}"
             
               for asset in "${existing_assets[@]}"; do
+                # if existing asset matches the required asset, break the loop
                 if ! [[ $asset =~ $regex ]]; then
                   missing_assets+=("$required_asset")
                   break
@@ -147,9 +153,11 @@ jobs:
           fi
 
       - name: Setup Git
-        run: git config --global user.email ${{ secrets.EMAIL }} && git config --global user.name PiX
+        run: |
+          # Configure git for pushing changes
+          git config --global user.email ${{ secrets.EMAIL }} && git config --global user.name PiX
 
-      - name: Install Rust
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable 2 weeks ago
@@ -183,12 +191,15 @@ jobs:
           # we source it to get the variables in the current shell and use them in the next steps by exporting them
           source src/main.sh
           
+          # Export the variables for the next steps
           echo "GRAPHENEOS_OTA_TARGET=${GRAPHENEOS[OTA_TARGET]}" >> $GITHUB_ENV
           echo "OUTPUTS_PATCHED_OTA=${OUTPUTS[PATCHED_OTA]}" >> $GITHUB_ENV
           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
 
       - name: Generate Changelog
-        run: echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
+        run: |
+          # Generate a changelog for the release taking the latest GrapheneOS release
+          echo -e "See [Changelog](https://grapheneos.org/releases#${{ env.GRAPHENEOS_VERSION }})." > ${{ github.workspace }}-CHANGELOG.txt
 
       - name: Make Release
         uses: softprops/action-gh-release@v2
@@ -207,11 +218,14 @@ jobs:
           FLAVOR=("magisk" "rootless")
           root=${{ github.event.inputs.root }}
           
+          # Create `magisk` and `rootless` directories if they don't exist
           mkdir -p "${FLAVOR}"
           
+          # Switch to gh-pages branch
           git checkout gh-pages
           echo -e "Updating Configs for the new release..."
           
+          # If root is true or the the release has `magisk` in <device_name>.json, use magisk flavor
           if [ "${root}" = "true" ] || grep -q magisk "${{ env.DEVICE_NAME }}.json"; then
             TARGET_FILE="${FLAVOR[0]}/${{ env.DEVICE_NAME }}.json"
           else
@@ -220,12 +234,13 @@ jobs:
           
           echo -e "Updating Configs for the new release..."
 
-          # Check if the target file exists, if not create an empty one
+          # Check if the target file exists, if not create an empty one to avoid any issues
           if [ ! -f "${TARGET_FILE}" ]; then
             echo -e "touching ${TARGET_FILE}..."
             touch "${TARGET_FILE}"
           fi
 
+          # Copy from `./` to `./<flavor>/` if same tag doesn't exist in the target file
           if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}"; then
             echo -e "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
             cp "${{ env.DEVICE_NAME }}.json" "${TARGET_FILE}"
@@ -234,8 +249,11 @@ jobs:
             echo -e "Deployed version (${{ env.GRAPHENEOS_VERSION }}) is same as current GrapheneOS release (${{ env.GRAPHENEOS_VERSION }}).\nUpdate skipped."
           fi
 
+          # Commit and push the changes if the working directory is clean
           if ! git diff-index --quiet HEAD; then
             git commit -m "release("${CURRENT_COMMIT}"): bump GrapheneOS version to ${{ env.GRAPHENEOS_VERSION }}"
             git push origin gh-pages
           fi
+
+          # Switch back to main branch
           git checkout main

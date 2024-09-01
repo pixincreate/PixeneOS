@@ -1,3 +1,4 @@
+# Declare associative arrays and variables
 declare -A ADDITIONALS
 declare -A AVBROOT
 declare -A GRAPHENEOS
@@ -6,20 +7,23 @@ declare -A MAGISK
 declare -A OUTPUTS
 declare -A VERSION
 
-# Specifications
+# Build Specifications
 ARCH="x86_64-unknown-linux-gnu" # for Linux
 # ARCH="universal-apple-darwin" # for macOS
 # ARCH="x86_64-pc-windows-msvc" # for Windows
 
+# Initial setup environment variables
 CLEANUP="${CLEANUP:-'false'}"                # Clean up after the script finishes
 DEVICE_NAME="${DEVICE_NAME:-}"               # Device name, passed from the CI environment
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
 WORKDIR=".tmp"
 
+# GitHub variables
 DOMAIN="https://github.com"
 REPOSITORY="PixeneOS" # GitHub repository name
 USER="pixincreate"    # GitHub username
 
+# Application version variables
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.0}"
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.6.0}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
