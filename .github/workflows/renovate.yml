@@ -1,0 +1,33 @@
+# Why? https://www.jvt.me/posts/2024/04/12/use-renovate/
+
+name: Renovate
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Log level
+        required: false
+        default: 'debug'
+        type: string
+  push:
+    branches:
+      - main
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v40.2.7
+        with:
+          configurationFile: .github/renovate.json5
+          # https://docs.renovatebot.com/modules/platform/github/#running-using-a-fine-grained-token
+          token: ${{ secrets.RENOVATE }}
+        env:
+            LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
+            RENOVATE_REPOSITORIES: ${{ github.repository }}
