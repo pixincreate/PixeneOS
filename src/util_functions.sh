@@ -26,8 +26,12 @@ function check_and_download_dependencies() {
   # Check for required tools
   # If they're present, continue with the script
   # Else, download them by checking version from declarations
-  local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
-  for tool in "${tools[@]}"; do
+  tools=$(supported_tools "cdd") # Call the function and capture its output
+
+  # Convert the space-separated string back into an array
+  IFS=' ' read -r -a tools_array <<< "${tools}"
+
+  for tool in "${tools_array[@]}"; do
     local flag=$(flag_check "${tool}")
 
     if [[ "${flag}" == 'false' ]]; then
@@ -428,4 +432,58 @@ function generate_ota_info() {
   local flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
   # e.g. bluejay-2024082200-rootless-abc12345-dirty.zip
   OUTPUTS[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
+}
+
+function check_toml_env() {
+  toml_file="env.toml"
+  if [ -f "$toml_file" ]; then
+
+    # Read the toml file and extract the required variables
+    DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/') && success_status=true
+    GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/') && success_status=true
+
+    if [[ "${success_status}" == true ]]; then
+      echo -e "Found variables in \`${toml_file}\` and will take precedence over other values. \n"
+    else
+      echo -e "Failed to find the required variables in \`${toml_file}\`.\n"
+      exit 1
+    fi
+
+    # Export the variables
+    export "DEVICE_NAME=${DEVICE_NAME}"
+    export "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
+
+    echo -e "DEVICE_NAME=${DEVICE_NAME}"
+    echo -e "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
+  fi
+}
+
+function supported_tools() {
+  local arg="${1:-}"
+  local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
+
+  if [[ "${arg}" == "cdd" ]]; then
+    echo "${tools[@]}"
+    return
+  fi
+
+  echo -e "Supported tools:"
+  for tool in "${tools[@]}"; do
+    echo -e "- ${tool}"
+  done
+  echo -e "- magisk"
+  exit 0
+}
+
+function help() {
+  cat << EOF
+Usage: source src/<file>.sh [functions] [arguments]
+functions:
+  - url_constructor        Run the URL Constructor function
+    - arguments            tool_name
+  - generate_keys          Generate keys
+  - help                   Show this help message
+  - check_toml_env         Check TOML environment
+  - supported_tools        List supported tools
+EOF
 }
