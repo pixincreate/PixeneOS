@@ -59,21 +59,8 @@ jobs:
       - name: Read from `env.toml` if exist
         if: ${{ github.event_name == 'schedule' }}
         run: |
-          toml_file="env.toml"
-          if [ -f "$toml_file" ]; then
-
-            # Read the toml file and extract the required variables
-            DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/')
-            GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/')
-
-            # Export the variables
-            echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
-            echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}" >> $GITHUB_ENV
-
-            # Print the variables for user reference
-            echo "DEVICE_NAME: $DEVICE_NAME"
-            echo "GRAPHENEOS_UPDATE_CHANNEL: $GRAPHENEOS_UPDATE_CHANNEL"
-          fi
+          # Check if the file exists
+          source src/util_functions.sh && check_toml_env
 
       - name: Check if a build exists already and verify assets
         shell: bash
