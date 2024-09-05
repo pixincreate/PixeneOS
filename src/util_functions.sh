@@ -444,14 +444,11 @@ function check_toml_env() {
 
     if [[ "${success_status}" == true ]]; then
       echo -e "Found variables in \`${toml_file}\` and will take precedence over other values. \n"
+      GRAPHENEOS[UPDATE_CHANNEL]="${GRAPHENEOS_UPDATE_CHANNEL}"
     else
       echo -e "Failed to find the required variables in \`${toml_file}\`.\n"
       exit 1
     fi
-
-    # Export the variables
-    export "DEVICE_NAME=${DEVICE_NAME}"
-    export "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
 
     echo -e "DEVICE_NAME=${DEVICE_NAME}"
     echo -e "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
