@@ -440,7 +440,7 @@ function check_toml_env() {
 
     # Read the toml file and extract the required variables
     DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/') && success_status=true
-    GRAPHENEOS_UPDATE_CHANNEL=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/') && success_status=true
+    GRAPHENEOS[UPDATE_CHANNEL]=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/') && success_status=true
 
     if [[ "${success_status}" == true ]]; then
       echo -e "Found variables in \`${toml_file}\` and will take precedence over other values. \n"
@@ -449,12 +449,8 @@ function check_toml_env() {
       exit 1
     fi
 
-    # Export the variables
-    export "DEVICE_NAME=${DEVICE_NAME}"
-    export "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
-
-    echo -e "DEVICE_NAME=${DEVICE_NAME}"
-    echo -e "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS_UPDATE_CHANNEL}"
+    echo -e "DEVICE_NAME: ${DEVICE_NAME}"
+    echo -e "GRAPHENEOS_UPDATE_CHANNEL: ${GRAPHENEOS[UPDATE_CHANNEL]}"
   fi
 }
 

@@ -27,6 +27,16 @@ function base64_decode() {
   local success_status=false
   echo -e "\nDecoding keys from base64..."
 
+  # Check if any of the KEYS or individual key values are empty
+  if [ -z "${KEYS[AVB_BASE64]}" ] || [ -z "${KEYS[CERT_OTA_BASE64]}" ] || [ -z "${KEYS[OTA_BASE64]}" ] \
+    || [ -z "${KEYS_AVB_BASE64}" ] || [ -z "${KEYS_CERT_OTA_BASE64}" ] || [ -z "${KEYS_OTA_BASE64}" ]; then
+    echo "Error: One or more BASE64 encoded values are empty. Please ensure all required keys are set."
+    exit 1
+  fi
+
+  # Continue with the rest of the script if all values are non-empty
+  echo -e "All KEY values are set. Proceeding with decoding..."
+
   KEYS[AVB_BASE64]="${KEYS_AVB_BASE64:-${KEYS[AVB_BASE64]}}"
   KEYS[CERT_OTA_BASE64]="${KEYS_CERT_OTA_BASE64:-${KEYS[CERT_OTA_BASE64]}}"
   KEYS[OTA_BASE64]="${KEYS_OTA_BASE64:-${KEYS[OTA_BASE64]}}"

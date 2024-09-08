@@ -63,6 +63,9 @@ jobs:
           # Check if the file exists
           source src/util_functions.sh && check_toml_env
 
+          echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
+          echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS[UPDATE_CHANNEL]}" >> $GITHUB_ENV
+
       - name: Check if a build exists already and verify assets
         shell: bash
         run: |
