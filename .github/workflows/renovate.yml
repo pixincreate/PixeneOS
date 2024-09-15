@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: Log level
+        description: Log levels based on severity. DEBUG, INFO, WARN, ERROR, FATAL
         required: false
-        default: 'debug'
+        default: 'info'
         type: string
   push:
     branches:

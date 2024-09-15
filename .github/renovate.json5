@@ -5,51 +5,51 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[AFSR]=\\$\\{VERSION[AFSR]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/afsr",
       "datasourceTemplate": "github-releases"
     },
    {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[AVBROOT]=\\$\\{VERSION[AVBROOT]:-(?<currentValue>.*?)\\}" ],
       "depNameTemplate": "chenxiaolong/avbroot",
       "datasourceTemplate": "github-releases"
-    }, 
+    },
    {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[ALTERINSTALLER]=\\$\\{VERSION[ALTERINSTALLER]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/alterinstaller",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[CUSTOTA]=\\$\\{VERSION[CUSTOTA]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/custota",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[MSD]=\\$\\{VERSION[MSD]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/msd",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[BCR]=\\$\\{VERSION[BCR]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/bcr",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["declarations.sh"],
+      "fileMatch": ["src/declarations.sh"],
       "matchStrings": [ "VERSION[OEMUNLOCKONBOOT]=\\$\\{VERSION[OEMUNLOCKONBOOT]:-(?<currentValue>.*?)\\}" ],
-      "depNameTemplate": "chenxiaolong/avbroot",
+      "depNameTemplate": "chenxiaolong/oemunlockonboot",
       "datasourceTemplate": "github-releases"
     }
   ]
