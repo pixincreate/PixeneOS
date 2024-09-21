@@ -2,6 +2,7 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   prHourlyLimit: 0,
   gitAuthor: "Renovate Bot <renovatebot@non-existent-email.com>",
+  assignees: "pixincreate",
   labels: ["dependencies"],
   customManagers: [
     {
