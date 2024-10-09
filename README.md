@@ -1,4 +1,4 @@
-# PixeneOS (GrapheneOS++)
+# PixeneOS (GrapheneOS++) - For Pixel 5a (barbet)
 
 ## CAUTION
 
