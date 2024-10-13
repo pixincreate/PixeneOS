@@ -4,14 +4,13 @@
 
 PixeneOS (the name of this project) is GrapheneOS patched with additional features.
 
-The features include:
+## Features
 
 - [BCR](https://github.com/chenxiaolong/BCR) (>= version 1.65)
 - [Custota](https://github.com/chenxiaolong/Custota) (>= version 4.5)
 - [Magisk](https://github.com/pixincreate/Magisk) (>= version 27006) -- optional
 - [MSD](https://github.com/chenxiaolong/MSD)
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
-- ADBRoot with `ro.adb.secure=1` for added security -- optional
 
 ### Note
 
@@ -20,7 +19,7 @@ The features include:
 
 ## Requirements
 
-In order to use this project, you need the following (most of them will be taken care by the script itself except `git` and `python`):
+In order to use this project, you need the following (most of them will be taken care by the script itself except for `git` and `python`):
 
 - A Linux machine. You can use WSL or a VM if other operating systems
 - Tools (needs to be in the path):
