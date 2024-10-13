@@ -44,7 +44,7 @@ function check_and_download_dependencies() {
       continue
     fi
 
-    if [ -f "${WORKDIR}/tools/${tool}" ]; then
+    if [ -d "${WORKDIR}/tools/${tool}" ]; then
       echo -e "\`${tool}\` file already exists in \`${WORKDIR}/tools\`."
       continue
     fi
