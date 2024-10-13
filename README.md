@@ -56,7 +56,17 @@ As mentioned in the beginning, OTA will have [Custota](https://github.com/chenxi
 
 ## Usage
 
-TBU
+### Getting started
+
+For now, below mentioned guides can be followed during initial setup:
+
+- [chenxiaolong/avbroot](https://github.com/chenxiaolong/avbroot)
+- [chenxiaolong/my-avbroot-setup](https://github.com/chenxiaolong/my-avbroot-setup)
+- [schnatterer/rooted-graphene](https://github.com/schnatterer/rooted-graphene)
+
+### Tool usage
+
+There still exist a lot of moving parts within this tiny tool. Although most of the functionalities are stabilised, the tool usage guide will become obselete real quick. Will update this section in some time.
 
 ## License
 
