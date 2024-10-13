@@ -455,20 +455,13 @@ function check_toml_env() {
 }
 
 function supported_tools() {
-  local arg="${1:-}"
   local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
-
-  if [[ "${arg}" == "cdd" ]]; then
-    echo "${tools[@]}"
-    return
-  fi
 
   echo -e "Supported tools:"
   for tool in "${tools[@]}"; do
     echo -e "- ${tool}"
   done
   echo -e "- magisk"
-  exit 0
 }
 
 function help() {
