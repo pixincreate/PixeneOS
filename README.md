@@ -1,9 +1,5 @@
 # PixeneOS (GrapheneOS++)
 
-## CAUTION
-
-THIS PROJECT IS IN ITS EARLY STAGES. USE AT YOUR OWN RISK. THE AUTHOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THE USAGE OF THIS PROJECT.
-
 ## Description
 
 PixeneOS (the name of this project) is GrapheneOS patched with additional features.
@@ -20,8 +16,7 @@ The features include:
 ### Note
 
 1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project for personal use
-2. The project is still in its early stages. Use at your own risk
-3. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
+2. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
 
 ## Requirements
 
