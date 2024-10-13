@@ -39,6 +39,21 @@ In order to use this project, you need the following (most of them will be taken
   - `pkg-config`
   - `tomlkit` -- a python dependency
 
+## Working
+
+In short, this repository is a server.
+
+[Release.yml](.github/workflows/release.yml) initially checks if a build exist already. If only rootless flavor exist and user opted for rooted flavor, it builds it and vice versa. If a version has got both the flavor for a specific device, then it skips the build.
+
+The workflow then calls the build script (can also be run locally in your machine; linux machine is preferred as it is the only platform this project is known to work and others are untested) which downloads all the [requirements](#requirements) mentioned above and patches the OTA by putting your signing key and installing the additional packages as mentioned in [features section](#features) and generates the output.
+
+The patched OTA is then released and will be available in the [releases section](https://github.com/pixincreate/PixeneOS/releases).
+
+Once the patched OTA is released, the server branch is then updated depending on the flavor selected (`rootless` is the default)
+
+As mentioned in the beginning, OTA will have [Custota](https://github.com/chenxiaolong/Custota) package installed during the patch. The user should add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch to receive the OTA update.
+
+
 ## Usage
 
 TBU
