@@ -44,7 +44,7 @@ function check_and_download_dependencies() {
       continue
     fi
 
-    if [ -f "${WORKDIR}/tools/${tool}" ]; then
+    if [ -d "${WORKDIR}/tools/${tool}" ]; then
       echo -e "\`${tool}\` file already exists in \`${WORKDIR}/tools\`."
       continue
     fi
@@ -435,40 +435,39 @@ function generate_ota_info() {
 }
 
 function check_toml_env() {
+  declare -A config_vars
   toml_file="env.toml"
+
   if [ -f "$toml_file" ]; then
+    while IFS='=' read -r key value; do
+      key=$(echo "$key" | xargs)                                  # Trim whitespace
+      value=$(echo "$value" | xargs | sed -E 's/^"([^"]*)"$/\1/') # Trim whitespace and quotes
+      if [[ -n "$key" && -n "$value" ]]; then
+        config_vars["$key"]="$value"
+      fi
+    done < <(grep -v '^#' "$toml_file") # Ignore comments
 
-    # Read the toml file and extract the required variables
-    DEVICE_NAME=$(grep '^device_name =' "$toml_file" | sed -E 's/^device_name *= *"([^"]*)"/\1/') && success_status=true
-    GRAPHENEOS[UPDATE_CHANNEL]=$(grep '^update_channel =' "$toml_file" | sed -E 's/^update_channel *= *"([^"]*)"/\1/') && success_status=true
-
-    if [[ "${success_status}" == true ]]; then
-      echo -e "Found variables in \`${toml_file}\` and will take precedence over other values. \n"
+    if [[ ${#config_vars[@]} -gt 0 ]]; then
+      echo -e "Found variables in \`${toml_file}\` and will take precedence over other values.\n"
+      for key in "${!config_vars[@]}"; do
+        echo -e "${key}: ${config_vars[$key]}"
+        eval "${key}=${config_vars[$key]}"
+      done
     else
       echo -e "Failed to find the required variables in \`${toml_file}\`.\n"
       exit 1
     fi
-
-    echo -e "DEVICE_NAME: ${DEVICE_NAME}"
-    echo -e "GRAPHENEOS_UPDATE_CHANNEL: ${GRAPHENEOS[UPDATE_CHANNEL]}"
   fi
 }
 
 function supported_tools() {
-  local arg="${1:-}"
   local tools=("avbroot" "afsr" "alterinstaller" "custota" "custota-tool" "msd" "bcr" "oemunlockonboot" "my-avbroot-setup")
-
-  if [[ "${arg}" == "cdd" ]]; then
-    echo "${tools[@]}"
-    return
-  fi
 
   echo -e "Supported tools:"
   for tool in "${tools[@]}"; do
     echo -e "- ${tool}"
   done
   echo -e "- magisk"
-  exit 0
 }
 
 function help() {
