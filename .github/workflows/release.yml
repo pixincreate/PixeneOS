@@ -155,7 +155,7 @@ jobs:
           toolchain: stable 2 weeks ago
 
       - name: Build and Cache Rust Dependencies
-        uses: Swatinem/rust-cache@v2.7.3
+        uses: Swatinem/rust-cache@v2.7.5
 
       - name: Install Python
         uses: actions/setup-python@v5
