@@ -21,7 +21,7 @@ WORKDIR=".tmp"
 # GitHub variables
 DOMAIN="https://github.com"
 REPOSITORY="PixeneOS" # GitHub repository name
-USER="pixincreate"    # GitHub username
+USER="radioaddition"    # GitHub username
 
 # Application version variables
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.1}"
@@ -64,7 +64,7 @@ ADDITIONALS[CUSTOTA]="${ADDITIONALS[CUSTOTA]:-true}"                   # Custom 
 ADDITIONALS[CUSTOTA_TOOL]="${ADDITIONALS[CUSTOTA_TOOL]:-true}"         # Custom OTA Tool
 ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass Storage Device on USB
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
-ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Unlock bootloader on boot
+ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # Allow unlocking the bootloader on boot
 ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported
 ADDITIONALS[RETRY]="${ADDITIONALS[RETRY]:-true}"                       # Auto download signatures
 
