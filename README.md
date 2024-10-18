@@ -6,6 +6,8 @@ THIS PROJECT IS IN ITS EARLY STAGES. USE AT YOUR OWN RISK. THE AUTHOR IS NOT RES
 
 ## Description
 
+This fork is only so that I can manage the signing keys for my own devices. You should use the original repo or fork your own instead of using this one
+
 PixeneOS (the name of this project) is GrapheneOS patched with additional features.
 
 The features include:
