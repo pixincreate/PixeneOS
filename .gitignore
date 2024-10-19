@@ -12,3 +12,6 @@
 
 # Python virtual environment
 venv
+
+# nix-direnv evaluations
+.direnv
