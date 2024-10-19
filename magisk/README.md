@@ -2,7 +2,7 @@
 
 At present, only unofficial Magisk is supported. Visit [info](#info) for more details.
 
-Set this URL as OTA server URL in Custota on your device.
+Set [this](https://pixincreate.github.io/PixeneOS/magisk/) URL as OTA server URL in Custota on your device.
 See Custota [usage](https://github.com/chenxiaolong/Custota#usage) for more info.
 
 ## Info
