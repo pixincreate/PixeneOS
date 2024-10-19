@@ -209,7 +209,7 @@ jobs:
           root=${{ github.event.inputs.root }}
           
           # Create `magisk` and `rootless` directories if they don't exist
-          mkdir -p "${FLAVOR}"
+          mkdir -p "${FLAVOR[@]}"
           
           # Switch to gh-pages branch
           git checkout gh-pages
