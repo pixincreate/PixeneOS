@@ -13,10 +13,9 @@ This tool offers many features which are highly dependent on the upstream projec
 - [MSD](https://github.com/chenxiaolong/MSD)
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
-### Note
-
-1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project solely created for personal use
-2. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
+>[!NOTE]
+> 1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project solely created for personal use
+> 2. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
 
 ## Requirements
 
@@ -67,7 +66,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 >[!IMPORTANT]
 > `Factory image` and `OTA image` are 2 different things. We deal with **OTA images** here.
 
-#### Detailed instructions
+### Detailed instructions
 
 1. Fastboot version must be `34` or newer. `35` or above is recommended as older versions are known to have bugs that prevent commands like `fastboot flashall` from running.
 
@@ -166,7 +165,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
 10. To install future OS, Magisk, or KernelSU updates, see the [updates section](#updates).
 
-#### Using root
+### Using root
 
 Rooting, from security point of view is **not** recommended. But that should not stop a power user from using it.
 
@@ -183,7 +182,7 @@ KernelSU does have some parts like `ksud`'s sources closed which makes it inappr
 >[!NOTE]
 > For Magisk preinit, see [Magisk preinit](#magisk-preinit)
 
-##### Magisk preinit
+### Magisk preinit
 
 Magisk versions 25211 and newer require a writable partition for storing custom SELinux rules that need to be accessed during early boot stages. This can only be determined on a real device, so avbroot requires the partition to be explicitly specified via `--magisk-preinit-device <name>`. To find the partition name:
 
@@ -217,7 +216,7 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
 
 If it's not possible to run the Magisk app on the target device (eg. device is currently unbootable), patch and flash the OTA once using `--ignore-magisk-warnings`, follow these steps, and then repatch and reflash the OTA with `--magisk-preinit-device <name>`.
 
-#### Updates
+### Updates
 
 Updates can be done by patching (or re-patching) the OTA by using `adb sideload`:
 
@@ -229,7 +228,7 @@ PixeneOS leverages Custota:
 1. Hence, it is advisable to [disable the system updater app](https://github.com/chenxiaolong/avbroot#ota-updates)
 2. Open Custota and set the OTA server URL to point to PixeneOS OTA server: https://pixincreate/github.io/PixeneOS/<rootless/magisk>
 
-### Tool usage
+## Tool usage
 
 Linux based Operating System is recommended.
 
@@ -265,14 +264,14 @@ To setup automated release, below mentioned variables needs to be added in the G
 
 It does so, by creating a GitHub [release](https://github.com/pixincreate/PixeneOS/releases) and then update the release URL in magisk / rootless `json` under `gh-pages` branch.
 
-##### Hop between root and rootless
+### Hop between root and rootless
 
 - In order to remove root, you can change to the `rootless` flavor.
   - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/rootless/
 - In order to add root, you can change to the `magisk` flavor.
   - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/magisk/
 
-#### Commands
+### Commands
 
 - Execute the following command to see the list of available commands and other helpful information:
 
@@ -313,7 +312,7 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
   . src/<file>.sh && <function_name>
   ```
 
-### Reverting to stock
+## Reverting back to stock
 
 To stop using PixeneOS and revert back to using stock GrapheneOS or firmware:
 
