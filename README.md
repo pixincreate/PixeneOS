@@ -15,14 +15,14 @@ This tool offers many features which are highly dependent on the upstream projec
 
 ### Note
 
-1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project for personal use
+1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project solely created for personal use
 2. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
 
 ## Requirements
 
 In order to use this project, you need the following (most of them will be taken care by the script itself except for `git` and `python`):
 
-- A Linux machine. You can use WSL or a VM if other operating systems
+- A Linux machine. You can use `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) if other operating systems
 - Tools (needs to be in the path):
   - `git`
   - `python`
@@ -44,15 +44,15 @@ In order to use this project, you need the following (most of them will be taken
 
 In short, this repository is a server.
 
-[Release.yml](.github/workflows/release.yml) initially checks if a build exist already. If only rootless flavor exist and user opted for rooted flavor, it builds it and vice versa. If a version has got both the flavor for a specific device, then it skips the build. It is not recommended to force a new build for the same version.
+[Release.yml](.github/workflows/release.yml) initially checks if a build exist already. If only `rootless` flavor exist and user opted for rooted (`magisk`) flavor, it builds it and vice versa. If a specific version has got both the flavor for a specific device, then it skips the build. It is not recommended to force a new build for the same version (unsupported at present).
 
-The workflow then calls the build script (can also be run locally in your machine; linux machine is preferred as it is the only platform this project is known to work and others are untested) which downloads all the [requirements](#requirements) mentioned above and patches the OTA by putting your signing key and installing the additional packages as mentioned in [features section](#features) and generates the output.
+The `workflow` then calls the build script (can also be run locally in your machine; linux machine is preferred as it is the only platform this project is known to work and others are untested) which downloads all the [requirements](#requirements) mentioned above and patches the `OTA` by putting your signing key and installing the additional packages as mentioned in [features section](#features) and generates the output.
 
 The patched OTA is then released and will be available in the [releases section](https://github.com/pixincreate/PixeneOS/releases).
 
 Once the patched OTA is released, the server branch is then updated depending on the flavor selected (`rootless` is the default)
 
-As mentioned in the beginning, OTA will have [Custota](https://github.com/chenxiaolong/Custota) package installed during the patch. The user should add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch to receive the OTA update.
+As mentioned in the beginning, OTA will have [Custota](https://github.com/chenxiaolong/Custota) package installed during the patch. The user should add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch to receive the future OTA updates.
 
 ## Usage
 
@@ -69,13 +69,13 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
 #### Detailed instructions
 
-1. Fastboot version must be `34` or newer. `35` or above is recommended as older versions have bugs that prevent commands like `fastboot flashall` from running.
+1. Fastboot version must be `34` or newer. `35` or above is recommended as older versions are known to have bugs that prevent commands like `fastboot flashall` from running.
 
   ```shell
   fastboot --version
   ```
 
-2. Reboot into fastboot mode and unlock the bootloader if not already. **This will trigger a data wipe.** So make sure that you've your data backed up somewhere else already.
+2. Reboot into `fastboot` mode and unlock the bootloader if not already. **This will trigger a data wipe.** It is important to make sure that the data is backed up somewhere else prior to unlocking the `bootloader`.
 
   ```shell
   fastboot flashing unlock
@@ -161,7 +161,8 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
   Confirm by pressing volume down and then power. Then reboot.
 
-  Remember: **Do not uncheck `OEM unlocking`!**
+>[!IMPORTANT]
+>**Do not uncheck `OEM unlocking`!**
 
 10. To install future OS, Magisk, or KernelSU updates, see the [updates section](#updates).
 
@@ -221,7 +222,7 @@ If it's not possible to run the Magisk app on the target device (eg. device is c
 Updates can be done by patching (or re-patching) the OTA by using `adb sideload`:
 
 1. Reboot to recovery mode. If the screen is stuck at `No command` message, press Volume up while holding Power button. It should open the recovery menu
-2. Sideload the patched OTA with `adb sideload` by usign volume buttons to toggle to `Apply update from ADB` which can be confirmed by pressing the power button
+2. Sideload the patched OTA with `adb sideload` by using volume buttons to toggle to `Apply update from ADB` which can be confirmed by pressing the power button
 
 PixeneOS leverages Custota:
 
@@ -241,7 +242,7 @@ To get started, clone / fork the repository and:
   . src/main.sh
   ```
 
-  `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the toml file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
+  `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the `env.toml` file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
 
 >[!IMPORTANT]
 > Make sure that `env.toml` file exist in root of the project.
@@ -316,7 +317,7 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
 
 To stop using PixeneOS and revert back to using stock GrapheneOS or firmware:
 
-1. Reboot into fastboot mode and unlock the bootloader. **This will trigger a data wipe.** Make sure that you have your data backed up to elsewhere before proceeding further.
+1. Reboot into fastboot mode and unlock the bootloader. **This will trigger a data wipe.** Make sure that the data is backed up before proceeding further in order to not lose data.
 
 2. Erase the custom AVB public key:
 
