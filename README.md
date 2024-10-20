@@ -61,7 +61,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is a **must*
 
 To start with, the device must have an unpatched version of GrapheneOS installed. The version must match with the one taken from PixeneOS.
 
-It is recommended ot start with version before the latest to make sure that OTA is working before setting other things up.
+It is recommended to start with version before the latest to make sure that OTA is working before setting other things up.
 
 >[!IMPORTANT]
 > `Factory image` and `OTA image` are 2 different things. We deal with **OTA images** here.
