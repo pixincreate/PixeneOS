@@ -488,7 +488,8 @@ function help() {
 Usage: source src/<file>.sh [functions] [arguments]
 functions:
   - url_constructor        Run the URL Constructor function
-    - arguments            tool_name
+    - arguments            Supported tool name.
+                           Check 'supported_tools' for more info
   - generate_keys          Generate keys
   - help                   Show this help message
   - check_toml_env         Check TOML environment
