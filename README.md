@@ -100,6 +100,13 @@ To setup automated release, below mentioned variables needs to be added in the G
 
 It does so, by creating a GitHub [release](https://github.com/pixincreate/PixeneOS/releases) and then update the release URL in magisk / rootless `json` under `gh-pages` branch.
 
+##### Hop between root and rootless
+
+- In order to remove root, you can change to the `rootless` flavor.
+  - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/rootless/
+- In order to add root, you can change to the `magisk` flavor.
+  - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/magisk/
+
 #### Commands
 
 - Execute the following command to see the list of available commands and other helpful information:
