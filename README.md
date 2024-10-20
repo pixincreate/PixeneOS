@@ -155,9 +155,9 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
    Confirm by pressing volume down and then power. Then reboot.
 
-> [!IMPORTANT]
->
-> **Do not uncheck `OEM unlocking`!**
+   > [!IMPORTANT]
+   >
+   > **Do not uncheck `OEM unlocking`!**
 
 10. For future updates, see the [updates section](#updates).
 
@@ -235,21 +235,21 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
 2. Modify `env.toml` to set environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
 
+   > [!IMPORTANT]
+   >
+   > Make sure that `env.toml` file exist in root of the project.
+
 3. Run the program end-to-end:
 
    ```shell
    . src/main.sh
    ```
 
+   > [!NOTE]
+   >
+   > Running the program end-to-end will only generate the patched OTA package locally and will not push it to the server (server branch that contains the json file which is read by the Custota).
+
 `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the `env.toml` file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
-
-> [!IMPORTANT]
->
-> Make sure that `env.toml` file exist in root of the project.
-
-> [!NOTE]
->
-> Running the program end-to-end will only generate the patched OTA package locally and will not push it to the server (server branch that contains the json file which is read by the Custota).
 
 To make the patched OTA available to the device, it needs to be hosted on the server. PixeneOS uses GitHub for pushing updates, handled by [release.yml](.github/workflows/release.yml).
 
@@ -295,9 +295,9 @@ To set up automated release, add the following variables in GitHub secrets:
 
   This command will generate the AVB keys and store them in `.keys` directory.
 
-> [!NOTE]
->
-> For security reasons, `.keys` directory will **not** be pushed to your GitHub repository.> Execute `setup_hooks.sh` to install a pre-commit hook that will prevent `.keys` directory from being pushed.
+  > [!NOTE]
+  >
+  > For security reasons, `.keys` directory will **not** be pushed to your GitHub repository.> Execute `setup_hooks.sh` to install a pre-commit hook that will prevent `.keys` directory from being pushed.
 
 - To create and make the release:
 
