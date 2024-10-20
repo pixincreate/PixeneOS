@@ -77,10 +77,10 @@ To get started, clone / fork the repository and:
   source src/main.sh
   ```
 
-  > [!IMPORTANT]
-  > Make sure that `env.toml` file exist in root of the project.
-
   `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the toml file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
+
+>[!IMPORTANT]
+> Make sure that `env.toml` file exist in root of the project.
 
 >[!NOTE]
 > Executing the program end to end will **only** generate the patched OTA package in local and will not be pushed to the server (server branch that contains the json file which is read by the Custota).
@@ -125,9 +125,9 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
 
   This command will generate the AVB keys and store them in `.keys` directory.
 
-  >[!NOTE]
-  > For security reasons, `.keys` directory will **not** be pushed to your github repository.
-  > Execute `setup_hooks.sh` to install a pre-commit hook that will stop `.keys` directory from being pushed if tried.
+>[!NOTE]
+> For security reasons, `.keys` directory will **not** be pushed to your github repository.
+> Execute `setup_hooks.sh` to install a pre-commit hook that will stop `.keys` directory from being pushed if tried.
 
 - To create and make the release, execute the following command:
 
