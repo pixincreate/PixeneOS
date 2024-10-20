@@ -2,7 +2,7 @@
 
 ## Description
 
-PixeneOS is a bash script for patching GrapheneOS OTA images with custom modules that gives you additional features.
+PixeneOS is a `shell` script for patching GrapheneOS OTA (Over The Air) images with custom modules that gives you additional features.
 This tool offers many features which are highly dependent on the upstream projects.
 
 ## Features
@@ -38,7 +38,7 @@ In order to use this project, you need the following (most of them will be taken
 - Dependencies:
   - `e2fsprogs`
   - `pkg-config`
-  - `tomlkit` -- a python dependency
+  - `tomlkit` -- a `Python` dependency
 
 ## Working
 
@@ -65,25 +65,25 @@ To start with, the device must have an unpatched version of GrapheneOS installed
 It is recommended ot start with version before the latest to make sure that OTA is working before setting other things up.
 
 >[!IMPORTANT]
-> Factory image and OTA image are 2 different things. We deal with **OTA images** here.
+> `Factory image` and `OTA image` are 2 different things. We deal with **OTA images** here.
 
 #### Detailed instructions
 
 1. Fastboot version must be `34` or newer. `35` or above is recommended as older versions have bugs that prevent commands like `fastboot flashall` from running.
 
-  ```bash
+  ```shell
   fastboot --version
   ```
 
 2. Reboot into fastboot mode and unlock the bootloader if not already. **This will trigger a data wipe.** So make sure that you've your data backed up somewhere else already.
 
-  ```bash
+  ```shell
   fastboot flashing unlock
   ```
 
 3. When setting PixeneOS up for the first time, the device must already be running the correct OS. Flash the original unpatched OTA or factory image if needed.
 
-  ```bash
+  ```shell
   bsdtar xvf DEVICE_NAME-factory-VERSION.zip # tar on windows and mac
   ./flash-all.sh # or .bat on windows
   ```
@@ -92,7 +92,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
   Extract the partition images from the patched OTA that are different from the original.
 
-  ```bash
+  ```shell
   avbroot ota extract \
       --input /path/to/ota.zip.patched \
       --directory extracted \
@@ -105,7 +105,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
   For sh/bash/zsh (Linux, macOS, WSL):
 
-  ```bash
+  ```shell
   export ANDROID_PRODUCT_OUT=extracted
   ```
 
@@ -123,7 +123,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
 6. Flash the partition images that were extracted.
 
-  ```bash
+  ```shell
   fastboot flashall --skip-reboot
   ```
 
@@ -133,7 +133,7 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
 7. Set up the custom AVB public key in the bootloader after rebooting from fastbootd to bootloader.
 
-  ```bash
+  ```shell
   fastboot reboot-bootloader
   fastboot erase avb_custom_key
   fastboot flash avb_custom_key /path/to/avb_pkmd.bin
@@ -143,19 +143,19 @@ It is recommended ot start with version before the latest to make sure that OTA 
 
   Install the Magisk or KernelSU app and run the following command:
 
-  ```bash
+  ```shell
   adb shell su -c 'dmesg | grep libfs_avb'
   ```
 
   If AVB is working properly, the following message should be printed out:
 
-  ```bash
+  ```shell
   init: [libfs_avb]Returning avb_handle with status: Success
   ```
 
 9. Reboot back into fastboot and lock the bootloader. This will trigger a data wipe again.
 
-  ```bash
+  ```shell
   fastboot flashing lock
   ```
 
@@ -188,7 +188,7 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
 
 1. Extract the boot image from the original/unpatched OTA:
 
-    ```bash
+    ```shell
     avbroot ota extract \
         --input /path/to/ota.zip \
         --directory . \
@@ -205,7 +205,7 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
 
     Alternatively, avbroot can print out what Magisk detected by running:
 
-    ```bash
+    ```shell
     avbroot boot magisk-info \
         --image magisk_patched-*.img
     ```
@@ -237,8 +237,8 @@ To get started, clone / fork the repository and:
 - Modify `env.toml` file to set the environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
 - To run the program E2E (end to end), execute the following command:
 
-  ```bash
-  source src/main.sh
+  ```shell
+  . src/main.sh
   ```
 
   `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the toml file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
@@ -275,23 +275,23 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
 
 - Execute the following command to see the list of available commands and other helpful information:
 
-  ```bash
-  source src/util_functions.sh && help
+  ```shell
+  . src/util_functions.sh && help
   ```
 
   `help` command will display the help message.
 
 - Execute the following command to see the list of supported tools:
 
-  ```bash
-  source src/util_functions.sh && supported_tools
+  ```shell
+  . src/util_functions.sh && supported_tools
   ```
   `supported_tools` command will display the list of tools that are supported.
 
 - To generate AVB keys, execute the following command:
 
-  ```bash
-  source src/util_functions.sh && generate_keys
+  ```shell
+  . src/util_functions.sh && generate_keys
   ```
 
   This command will generate the AVB keys and store them in `.keys` directory.
@@ -302,14 +302,14 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
 
 - To create and make the release, execute the following command:
 
-  ```bash
-  source src/util_functions.sh && create_and_make_release
+  ```shell
+  . src/util_functions.sh && create_and_make_release
   ```
 
 - To call individual functions / commands, execute the commands in the following manner:
 
-  ```bash
-  source src/<file>.sh && <function_name>
+  ```shell
+  . src/<file>.sh && <function_name>
   ```
 
 ### Reverting to stock
@@ -320,7 +320,7 @@ To stop using PixeneOS and revert back to using stock GrapheneOS or firmware:
 
 2. Erase the custom AVB public key:
 
-  ```bash
+  ```shell
   fastboot erase avb_custom_key
   ```
 
