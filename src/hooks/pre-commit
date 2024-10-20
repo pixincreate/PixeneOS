@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if git diff --cached --name-only | grep -q '^\.keys/'; then
+  echo -e "Error: The \`.keys\` directory should not be committed as it contains your AVB keys!"
+  exit 1
+fi
