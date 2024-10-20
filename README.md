@@ -148,6 +148,20 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
   source src/<file>.sh && <function_name>
   ```
 
+### Reverting to stock
+
+To stop using PixeneOS and revert back to using stock GrapheneOS or firmware:
+
+1. Reboot into fastboot mode and unlock the bootloader. **This will trigger a data wipe.** Make sure that you have your data backed up to elsewhere before proceeding further.
+
+2. Erase the custom AVB public key:
+
+  ```bash
+  fastboot erase avb_custom_key
+  ```
+
+3. Flash the stock firmware
+
 ## License
 
 This project is licensed under the `MIT`. For more information, please refer to the [LICENSE](LICENSE) file.
