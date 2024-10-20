@@ -21,7 +21,7 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 
 To use this project, you need the following (most dependencies will be handled by the script, except for `git` and `python`):
 
-- A Linux machine (`WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can be used on other operating systems)
+- A Linux machine is recommended. `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can also be used instead
 - Tools (must be in the path):
   - `git`
   - `python`
