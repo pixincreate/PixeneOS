@@ -94,6 +94,13 @@ function flag_check() {
 
 # Function to create and make the release called by main script
 function create_and_make_release() {
+  if [[ ! -d $WORKDIR ]]; then
+    echo -e "Error: $WORKDIR is non-existent. Downloading the tools..."
+
+    # Check for requirements and download them accordingly
+    check_and_download_dependencies
+  fi
+
   # Calls the download_ota function to download the OTA if not found
   download_ota
   # Calls the create_ota function to create the OTA
