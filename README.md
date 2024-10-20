@@ -48,8 +48,6 @@ This repository acts as a server.
 3. The patched OTA is released and available in the [releases section](https://github.com/pixincreate/PixeneOS/releases).
 4. The server branch is updated based on the selected flavor (`rootless` is the default).
 
-To receive future OTA updates, add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch.
-
 ## Usage
 
 ### Getting Started
@@ -223,6 +221,8 @@ PixeneOS leverages Custota:
 
 1. Disable the [system updater app](https://github.com/chenxiaolong/avbroot#ota-updates).
 2. Open Custota and set the OTA server URL to: https://pixincreate/github.io/PixeneOS/<rootless/magisk>
+
+For more info, refer to the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch.
 
 ## Tool Usage
 
