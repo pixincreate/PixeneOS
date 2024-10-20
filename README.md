@@ -2,8 +2,7 @@
 
 ## Description
 
-PixeneOS is a `shell` script for patching GrapheneOS OTA (Over The Air) images with custom modules that gives you additional features.
-This tool offers many features which are highly dependent on the upstream projects.
+PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) images with custom modules, providing additional features. This tool relies heavily on upstream projects for its functionality.
 
 ## Features
 
@@ -14,15 +13,15 @@ This tool offers many features which are highly dependent on the upstream projec
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
 >[!NOTE]
-> 1. This project is in no way affiliated with GrapheneOS or any of the projects mentioned above. This is a personal project solely created for personal use
-> 2. At the moment, the project only supports Linux given compatibility issues with other operating systems (`libsepol` is highly Linux specific)
+> 1. This project is not affiliated with GrapheneOS or any of the mentioned projects. It is a personal project for personal use.
+> 2. Currently, the project only supports Linux due to compatibility issues with other operating systems (`libsepol` is highly Linux-specific).
 
 ## Requirements
 
-In order to use this project, you need the following (most of them will be taken care by the script itself except for `git` and `python`):
+To use this project, you need the following (most dependencies will be handled by the script, except for `git` and `python`):
 
-- A Linux machine. You can use `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) if other operating systems
-- Tools (needs to be in the path):
+- A Linux machine (`WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can be used on other operating systems)
+- Tools (must be in the path):
   - `git`
   - `python`
   - `avbroot`
@@ -37,44 +36,40 @@ In order to use this project, you need the following (most of them will be taken
 - Dependencies:
   - `e2fsprogs`
   - `pkg-config`
-  - `tomlkit` -- a `Python` dependency
+  - `tomlkit` (Python dependency)
 
 ## Working
 
-In short, this repository is a server.
+This repository acts as a server.
 
-[Release.yml](.github/workflows/release.yml) initially checks if a build exist already. If only `rootless` flavor exist and user opted for rooted (`magisk`) flavor, it builds it and vice versa. If a specific version has got both the flavor for a specific device, then it skips the build. It is not recommended to force a new build for the same version (unsupported at present).
+1. [Release.yml](.github/workflows/release.yml) checks if a build already exists. If only the `rootless` flavor exists and the user opts for the `magisk` flavor, it builds it, and vice versa. If both flavors exist for a specific version and device, it skips the build.
+2. The workflow calls the build script, which downloads all the [requirements](#requirements) and patches the OTA by adding your signing key and installing the additional packages mentioned in the [features section](#features).
+3. The patched OTA is released and available in the [releases section](https://github.com/pixincreate/PixeneOS/releases).
+4. The server branch is updated based on the selected flavor (`rootless` is the default).
 
-The `workflow` then calls the build script which downloads all the [requirements](#requirements) mentioned above and patches the `OTA` by putting your signing key and installing the additional packages as mentioned in [features section](#features) and generates the output.
-
-The patched OTA is then released and will be available in the [releases section](https://github.com/pixincreate/PixeneOS/releases).
-
-Once the patched OTA is released, the server branch is then updated depending on the flavor selected (`rootless` is the default)
-
-As mentioned in the beginning, OTA will have [Custota](https://github.com/chenxiaolong/Custota) package installed during the patch. The user should add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch to receive the future OTA updates.
+To receive future OTA updates, add the OTA URL from the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch.
 
 ## Usage
 
-### Getting started
+### Getting Started
 
-Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is a **must** before proceeding with PixeneOS.
+Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential before proceeding with PixeneOS.
 
-To start with, the device must have an unpatched version of GrapheneOS installed. The version must match with the one taken from PixeneOS.
-
-It is recommended to start with version before the latest to make sure that OTA is working before setting other things up.
+1. Ensure the device has an unpatched version of GrapheneOS installed. The version must match the one from PixeneOS.
+2. Start with a version before the latest to ensure OTA functionality.
 
 >[!IMPORTANT]
-> `Factory image` and `OTA image` are 2 different things. We deal with **OTA images** here.
+> `Factory image` and `OTA image` are different. This project deals with **OTA images**.
 
-### Detailed instructions
+### Detailed Instructions
 
-1. Fastboot version must be `34` or newer. `35` or above is recommended as older versions are known to have bugs that prevent commands like `fastboot flashall` from running.
+1. Ensure Fastboot version is `34` or newer. `35` or above is recommended as older versions are known to have bugs that prevent commands like `fastboot flashall` from running.
 
   ```shell
   fastboot --version
   ```
 
-2. Reboot into `fastboot` mode and unlock the bootloader if not already. **This will trigger a data wipe.** It is important to make sure that the data is backed up somewhere else prior to unlocking the `bootloader`.
+2. Reboot into `fastboot` mode and unlock the bootloader if not already. **This will trigger a data wipe.** Ensure data is backed up.
 
   ```shell
   fastboot flashing unlock
@@ -83,11 +78,11 @@ It is recommended to start with version before the latest to make sure that OTA 
 3. When setting PixeneOS up for the first time, the device must already be running the correct OS. Flash the original unpatched OTA or factory image if needed.
 
   ```shell
-  bsdtar xvf DEVICE_NAME-factory-VERSION.zip # tar on windows and mac
-  ./flash-all.sh # or .bat on windows
+  bsdtar xvf DEVICE_NAME-factory-VERSION.zip # tar on Windows and macOS
+  ./flash-all.sh # or .bat on Windows
   ```
 
-4. Download the [OTA from the releases](https://github.com/pixincreate/PixeneOS/releases). Make sure that the version of the downloaded OTA matches the version of the one that is installed on the device.
+4. Download the [OTA from the releases](https://github.com/pixincreate/PixeneOS/releases). Ensure the version matches the installed version.
 
   Extract the partition images from the patched OTA that are different from the original.
 
@@ -98,7 +93,7 @@ It is recommended to start with version before the latest to make sure that OTA 
       --fastboot
   ```
 
-  If you prefer to extract and flash all OS partitions just to be safe, pass in `--all`.
+  To extract and flash all OS partitions, pass `--all`.
 
 5. Set the `ANDROID_PRODUCT_OUT` environment variable to the directory containing the extracted files.
 
@@ -120,13 +115,13 @@ It is recommended to start with version before the latest to make sure that OTA 
   set ANDROID_PRODUCT_OUT=extracted
   ```
 
-6. Flash the partition images that were extracted.
+6. Flash the partition images.
 
   ```shell
   fastboot flashall --skip-reboot
   ```
 
-  Note that this only flashes the OS partitions. The bootloader and modem/radio partitions are left untouched due to fastboot limitations. If they are not already up to date or if unsure, after fastboot completes, follow the steps in the [updates section](#updates) to sideload the patched OTA once. Sideloading OTAs always ensures that all partitions are up to date.
+  Note: This only flashes the OS partitions. The bootloader and modem/radio partitions are left untouched due to fastboot limitations. If they are not already up to date or if unsure, after fastboot completes, follow the steps in the [updates section](#updates) to sideload the patched OTA once. Sideloading OTAs always ensures that all partitions are up to date.
 
   Alternatively, for Pixel devices, running `flash-base.sh` from the factory image will also update the bootloader and modem.
 
@@ -138,21 +133,21 @@ It is recommended to start with version before the latest to make sure that OTA 
   fastboot flash avb_custom_key /path/to/avb_pkmd.bin
   ```
 
-8. **[Optional]** Before locking the bootloader, reboot into Android once to confirm that everything is properly signed.
+8. **[Optional]** Before locking the bootloader, reboot into Android to confirm proper signing.
 
-  Install the Magisk or KernelSU app and run the following command:
+  Install the Magisk or KernelSU app and run:
 
   ```shell
   adb shell su -c 'dmesg | grep libfs_avb'
   ```
 
-  If AVB is working properly, the following message should be printed out:
+  If AVB is working, you should see:
 
   ```shell
   init: [libfs_avb]Returning avb_handle with status: Success
   ```
 
-9. Reboot back into fastboot and lock the bootloader. This will trigger a data wipe again.
+9. Reboot into fastboot and lock the bootloader. This will trigger a data wipe.
 
   ```shell
   fastboot flashing lock
@@ -161,11 +156,11 @@ It is recommended to start with version before the latest to make sure that OTA 
   Confirm by pressing volume down and then power. Then reboot.
 
 >[!IMPORTANT]
->**Do not uncheck `OEM unlocking`!**
+> **Do not uncheck `OEM unlocking`!**
 
-10. To install future OS, Magisk, or KernelSU updates, see the [updates section](#updates).
+10. For future updates, see the [updates section](#updates).
 
-### Using root
+### Using Root
 
 Rooting, from security point of view is **not** recommended. But that should not stop a power user from using it.
 
@@ -182,7 +177,7 @@ KernelSU does have some parts like `ksud`'s sources closed which makes it inappr
 >[!NOTE]
 > For Magisk preinit, see [Magisk preinit](#magisk-preinit)
 
-### Magisk preinit
+### Magisk Preinit
 
 Magisk versions 25211 and newer require a writable partition for storing custom SELinux rules that need to be accessed during early boot stages. This can only be determined on a real device, so avbroot requires the partition to be explicitly specified via `--magisk-preinit-device <name>`. To find the partition name:
 
@@ -195,15 +190,15 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
         --boot-only
     ```
 
-2. Patch the boot image via the Magisk app. This **MUST** be done on the target device or a device of the same model! The partition name will be incorrect if patched from Magisk on a different device model.
+2. Patch the boot image via the Magisk app on the target device.
 
-    The Magisk app will print out a line like the following in the output:
+    The Magisk app will print out a line like:
 
     ```
     - Pre-init storage partition device ID: <name>
     ```
 
-    Alternatively, avbroot can print out what Magisk detected by running:
+    Alternatively, run:
 
     ```shell
     avbroot boot magisk-info \
@@ -214,28 +209,27 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
 
     Now that the partition name is known, it can be passed to avbroot when patching via `--magisk-preinit-device <name>`. The partition name should be saved somewhere for future reference since it's unlikely to change across Magisk updates.
 
-If it's not possible to run the Magisk app on the target device (eg. device is currently unbootable), patch and flash the OTA once using `--ignore-magisk-warnings`, follow these steps, and then repatch and reflash the OTA with `--magisk-preinit-device <name>`.
+If the device is unbootable, patch and flash the OTA once using `--ignore-magisk-warnings`, then repatch and reflash the OTA with `--magisk-preinit-device <name>`.
 
 ### Updates
 
-Updates can be done by patching (or re-patching) the OTA by using `adb sideload`:
+Updates can be done by patching (or re-patching) the OTA using `adb sideload`:
 
-1. Reboot to recovery mode. If the screen is stuck at `No command` message, press Volume up while holding Power button. It should open the recovery menu
+1. Reboot to recovery mode. If stuck at `No command`, press Volume up while holding Power button.
 2. Sideload the patched OTA with `adb sideload` by using volume buttons to toggle to `Apply update from ADB` which can be confirmed by pressing the power button
 
 PixeneOS leverages Custota:
 
-1. Hence, it is advisable to [disable the system updater app](https://github.com/chenxiaolong/avbroot#ota-updates)
-2. Open Custota and set the OTA server URL to point to PixeneOS OTA server: https://pixincreate/github.io/PixeneOS/<rootless/magisk>
+1. Disable the [system updater app](https://github.com/chenxiaolong/avbroot#ota-updates).
+2. Open Custota and set the OTA server URL to: https://pixincreate/github.io/PixeneOS/<rootless/magisk>
 
-## Tool usage
+## Tool Usage
 
-PixeneOS can also be run on your local machine. Linux machine is preferred as it is the only platform this project is known to work and others are untested.
+PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
-To get started, clone / fork the repository and:
-
-- Modify `env.toml` file to set the environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
-- To run the program E2E (end to end), execute the following command:
+1. Clone or fork the repository.
+2. Modify `env.toml` to set environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,).
+3. Run the program end-to-end:
 
   ```shell
   . src/main.sh
@@ -247,48 +241,43 @@ To get started, clone / fork the repository and:
 > Make sure that `env.toml` file exist in root of the project.
 
 >[!NOTE]
-> Executing the program end to end will **only** generate the patched OTA package in local and will not be pushed to the server (server branch that contains the json file which is read by the Custota).
+> Running the program end-to-end will only generate the patched OTA package locally and will not push it to the server (server branch that contains the json file which is read by the Custota).
 
-In order to make the patched OTA available to the device, it needs to be hosted in the server. PixeneOS uses GitHub itself as the server for pushing updates and is handled by the [release.yml](.github/workflows/release.yml).
+To make the patched OTA available to the device, it needs to be hosted on the server. PixeneOS uses GitHub for pushing updates, handled by [release.yml](.github/workflows/release.yml).
 
-To setup automated release, below mentioned variables needs to be added in the GitHub secrets:
+To set up automated release, add the following variables in GitHub secrets:
 
-- `EMAIL`: Email address that is associated to the GitHub account (example: `user@example.com`)
-- Base64 encoded keys (Check [commands section](#commands) to generate keys if not done already)
+- `EMAIL`: Email address associated with the GitHub account.
+- Base64 encoded keys:
   - `AVB_KEY`
   - `CERT_OTA`
   - `OTA_KEY`
-- Passphrases used to generate the keys
+- Passphrases used to generate the keys:
   - `PASSPHRASE_AVB`
   - `PASSPHRASE_OTA`
 
-It does so, by creating a GitHub [release](https://github.com/pixincreate/PixeneOS/releases) and then update the release URL in magisk / rootless `json` under `gh-pages` branch.
+### Hop Between Root and Rootless
 
-### Hop between root and rootless
-
-- In order to remove root, you can change to the `rootless` flavor.
-  - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/rootless/
-- In order to add root, you can change to the `magisk` flavor.
-  - To do so, set the following URL in custota: https://pixincreate.github.io/PixeneOS/magisk/
+- To remove root, set the following URL in Custota: https://pixincreate.github.io/PixeneOS/rootless/
+- To add root, set the following URL in Custota: https://pixincreate.github.io/PixeneOS/magisk/
 
 ### Commands
 
-- Execute the following command to see the list of available commands and other helpful information:
+- To see the list of available commands:
 
   ```shell
   . src/util_functions.sh && help
   ```
 
   `help` command will display the help message.
-
-- Execute the following command to see the list of supported tools:
+- To see the list of supported tools:
 
   ```shell
   . src/util_functions.sh && supported_tools
   ```
   `supported_tools` command will display the list of tools that are supported.
 
-- To generate AVB keys, execute the following command:
+- To generate AVB keys:
 
   ```shell
   . src/util_functions.sh && generate_keys
@@ -297,45 +286,43 @@ It does so, by creating a GitHub [release](https://github.com/pixincreate/Pixene
   This command will generate the AVB keys and store them in `.keys` directory.
 
 >[!NOTE]
-> For security reasons, `.keys` directory will **not** be pushed to your github repository.
-> Execute `setup_hooks.sh` to install a pre-commit hook that will stop `.keys` directory from being pushed if tried.
+> For security reasons, `.keys` directory will **not** be pushed to your GitHub repository.> Execute `setup_hooks.sh` to install a pre-commit hook that will prevent `.keys` directory from being pushed.
 
-- To create and make the release, execute the following command:
+- To create and make the release:
 
   ```shell
   . src/util_functions.sh && create_and_make_release
   ```
 
-- To call individual functions / commands, execute the commands in the following manner:
+- To call individual functions/commands:
 
   ```shell
   . src/<file>.sh && <function_name>
   ```
 
-## Reverting back to stock
+## Reverting Back to Stock
 
-To stop using PixeneOS and revert back to using stock GrapheneOS or firmware:
+To revert to stock GrapheneOS or firmware:
 
-1. Reboot into fastboot mode and unlock the bootloader. **This will trigger a data wipe.** Make sure that the data is backed up before proceeding further in order to not lose data.
-
+1. Reboot into fastboot mode and unlock the bootloader. **This will trigger a data wipe**. Ensure data is backed up.
 2. Erase the custom AVB public key:
 
   ```shell
   fastboot erase avb_custom_key
   ```
 
-3. Flash the stock firmware
+2. Flash the stock firmware.
 
 ## License
 
 This project is licensed under the `MIT`. For more information, please refer to the [LICENSE](LICENSE) file.
 
-Dependencies that are downloaded from their respective repositories and are licensed under their respective licenses. Please refer to the respective repositories for more information.
+Dependencies are downloaded from their respective repositories and are licensed under their respective licenses. Refer to the respective repositories for more information.
 
 ## Credits
 
 - [GrapheneOS](https://grapheneos.org) -- for the OS
-- [Chenxiaolong](https://github.com/chenxiaolong) -- for the additional features and tools
+- [Chenxiaolong](https://github.com/chenxiaolong) -- for additional features and tools
   - [afsr](https://github.com/chenxiaolong/afsr)
   - [avbroot](https://github.com/chenxiaolong/avbroot)
   - [BCR](https://github.com/chenxiaolong/BCR)
@@ -343,7 +330,7 @@ Dependencies that are downloaded from their respective repositories and are lice
   - [MSD](https://github.com/chenxiaolong/MSD)
   - [my-avbroot-setup](https://github.com/chenxiaolong/my-avbroot-setup)
   - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
-- [Rooted-Graphene](https://github.com/schnatterer/rooted-graphene) -- for the motivation and inspiration to re-invent the wheel
+- [Rooted-Graphene](https://github.com/schnatterer/rooted-graphene) -- for motivation and inspiration
 
 ## Disclaimer
 
