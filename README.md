@@ -13,7 +13,6 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
 > [!NOTE]
->
 > 1. This project is not affiliated with GrapheneOS or any of the mentioned projects. It is a personal project for personal use.
 > 2. Currently, the project only supports Linux due to compatibility issues with other operating systems (`libsepol` is highly Linux-specific).
 
@@ -58,7 +57,6 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 2. Start with a version before the latest to ensure OTA functionality.
 
 > [!IMPORTANT]
->
 > `Factory image` and `OTA image` are different. This project deals with **OTA images**.
 
 ### Detailed Instructions
@@ -155,7 +153,8 @@ fastboot flashing lock
 
 Confirm by pressing volume down and then power. Then reboot.
 
-> [!IMPORTANT] > **Do not uncheck `OEM unlocking`!**
+> [!IMPORTANT]
+> **Do not uncheck `OEM unlocking`!**
 
 10. For future updates, see the [updates section](#updates).
 
