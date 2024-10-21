@@ -219,7 +219,7 @@ Updates can be done by patching (or re-patching) the OTA using `adb sideload`:
 PixeneOS leverages Custota:
 
 1. Disable the [system updater app](https://github.com/chenxiaolong/avbroot#ota-updates).
-2. Open Custota and set the OTA server URL to: `https://pixincreate/github.io/PixeneOS/<rootless/magisk>`
+2. Open Custota and set the OTA server URL to: `https://pixincreate.github.io/PixeneOS/<rootless/magisk>`
 
 For more info, refer to the [server](https://github.com/pixincreate/PixeneOS/tree/gh-pages) branch.
 
