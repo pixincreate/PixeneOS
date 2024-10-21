@@ -13,7 +13,6 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
 > [!NOTE]
->
 > 1. This project is not affiliated with GrapheneOS or any of the mentioned projects. It is a personal project for personal use.
 > 2. Currently, the project only supports Linux due to compatibility issues with other operating systems (`libsepol` is highly Linux-specific).
 
@@ -58,7 +57,6 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 2. Start with a version before the latest to ensure OTA functionality.
 
 > [!IMPORTANT]
->
 > `Factory image` and `OTA image` are different. This project deals with **OTA images**.
 
 ### Detailed Instructions
@@ -155,9 +153,8 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
    Confirm by pressing volume down and then power. Then reboot.
 
-   > [!IMPORTANT]
-   >
-   > **Do not uncheck `OEM unlocking`!**
+> [!CAUTION]
+> **Do not uncheck `OEM unlocking`!**
 
 10. For future updates, see the [updates section](#updates).
 
@@ -176,7 +173,6 @@ Using the [fork of Magisk that supports Zygisk](https://github.com/pixincreate/M
 KernelSU does have some parts like `ksud`'s sources closed which makes it inappropriate for a tool that has so much influence on the device.
 
 > [!NOTE]
->
 > For Magisk preinit, see [Magisk preinit](#magisk-preinit)
 
 ### Magisk Preinit
@@ -235,9 +231,8 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
 2. Modify `env.toml` to set environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
 
-   > [!IMPORTANT]
-   >
-   > Make sure that `env.toml` file exist in root of the project.
+> [!IMPORTANT]
+> Make sure that `env.toml` file exist in root of the project.
 
 3. Run the program end-to-end:
 
@@ -245,9 +240,8 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
    . src/main.sh
    ```
 
-   > [!NOTE]
-   >
-   > Running the program end-to-end will only generate the patched OTA package locally and will not push it to the server (server branch that contains the json file which is read by the Custota).
+> [!NOTE]
+> Running the program end-to-end will only generate the patched OTA package locally and will not push it to the server (server branch that contains the json file which is read by the Custota).
 
 `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the `env.toml` file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
 
@@ -295,9 +289,8 @@ To set up automated release, add the following variables in GitHub secrets:
 
   This command will generate the AVB keys and store them in `.keys` directory.
 
-  > [!NOTE]
-  >
-  > For security reasons, `.keys` directory will **not** be pushed to your GitHub repository.> Execute `setup_hooks.sh` to install a pre-commit hook that will prevent `.keys` directory from being pushed.
+> [!WARNING]
+> For security reasons, `.keys` directory will **not** be pushed to your GitHub repository.> Execute `setup_hooks.sh` to install a pre-commit hook that will prevent `.keys` directory from being pushed.
 
 - To create and make the release:
 
