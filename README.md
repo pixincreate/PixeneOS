@@ -318,6 +318,21 @@ To revert to stock GrapheneOS or firmware:
 
 3. Flash the stock firmware.
 
+## More information
+
+To know more about the projects used in this repository, refer to the following links:
+
+- [GrapheneOS](https://grapheneos.org)
+- [MSD](https://github.com/chenxiaolong/MSD)
+- [BCR](https://github.com/chenxiaolong/BCR)
+- [Custota](https://github.com/chenxiaolong/Custota)
+- [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
+- [AVBRoot](https://github.com/chenxiaolong/AVBRoot)
+- [AFSR](https://github.com/chenxiaolong/AFSR)
+- [AlterInstaller](https://github.com/chenxiaolong/AlterInstaller)
+- [Magisk](https://github.com/pixincreate/Magisk)
+- [Rooted Graphene](https://github.com/schnatterer/rooted-graphene)
+
 ## License
 
 This project is licensed under the `MIT`. For more information, please refer to the [LICENSE](LICENSE) file.
