@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "full": {
+    "location_ota": "https://github.com/pixincreate/PixeneOS/releases/download/2024120400/caiman-2024120400-rootless-6bb1f7b.zip",
+    "location_csig": "https://github.com/pixincreate/PixeneOS/releases/download/2024120400/caiman-2024120400-rootless-6bb1f7b.zip.csig"
+  }
+}
