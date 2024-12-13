@@ -8,58 +8,74 @@
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[AVBROOT\\]=\\\"\\$\\{VERSION\\[AVBROOT\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[AVBROOT\\]=\\"\\$\\{VERSION\\[AVBROOT\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/avbroot",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[CUSTOTA\\]=\\\"\\$\\{VERSION\\[CUSTOTA\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[CUSTOTA\\]=\\"\\$\\{VERSION\\[CUSTOTA\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/Custota",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[ALTERINSTALLER\\]=\\\"\\$\\{VERSION\\[ALTERINSTALLER\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[ALTERINSTALLER\\]=\\"\\$\\{VERSION\\[ALTERINSTALLER\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/AlterInstaller",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[MSD\\]=\\\"\\$\\{VERSION\\[MSD\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[MSD\\]=\\"\\$\\{VERSION\\[MSD\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/MSD",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[BCR\\]=\\\"\\$\\{VERSION\\[BCR\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[BCR\\]=\\"\\$\\{VERSION\\[BCR\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/BCR",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[CHARGELIMIT\\]=\\\"\\$\\{VERSION\\[CHARGELIMIT\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[CHARGELIMIT\\]=\\"\\$\\{VERSION\\[CHARGELIMIT\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/CHARGELIMIT",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[OEMUNLOCKONBOOT\\]=\\\"\\$\\{VERSION\\[OEMUNLOCKONBOOT\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[OEMUNLOCKONBOOT\\]=\\"\\$\\{VERSION\\[OEMUNLOCKONBOOT\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/OEMUnlockOnBoot",
-      datasourceTemplate: "github-releases"
+      datasourceTemplate: "github-releases",
     },
     {
       customType: "regex",
       fileMatch: ["src/declarations.sh"],
-      matchStrings: [ "VERSION\\[AFSR\\]=\\\"\\$\\{VERSION\\[AFSR\\]:-(?<currentValue>.*?)\\}\"" ],
+      matchStrings: [
+        'VERSION\\[AFSR\\]=\\"\\$\\{VERSION\\[AFSR\\]:-(?<currentValue>.*?)\\}"',
+      ],
       depNameTemplate: "chenxiaolong/afsr",
-      datasourceTemplate: "github-releases"
-    }
-  ]
+      datasourceTemplate: "github-releases",
+    },
+  ],
 }
