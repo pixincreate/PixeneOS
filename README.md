@@ -13,6 +13,7 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
 
 > [!NOTE]
+>
 > 1. This project is not affiliated with GrapheneOS or any of the mentioned projects. It is a personal project for personal use.
 > 2. Currently, the project only supports Linux due to compatibility issues with other operating systems (`libsepol` is highly Linux-specific).
 

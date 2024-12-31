@@ -475,7 +475,7 @@ function supported_tools() {
     echo "${tools[@]}"
     return
   fi
-  
+
   echo -e "Supported tools:"
   for tool in "${tools[@]}"; do
     echo -e "- ${tool}"
