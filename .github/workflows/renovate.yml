@@ -5,13 +5,13 @@ name: Renovate
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
       logLevel:
         description: Log levels based on severity. DEBUG, INFO, WARN, ERROR, FATAL
         required: false
-        default: "info"
+        default: 'info'
         type: string
   push:
     branches:
@@ -31,5 +31,5 @@ jobs:
           # https://docs.renovatebot.com/modules/platform/github/#running-using-a-fine-grained-token
           token: ${{ secrets.RENOVATE }}
         env:
-          LOG_LEVEL: ${{ github.event.inputs.logLevel || 'info' }}
-          RENOVATE_REPOSITORIES: ${{ github.repository }}
+            LOG_LEVEL: ${{ github.event.inputs.logLevel || 'info' }}
+            RENOVATE_REPOSITORIES: ${{ github.repository }}
