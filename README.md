@@ -27,10 +27,11 @@ To use this project, you need the following (most dependencies will be handled b
   - `avbroot`
   - `afsr`
   - `custota-tool`
+  - `Magisk` (optional)
 - Modules:
   - `BCR`
+  - `Charge Limit`
   - `Custota`
-  - `Magisk`
   - `MSD`
   - `OEMUnlockOnBoot`
 - Dependencies:
@@ -153,8 +154,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
    Confirm by pressing volume down and then power. Then reboot.
 
-> [!CAUTION]
-> **Do not uncheck `OEM unlocking`!**
+> [!CAUTION] > **Do not uncheck `OEM unlocking`!**
 
 10. For future updates, see the [updates section](#updates).
 
@@ -322,15 +322,16 @@ To revert to stock GrapheneOS or firmware:
 
 To know more about the projects used in this repository, refer to the following links:
 
-- [GrapheneOS](https://grapheneos.org)
-- [MSD](https://github.com/chenxiaolong/MSD)
-- [BCR](https://github.com/chenxiaolong/BCR)
-- [Custota](https://github.com/chenxiaolong/Custota)
-- [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
-- [AVBRoot](https://github.com/chenxiaolong/AVBRoot)
 - [AFSR](https://github.com/chenxiaolong/AFSR)
 - [AlterInstaller](https://github.com/chenxiaolong/AlterInstaller)
+- [AVBRoot](https://github.com/chenxiaolong/AVBRoot)
+- [BCR](https://github.com/chenxiaolong/BCR)
+- [ChargeLimit](https://github.com/chenxiaolong/ChargeLimit)
+- [Custota](https://github.com/chenxiaolong/Custota)
+- [GrapheneOS](https://grapheneos.org)
 - [Magisk](https://github.com/pixincreate/Magisk)
+- [MSD](https://github.com/chenxiaolong/MSD)
+- [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
 - [Rooted Graphene](https://github.com/schnatterer/rooted-graphene)
 
 ## License

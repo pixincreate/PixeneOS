@@ -2,7 +2,7 @@ name: Patch and Release OTA
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Check for update every 6 hours (UTC). GrapheneOS checks every 6 hours.
+    - cron: "0 */6 * * *" # Check for update every 6 hours (UTC). GrapheneOS checks every 6 hours.
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -158,7 +158,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12-dev'
+          python-version: "3.12-dev"
 
       - name: Setup Environment variables
         run: |
