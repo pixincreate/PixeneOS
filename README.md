@@ -55,7 +55,7 @@ This repository acts as a server.
 
 Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential before proceeding with PixeneOS.
 
-1. Ensure the device has an unpatched version of GrapheneOS installed. The version must match the one from PixeneOS.
+1. Ensure the device has an unpatched version of GrapheneOS installed. The version must match the one from PixeneOS. It is important to make sure that the version installed matches the version on PixeneOS
 2. Start with a version before the latest to ensure OTA functionality.
 
 > [!IMPORTANT]
