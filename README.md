@@ -82,7 +82,11 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
    ./flash-all.sh # or .bat on Windows
    ```
 
-4. Download the [OTA from the releases](https://github.com/pixincreate/PixeneOS/releases). Ensure the version matches the installed version.
+4. Proceed to the [patching section](#patching-grapheneos-cooking-pixeneos)
+
+#### Patching GrapheneOS (cooking PixeneOS)
+
+1. Download the [OTA from the releases](https://github.com/pixincreate/PixeneOS/releases). Ensure the version matches the installed version.
 
    Extract the partition images from the patched OTA that are different from the original.
 
@@ -95,7 +99,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
    To extract and flash all OS partitions, pass `--all`.
 
-5. Set the `ANDROID_PRODUCT_OUT` environment variable to the directory containing the extracted files.
+2. Set the `ANDROID_PRODUCT_OUT` environment variable to the directory containing the extracted files.
 
    For `sh`/`bash`/`zsh` (Linux, macOS, WSL):
 
@@ -115,7 +119,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
    set ANDROID_PRODUCT_OUT=extracted
    ```
 
-6. Flash the partition images.
+3. Flash the partition images.
 
    ```shell
    fastboot flashall --skip-reboot
@@ -125,7 +129,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
    Alternatively, for Pixel devices, running `flash-base.sh` from the factory image will also update the bootloader and modem.
 
-7. Set up the custom AVB public key in the bootloader after rebooting from fastbootd to bootloader.
+4. Set up the custom AVB public key in the bootloader after rebooting from fastbootd to bootloader.
 
    ```shell
    fastboot reboot-bootloader
@@ -133,7 +137,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
    fastboot flash avb_custom_key /path/to/avb_pkmd.bin
    ```
 
-8. **[Optional]** Before locking the bootloader, reboot into Android to confirm proper signing.
+5. **[Optional]** Before locking the bootloader, reboot into Android to confirm proper signing.
 
    Install the Magisk or KernelSU app and run:
 
@@ -147,7 +151,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
    init: [libfs_avb]Returning avb_handle with status: Success
    ```
 
-9. Reboot into fastboot and lock the bootloader. This will trigger a data wipe.
+6. Reboot into fastboot and lock the bootloader. This will trigger a data wipe.
 
    ```shell
    fastboot flashing lock
@@ -157,7 +161,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
 > [!CAUTION] > **Do not uncheck `OEM unlocking`!**
 
-10. For future updates, see the [updates section](#updates).
+7. For future updates, see the [updates section](#updates).
 
 ### Using Root
 
