@@ -59,9 +59,19 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 2. Start with a version before the latest to ensure OTA functionality.
 
 > [!IMPORTANT]
-> `Factory image` and `OTA image` are different. This project deals with **OTA images**.
+> `Factory image` and `OTA image` are different. AVBRoot is meant to deal with **OTA images**. So does PixeneOS.
 
 ### Detailed Instructions
+
+#### Web Install
+
+It is easier to use the web installer to flash GrapheneOS. However, it is recommended to use the manual method since it makes it possible to install an older version of GrapheneOS unlike the web installer which always installs the latest version.
+
+- Use the [web installer](https://grapheneos.org/install/web) to install GrapheneOS
+- Once installed, **do not** re-lock the bootloader by clicking `Lock bootloader` under the `Locking the bootloader` section
+- Proceed to the [patching section](#patching-grapheneos-cooking-pixeneos)
+
+#### Manual Install
 
 1. Ensure Fastboot version is `34` or newer. `35` or above is recommended as older versions are known to have bugs that prevent commands like `fastboot flashall` from running.
 
