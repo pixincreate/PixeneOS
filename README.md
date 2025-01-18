@@ -6,11 +6,12 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 
 ## Features
 
-- [BCR](https://github.com/chenxiaolong/BCR) (>= version 1.65)
-- [Custota](https://github.com/chenxiaolong/Custota) (>= version 4.5)
-- [Magisk](https://github.com/pixincreate/Magisk) (>= version 27006) -- optional
+- [BCR](https://github.com/chenxiaolong/BCR)
+- [Custota](https://github.com/chenxiaolong/Custota)
+- [Magisk](https://github.com/pixincreate/Magisk)
 - [MSD](https://github.com/chenxiaolong/MSD)
-- [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot) (>= version 1.1)
+- [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
+- [AlterInstaller](https://github.com/chenxiaolong/AlterInstalle)
 
 > [!NOTE]
 >
@@ -21,20 +22,21 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 
 To use this project, you need the following (most dependencies will be handled by the script, except for `git` and `python`):
 
-- A Linux machine is recommended. `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can also be used instead
+- A Linux machine is recommended (Needed for running a statically-linked Android executable). `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can also be used instead
 - Tools (must be in the path):
+  - `afsr` (>= commit adcae036b68684828edf5eb90be1500abd5cf491)
+  - `avbroot` (>= version 3.3.0)
+  - `custota-tool` (>= version 5.2)
   - `git`
+  - `Magisk` (>= version 27006 -- optional)
   - `python`
-  - `avbroot`
-  - `afsr`
-  - `custota-tool`
-  - `Magisk` (optional)
 - Modules:
-  - `BCR`
+  - `AlterInstaller` (>= version 2.0)
+  - `BCR` (>= version 1.65)
   - `Charge Limit`
-  - `Custota`
-  - `MSD`
-  - `OEMUnlockOnBoot`
+  - `Custota` (>= version 5.2)
+  - `MSD` (>= version 1.8)
+  - `OEMUnlockOnBoot` (>= version 1.1)
 - Dependencies:
   - `e2fsprogs`
   - `pkg-config`
@@ -58,8 +60,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 1. Ensure the device has an unpatched version of GrapheneOS installed. The version must match the one from PixeneOS. It is important to make sure that the version installed matches the version on PixeneOS
 2. Start with a version before the latest to ensure OTA functionality.
 
-> [!IMPORTANT]
-> `Factory image` and `OTA image` are different. AVBRoot is meant to deal with **OTA images**. So does PixeneOS.
+> [!IMPORTANT] > `Factory image` and `OTA image` are different. AVBRoot is meant to deal with **OTA images**. So does PixeneOS.
 
 ### Detailed Instructions
 
@@ -169,7 +170,7 @@ It is easier to use the web installer to flash GrapheneOS. However, it is recomm
 
    Confirm by pressing volume down and then power. Then reboot.
 
-> [!CAUTION] > **Do not uncheck `OEM unlocking`!**
+   > [!CAUTION] > **Do not uncheck `OEM unlocking`!**
 
 7. For future updates, see the [updates section](#updates).
 
@@ -207,8 +208,8 @@ Magisk versions 25211 and newer require a writable partition for storing custom 
 
    The Magisk app will print out a line like:
 
-   ```
-   - Pre-init storage partition device ID: <name>
+   ```shell
+   Pre-init storage partition device ID: <name>
    ```
 
    Alternatively, run:
@@ -246,8 +247,8 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
 2. Modify `env.toml` to set environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
 
-> [!IMPORTANT]
-> Make sure that `env.toml` file exist in root of the project.
+   > [!IMPORTANT]
+   > Make sure that `env.toml` file exist in root of the project.
 
 3. Run the program end-to-end:
 
@@ -275,8 +276,8 @@ To set up automated release, add the following variables in GitHub secrets:
 
 ### Hop Between Root and Rootless
 
-- To remove root, set the following URL in Custota: https://pixincreate.github.io/PixeneOS/rootless/
-- To add root, set the following URL in Custota: https://pixincreate.github.io/PixeneOS/magisk/
+- To remove root, set the following URL in Custota: `https://pixincreate.github.io/PixeneOS/rootless/`
+- To add root, set the following URL in Custota: `https://pixincreate.github.io/PixeneOS/magisk/`
 
 ### Commands
 
