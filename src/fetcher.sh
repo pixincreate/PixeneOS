@@ -55,7 +55,7 @@ function get() {
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
-    git clone "${url}" "${WORKDIR}/tools/${filename}" && git checkout "${VERSION[AVBROOT_SETUP]}"
+    git clone "${url}" "${WORKDIR}/tools/${filename}" && git -C "${WORKDIR}/tools/${filename}" checkout "${VERSION[AVBROOT_SETUP]}"
   else
     if [[ "${filename}" == "magisk" ]]; then
       suffix="apk"
