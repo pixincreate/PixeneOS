@@ -165,6 +165,7 @@ function patch_ota() {
   local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"
   local grapheneos_otacert="${WORKDIR}/extracted/ota/META-INF/com/android/otacert"
+  local magisk_path="${WORKDIR}/modules/magisk.apk"
   local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
 
   # Activate the virtual environment
@@ -217,6 +218,15 @@ function patch_ota() {
     args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
     args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
+    # Add support for Magisk if root config is enabled
+    if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
+      echo -e "Magisk is enabled. Modifying the setup script...\n"
+      args+=("--patch-arg=--magisk" "--patch-arg" "${magisk_path}")
+      args+=("--patch-arg=--magisk-preinit-device" "--patch-arg" "${MAGISK[PREINIT]}")
+    else
+      echo -e "Magisk is not enabled. Skipping...\n"
+    fi
+
     # Python command to run the patch script
     python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
@@ -237,15 +247,6 @@ function my_avbroot_setup() {
 
   # Update location path to use GitHub releases
   sed -i -e "s|generate_update_info(update_info, args.output.name)|generate_update_info(update_info, '${location_path}')|" "${setup_script}"
-
-  # Add support for Magisk if root config is enabled
-  if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-    echo -e "Magisk is enabled. Modifying the setup script...\n"
-    sed -i -e "s|'--rootless'|'--magisk', '${magisk_path}',\\
-    \t\t'--magisk-preinit-device', '${MAGISK[PREINIT]}'|" "${setup_script}"
-  else
-    echo -e "Magisk is not enabled. Skipping...\n"
-  fi
 }
 
 # Function to setup the environment variables and paths for patching the OTA
