@@ -25,19 +25,20 @@ USER="pixincreate"    # GitHub username
 
 # Application version variables
 VERSION[AFSR]="${VERSION[AFSR]:-1.0.2}"
-VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.12.0}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.0}"
-VERSION[CUSTOTA]="${VERSION[CUSTOTA]:-5.6}"
-VERSION[MSD]="${VERSION[MSD]:-1.11}"
+VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.12.0}"
+VERSION[AVBROOT_SETUP]="16636c3" # Commit hash
 VERSION[BCR]="${VERSION[BCR]:-1.76}"
-VERSION[OEMUNLOCKONBOOT]="${VERSION[OEMUNLOCKONBOOT]:-1.1}"
-VERSION[MAGISK]="${VERSION[MAGISK]:-}"
+VERSION[CUSTOTA]="${VERSION[CUSTOTA]:-5.6}"
 VERSION[GRAPHENEOS]="${VERSION[GRAPHENEOS]:-}"
+VERSION[MAGISK]="${VERSION[MAGISK]:-}"
+VERSION[MSD]="${VERSION[MSD]:-1.11}"
+VERSION[OEMUNLOCKONBOOT]="${VERSION[OEMUNLOCKONBOOT]:-1.1}"
 
 # Magisk
+MAGISK[PREINIT]="${MAGISK_PREINIT:-}"
 MAGISK[REPOSITORY]="${USER}/Magisk"
 MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
-MAGISK[PREINIT]="${MAGISK_PREINIT:-}"
 
 # Keys
 KEYS[AVB]="${KEYS[AVB]:-avb.key}"
@@ -56,17 +57,21 @@ GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_URL]:-}"                   # Will be const
 GRAPHENEOS[OTA_TARGET]="${GRAPHENEOS[OTA_TARGET]:-}"             # Will be constructed from the latest version
 
 # Additionals
-ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                         # Android File system repack
-ADDITIONALS[ALTERINSTALLER]="${ADDITIONALS[ALTERINSTALLER]:-true}"     # Spoof Android package manager installer fields
+
+# Modules
+ADDITIONALS[AFSR]="${ADDITIONALS[AFSR]:-true}"                       # Android File system repack
+ADDITIONALS[ALTERINSTALLER]="${ADDITIONALS[ALTERINSTALLER]:-true}"   # Spoof Android package manager installer fields
+ADDITIONALS[BCR]="${ADDITIONALS[BCR]:-true}"                         # Basic Call Recorder
+ADDITIONALS[CUSTOTA]="${ADDITIONALS[CUSTOTA]:-true}"                 # Custom OTA Updater app
+ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                         # Mass Storage Device on USB
+ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}" # toggle OEM unlock button on boot
+# Tools
 ADDITIONALS[AVBROOT]="${ADDITIONALS[AVBROOT]:-true}"                   # Android Verified Boot Root
-ADDITIONALS[BCR]="${ADDITIONALS[BCR]:-true}"                           # Basic Call Recorder
-ADDITIONALS[CUSTOTA]="${ADDITIONALS[CUSTOTA]:-true}"                   # Custom OTA Updater app
 ADDITIONALS[CUSTOTA_TOOL]="${ADDITIONALS[CUSTOTA_TOOL]:-true}"         # Custom OTA Tool
-ADDITIONALS[MSD]="${ADDITIONALS[MSD]:-true}"                           # Mass Storage Device on USB
 ADDITIONALS[MY_AVBROOT_SETUP]="${ADDITIONALS[MY_AVBROOT_SETUP]:-true}" # My AVBRoot setup
-ADDITIONALS[OEMUNLOCKONBOOT]="${ADDITIONALS[OEMUNLOCKONBOOT]:-true}"   # toggle OEM unlock button on boot
-ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"                         # Only Magisk is supported
-ADDITIONALS[RETRY]="${ADDITIONALS[RETRY]:-true}"                       # Auto download signatures
+
+ADDITIONALS[ROOT]="${ADDITIONALS_ROOT:-false}"   # Only Magisk is supported
+ADDITIONALS[RETRY]="${ADDITIONALS[RETRY]:-true}" # Auto download signatures
 
 # Outputs
 OUTPUTS[PATCHED_OTA]="${OUTPUTS[PATCHED_OTA]:-}"

@@ -11,7 +11,7 @@ function check_and_download_dependencies() {
   make_directories
 
   # Check for Python requirements
-  if ! command -v python3 &> /dev/null; then
+  if ! command -v python3 &>/dev/null; then
     echo -e "Python 3 is required to run this script.\nExiting..."
     exit 1
   fi
@@ -29,7 +29,7 @@ function check_and_download_dependencies() {
   tools=$(supported_tools "cdd") # Call the function and capture its output
 
   # Convert the space-separated string back into an array
-  IFS=' ' read -r -a tools_array <<< "${tools}"
+  IFS=' ' read -r -a tools_array <<<"${tools}"
 
   for tool in "${tools_array[@]}"; do
     local flag=$(flag_check "${tool}")
@@ -165,6 +165,7 @@ function patch_ota() {
   local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"
   local grapheneos_otacert="${WORKDIR}/extracted/ota/META-INF/com/android/otacert"
+  local magisk_path="${WORKDIR}/modules/magisk.apk"
   local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
 
   # Activate the virtual environment
@@ -180,7 +181,7 @@ function patch_ota() {
 
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
-  if ls "${ota_zip}.patched*.zip" 1> /dev/null 2>&1; then
+  if ls "${ota_zip}.patched*.zip" 1>/dev/null 2>&1; then
     echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
   else
     echo -e "Patching OTA..."
@@ -217,6 +218,15 @@ function patch_ota() {
     args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
     args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
 
+    # Add support for Magisk if root config is enabled
+    if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
+      echo -e "Magisk is enabled. Modifying the setup script...\n"
+      args+=("--patch-arg=--magisk" "--patch-arg" "${magisk_path}")
+      args+=("--patch-arg=--magisk-preinit-device" "--patch-arg" "${MAGISK[PREINIT]}")
+    else
+      echo -e "Magisk is not enabled. Skipping...\n"
+    fi
+
     # Python command to run the patch script
     python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
@@ -237,15 +247,6 @@ function my_avbroot_setup() {
 
   # Update location path to use GitHub releases
   sed -i -e "s|generate_update_info(update_info, args.output.name)|generate_update_info(update_info, '${location_path}')|" "${setup_script}"
-
-  # Add support for Magisk if root config is enabled
-  if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-    echo -e "Magisk is enabled. Modifying the setup script...\n"
-    sed -i -e "s|'--rootless'|'--magisk', '${magisk_path}',\\
-    \t\t'--magisk-preinit-device', '${MAGISK[PREINIT]}'|" "${setup_script}"
-  else
-    echo -e "Magisk is not enabled. Skipping...\n"
-  fi
 }
 
 # Function to setup the environment variables and paths for patching the OTA
@@ -258,19 +259,33 @@ function env_setup() {
   local afsr="${WORKDIR}/tools/afsr"
   local custota_tool="${WORKDIR}/tools/custota-tool"
   local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
+  local requirements_file="${my_avbroot_setup}/requirements.txt"
 
   # Add the paths to the PATH environment variable just so that the script can find them
-  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null && ! command -v custota-tool &> /dev/null; then
+  if ! command -v avbroot &>/dev/null && ! command -v afsr &>/dev/null && ! command -v custota-tool &>/dev/null; then
     export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$(realpath ${custota_tool}):$PATH"
   fi
 
   # Enabled python virtual environment
   enable_venv
 
-  # Install `tomlkit` package if not found
-  if [[ $(pip list | grep tomlkit &> /dev/null && echo 'true' || echo 'false') == 'false' ]]; then
-    echo -e "Python module \`tomlkit\` is required to run this script.\nInstalling..."
-    pip3 install tomlkit
+  # Install required Python packages
+  if [[ -f "${requirements_file}" ]]; then
+    local missing_packages=false
+    while read -r package; do
+      [[ -z "${package}" ]] && continue
+      if ! pip list | grep -i "^${package%%[=><]*}" &>/dev/null; then
+        missing_packages=true
+        break
+      fi
+    done <"${requirements_file}"
+
+    if [[ "${missing_packages}" == "true" ]]; then
+      echo -e "Installing required Python packages from requirements.txt..."
+      pip3 install -r "${requirements_file}"
+    fi
+  else
+    echo -e "Warning: requirements.txt not found at ${requirements_file}"
   fi
 }
 
@@ -377,7 +392,7 @@ function download_dependencies() {
   local tool="${1}"
   INTERACTIVE_MODE='false'
 
-  if type url_constructor &> /dev/null; then
+  if type url_constructor &>/dev/null; then
     url_constructor "${tool}" "${INTERACTIVE_MODE}"
   else
     echo -e "Error: \`url_constructor\` function is not defined."
@@ -405,10 +420,10 @@ function extract_official_keys() {
   # To verify, execute sha256sum avb_pkmd.bin in terminal
   # compare the output with base16-encoded verified boot key fingerprints
   # mentioned at https://grapheneos.org/articles/attestation-compatibility-guide for the respective device
-  avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" \
-    | grep 'public_key' \
-    | sed -n 's/.*public_key: "\(.*\)".*/\1/p' \
-    | tr -d '[:space:]' | xxd -r -p > "${WORKDIR}/extracted/avb_pkmd.bin"
+  avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" |
+    grep 'public_key' |
+    sed -n 's/.*public_key: "\(.*\)".*/\1/p' |
+    tr -d '[:space:]' | xxd -r -p >"${WORKDIR}/extracted/avb_pkmd.bin"
 
   # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
   unzip "${ota_zip}" -d "${WORKDIR}/extracted/ota"
@@ -484,7 +499,7 @@ function supported_tools() {
 }
 
 function help() {
-  cat << EOF
+  cat <<EOF
 Usage: source src/<file>.sh [functions] [arguments]
 functions:
   - url_constructor        Run the URL Constructor function

@@ -28,8 +28,8 @@ function base64_decode() {
   echo -e "\nDecoding keys from base64..."
 
   # Check if any of the KEYS or individual key values are empty
-  if [ -z "${KEYS[AVB_BASE64]}" ] || [ -z "${KEYS[CERT_OTA_BASE64]}" ] || [ -z "${KEYS[OTA_BASE64]}" ] \
-    || [ -z "${KEYS_AVB_BASE64}" ] || [ -z "${KEYS_CERT_OTA_BASE64}" ] || [ -z "${KEYS_OTA_BASE64}" ]; then
+  if [ -z "${KEYS[AVB_BASE64]}" ] || [ -z "${KEYS[CERT_OTA_BASE64]}" ] || [ -z "${KEYS[OTA_BASE64]}" ] ||
+    [ -z "${KEYS_AVB_BASE64}" ] || [ -z "${KEYS_CERT_OTA_BASE64}" ] || [ -z "${KEYS_OTA_BASE64}" ]; then
     echo "Error: One or more BASE64 encoded values are empty. Please ensure all required keys are set."
     exit 1
   fi
@@ -50,7 +50,7 @@ function base64_decode() {
       local output_file="${WORKDIR}/.keys/${KEYS[$(echo ${key} | sed 's/_BASE64$//')]}"
 
       # Decode bas64 and write to a file
-      echo "${base64_key}" | base64 --decode > "${output_file}" 2> /dev/null
+      echo "${base64_key}" | base64 --decode >"${output_file}" 2>/dev/null
 
       if [[ $? -ne 0 ]]; then
         echo "Error decoding base64 for ${key}"

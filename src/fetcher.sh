@@ -6,13 +6,13 @@ source src/declarations.sh
 function get_latest_version() {
   local latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
   local latest_magisk_version=$(
-    git ls-remote --tags "${DOMAIN}/${MAGISK[REPOSITORY]}.git" \
-      | awk -F'\t' '{print $2}' \
-      | grep -E 'refs/tags/' \
-      | sed 's/refs\/tags\///' \
-      | sort -V \
-      | tail -n1 \
-      | sed 's/canary-//'
+    git ls-remote --tags "${DOMAIN}/${MAGISK[REPOSITORY]}.git" |
+      awk -F'\t' '{print $2}' |
+      grep -E 'refs/tags/' |
+      sed 's/refs\/tags\///' |
+      sort -V |
+      tail -n1 |
+      sed 's/canary-//'
   )
 
   if [[ GRAPHENEOS[UPDATE_TYPE] == "install" ]]; then
@@ -55,7 +55,7 @@ function get() {
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
-    git clone "${url}" "${WORKDIR}/tools/${filename}"
+    git clone "${url}" "${WORKDIR}/tools/${filename}" && git -C "${WORKDIR}/tools/${filename}" checkout "${VERSION[AVBROOT_SETUP]}"
   else
     if [[ "${filename}" == "magisk" ]]; then
       suffix="apk"
