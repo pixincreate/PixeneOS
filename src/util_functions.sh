@@ -11,7 +11,7 @@ function check_and_download_dependencies() {
   make_directories
 
   # Check for Python requirements
-  if ! command -v python3 &> /dev/null; then
+  if ! command -v python3 &>/dev/null; then
     echo -e "Python 3 is required to run this script.\nExiting..."
     exit 1
   fi
@@ -29,7 +29,7 @@ function check_and_download_dependencies() {
   tools=$(supported_tools "cdd") # Call the function and capture its output
 
   # Convert the space-separated string back into an array
-  IFS=' ' read -r -a tools_array <<< "${tools}"
+  IFS=' ' read -r -a tools_array <<<"${tools}"
 
   for tool in "${tools_array[@]}"; do
     local flag=$(flag_check "${tool}")
@@ -181,7 +181,7 @@ function patch_ota() {
 
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
-  if ls "${ota_zip}.patched*.zip" 1> /dev/null 2>&1; then
+  if ls "${ota_zip}.patched*.zip" 1>/dev/null 2>&1; then
     echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
   else
     echo -e "Patching OTA..."
@@ -262,7 +262,7 @@ function env_setup() {
   local requirements_file="${my_avbroot_setup}/requirements.txt"
 
   # Add the paths to the PATH environment variable just so that the script can find them
-  if ! command -v avbroot &> /dev/null && ! command -v afsr &> /dev/null && ! command -v custota-tool &> /dev/null; then
+  if ! command -v avbroot &>/dev/null && ! command -v afsr &>/dev/null && ! command -v custota-tool &>/dev/null; then
     export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$(realpath ${custota_tool}):$PATH"
   fi
 
@@ -392,7 +392,7 @@ function download_dependencies() {
   local tool="${1}"
   INTERACTIVE_MODE='false'
 
-  if type url_constructor &> /dev/null; then
+  if type url_constructor &>/dev/null; then
     url_constructor "${tool}" "${INTERACTIVE_MODE}"
   else
     echo -e "Error: \`url_constructor\` function is not defined."
@@ -420,10 +420,10 @@ function extract_official_keys() {
   # To verify, execute sha256sum avb_pkmd.bin in terminal
   # compare the output with base16-encoded verified boot key fingerprints
   # mentioned at https://grapheneos.org/articles/attestation-compatibility-guide for the respective device
-  avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" \
-    | grep 'public_key' \
-    | sed -n 's/.*public_key: "\(.*\)".*/\1/p' \
-    | tr -d '[:space:]' | xxd -r -p > "${WORKDIR}/extracted/avb_pkmd.bin"
+  avbroot avb info -i "${WORKDIR}/extracted/extracts/vbmeta.img" |
+    grep 'public_key' |
+    sed -n 's/.*public_key: "\(.*\)".*/\1/p' |
+    tr -d '[:space:]' | xxd -r -p >"${WORKDIR}/extracted/avb_pkmd.bin"
 
   # Extract META-INF/com/android/otacert from OTA or otacerts.zip from either vendor_boot.img or system.img
   unzip "${ota_zip}" -d "${WORKDIR}/extracted/ota"
@@ -499,7 +499,7 @@ function supported_tools() {
 }
 
 function help() {
-  cat << EOF
+  cat <<EOF
 Usage: source src/<file>.sh [functions] [arguments]
 functions:
   - url_constructor        Run the URL Constructor function
