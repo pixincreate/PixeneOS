@@ -25,7 +25,7 @@ To use this project, you need the following (most dependencies will be handled b
 - A Linux machine is recommended (Needed for running a statically-linked Android executable). `WSL` (Windows Subsystem for Linux) or a `VM` (Virtual Machine) can also be used instead
 - Tools (must be in the path):
   - `afsr` (>= commit adcae036b68684828edf5eb90be1500abd5cf491)
-  - `avbroot` (>= version 3.3.0)
+  - `avbroot` (>= version 3.12.0)
   - `custota-tool` (>= version 5.2)
   - `git`
   - `Magisk` (>= version 27006 -- optional)
@@ -41,6 +41,7 @@ To use this project, you need the following (most dependencies will be handled b
   - `e2fsprogs`
   - `pkg-config`
   - `tomlkit` (Python dependency)
+  - `pydantic` (Python dependency)
 
 ## Working
 
