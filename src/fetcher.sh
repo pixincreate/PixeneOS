@@ -92,14 +92,14 @@ function download_ota() {
   local ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
   # Set the URLs if not set
-  if [ ! -z "${GRAPHENEOS[OTA_URL]}" ]; then
+  if [ -n "${GRAPHENEOS[OTA_URL]}" ]; then
     get_latest_version
   fi
 
   # Download if not downloaded already
   if [ ! -f "${ota}" ]; then
     echo -e "Downloading OTA from: ${GRAPHENEOS[OTA_URL]}...\nPlease be patient while the download happens."
-    curl -sL "${GRAPHENEOS[OTA_URL]}" --output ${ota}
+    curl -sL "${GRAPHENEOS[OTA_URL]}" --output "${ota}"
     echo -e "OTA downloaded to: \`${ota}\`\n"
   else
     echo -e "OTA is already downloaded in: \`${ota}\`\n"
