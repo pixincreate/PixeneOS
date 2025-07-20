@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # This file consists of functions to verify the downloaded tools and signatures existence
 # Verifier also looks after retries if the tool is not found
 # We do not verify signatures as `my-avbroot-setup` checks on behalf of us and `magisk` do not have signature

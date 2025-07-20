@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Declare associative arrays and variables
 declare -A ADDITIONALS
 declare -A AVBROOT

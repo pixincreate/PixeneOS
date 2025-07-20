@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # This file consists of functions to encode and decode keys to and from base64
 
 source src/declarations.sh

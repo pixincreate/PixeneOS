@@ -62,7 +62,9 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 1. Ensure the device has an unpatched version of GrapheneOS installed. The version must match the one from PixeneOS. It is important to make sure that the version installed matches the version on PixeneOS
 2. Start with a version before the latest to ensure OTA functionality.
 
-> [!IMPORTANT] > `Factory image` and `OTA image` are different. AVBRoot is meant to deal with **OTA images**. So does PixeneOS.
+> [!IMPORTANT]
+>
+> `Factory image` and `OTA image` are different. AVBRoot is meant to deal with **OTA images**. So does PixeneOS.
 
 ### Detailed Instructions
 
@@ -172,7 +174,9 @@ It is easier to use the web installer to flash GrapheneOS. However, it is recomm
 
    Confirm by pressing volume down and then power. Then reboot.
 
-   > [!CAUTION] > **Do not uncheck `OEM unlocking`!**
+> [!CAUTION]
+>
+> **Do not uncheck `OEM unlocking`!**
 
 7. For future updates, see the [updates section](#updates).
 
@@ -249,8 +253,8 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
 2. Modify `env.toml` to set environment variables (your device model, AVBRoot architecture, GrapheneOS update channel and etc.,)
 
-   > [!IMPORTANT]
-   > Make sure that `env.toml` file exist in root of the project.
+> [!IMPORTANT]
+> Make sure that `env.toml` file exist in root of the project.
 
 3. Run the program end-to-end:
 
@@ -351,6 +355,10 @@ To know more about the projects used in this repository, refer to the following 
 - [MSD](https://github.com/chenxiaolong/MSD)
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
 - [Rooted Graphene](https://github.com/schnatterer/rooted-graphene)
+
+## FAQs
+
+Check the [FAQs](docs/FAQ.md) to learn about common issues faced by users and their solutions.
 
 ## License
 

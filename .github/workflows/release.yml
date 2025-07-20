@@ -21,6 +21,15 @@ on:
       update-channel:
         description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
         required: false
+      release-type:
+        description: 'How to handle the release. `default`: build and publish if new. `build-only`: only build. `force-publish`: build and publish even if it exists.'
+        required: true
+        type: choice
+        options:
+          - default
+          - build-only
+          - force-publish
+        default: default
 
 env:
   CARGO_INCREMENTAL: 1
@@ -65,7 +74,7 @@ jobs:
           echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
           echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS[UPDATE_CHANNEL]}" >> $GITHUB_ENV
 
-      - name: Check if a build exists already and verify assets
+      - name: Set GrapheneOS version
         shell: bash
         run: |
           # Device name is a required parameter
@@ -78,6 +87,10 @@ jobs:
           source src/fetcher.sh && get_latest_version
           echo "GRAPHENEOS_VERSION=${VERSION[GRAPHENEOS]}" >> $GITHUB_ENV
 
+      - name: Check if a build exists already and verify assets
+        shell: bash
+        if: github.event_name == 'schedule' || github.event.inputs.release-type == 'default'
+        run: |
           # Determine if the build is based on magisk or rootless (build flavor)
           build_flavor=$([[ ${{ github.event.inputs.root == 'true' }} == 'true' ]] && echo 'magisk' || echo 'rootless')
 
@@ -193,6 +206,7 @@ jobs:
 
       - name: Make Release
         uses: softprops/action-gh-release@v2
+        if: github.event.inputs.release-type != 'build-only'
         with:
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
@@ -203,6 +217,7 @@ jobs:
 
       - name: Publish OTA to server
         shell: bash
+        if: github.event.inputs.release-type != 'build-only'
         run: |
           CURRENT_COMMIT=$(git rev-parse --short HEAD)
           FLAVOR=("magisk" "rootless")
@@ -230,8 +245,8 @@ jobs:
             touch "${TARGET_FILE}"
           fi
 
-          # Copy from `./` to `./<flavor>/` if same tag doesn't exist in the target file
-          if ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}"; then
+          # Copy from `./` to `./<flavor>/` if same tag doesn't exist in the target file or if it's a force-publish
+          if [[ "${{ github.event.inputs.release-type }}" == "force-publish" ]] || ! grep -q "${{ env.GRAPHENEOS_VERSION }}" "${TARGET_FILE}"; then
             echo -e "Copying ${{ env.DEVICE_NAME }}.json to ${TARGET_FILE}..."
             cp "${{ env.DEVICE_NAME }}.json" "${TARGET_FILE}"
             git add "${TARGET_FILE}"
