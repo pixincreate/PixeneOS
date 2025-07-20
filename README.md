@@ -356,6 +356,10 @@ To know more about the projects used in this repository, refer to the following 
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
 - [Rooted Graphene](https://github.com/schnatterer/rooted-graphene)
 
+## FAQs
+
+Check the [FAQs](docs/FAQ.md) to learn about common issues faced by users and their solutions.
+
 ## License
 
 This project is licensed under the `MIT`. For more information, please refer to the [LICENSE](LICENSE) file.
