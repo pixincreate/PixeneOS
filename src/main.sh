@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This project is highly dependent on chenxiaolong's projects.
 # Project PixeneOS needs to be up-to-date with chenxiaolong's projects

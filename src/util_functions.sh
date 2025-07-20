@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # This script is a part of the main script and is responsible for the utility functions used in the main script.
 
 source src/declarations.sh

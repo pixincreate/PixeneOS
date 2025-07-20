@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Contains the functions to fetch the required files. In short, this takes care of downloading the OTA, Magisk, and other dependencies.
 
 source src/declarations.sh
