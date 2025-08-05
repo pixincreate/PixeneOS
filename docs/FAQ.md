@@ -16,7 +16,7 @@
 ### Root does not seem to exist after update
 
 - Check [chenxiaolong/avbroot#455 (comment)](https://github.com/chenxiaolong/avbroot/issues/455#issuecomment-2955973508) contains some approaches to troubleshooting.
-This one is known to work (at the expense of restoring Magisk's settings to its default state):
+The following command is known to work (at the expense of restoring Magisk's settings to its default state):
 
 ```bash
 su -c 'rm -r /data/adb/magisk* && reboot'
