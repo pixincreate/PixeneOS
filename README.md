@@ -73,7 +73,7 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 > Also, check the FAQ section for more information on [this](https://github.com/pixincreate/PixeneOS/blob/main/docs/FAQ.md#im-getting-an-error-on-boot-saying-device-is-corrupt-it-cant-be-trusted-what-can-i-do-what-are-my-options) issue.
 
 > [!CAUTION]
-> If flashing fails, [**don't switch the slot**](https://github.com/schnatterer/rooted-graphene/issues/96#issuecomment-3128121844).
+> If flashing fails, [**do not switch the slot**](https://github.com/schnatterer/rooted-graphene/issues/96#issuecomment-3128121844).
 
 #### Web Install
 
