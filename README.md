@@ -68,6 +68,13 @@ Reading the [AVBRoot docs](https://github.com/chenxiaolong/AVBRoot) is essential
 
 ### Detailed Instructions
 
+> [!IMPORTANT]
+> In case you run into an issue that throws `Device is corrupt. It can't be trusted` soon after first install, try sideloading the OTA once before proceeding with flashing the custom AVB public key. This suggestion is based on the experience of users who faced this issue. See [#89](https://github.com/schnatterer/rooted-graphene/issues/89).
+> Also, check the FAQ section for more information on [this](https://github.com/pixincreate/PixeneOS/blob/main/docs/FAQ.md#im-getting-an-error-on-boot-saying-device-is-corrupt-it-cant-be-trusted-what-can-i-do-what-are-my-options) issue.
+
+> [!CAUTION]
+> If flashing fails, [**do not switch the slot**](https://github.com/schnatterer/rooted-graphene/issues/96#issuecomment-3128121844).
+
 #### Web Install
 
 It is easier to use the web installer to flash GrapheneOS. However, it is recommended to use the manual method since it makes it possible to install an older version of GrapheneOS unlike the web installer which always installs the latest version.
