@@ -26,7 +26,7 @@ REPOSITORY="PixeneOS" # GitHub repository name
 USER="pixincreate"    # GitHub username
 
 # Application version variables
-VERSION[AFSR]="${VERSION[AFSR]:-1.0.3}"
+VERSION[AFSR]="${VERSION[AFSR]:-1.0.4}"
 VERSION[ALTERINSTALLER]="${VERSION[ALTERINSTALLER]:-2.3}"
 VERSION[AVBROOT]="${VERSION[AVBROOT]:-3.23.2}"
 VERSION[AVBROOT_SETUP]="16636c3" # Commit hash
