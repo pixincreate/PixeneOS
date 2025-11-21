@@ -60,7 +60,7 @@ jobs:
           fi
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # Allow for switching to github-pages branch
           fetch-depth: 0
