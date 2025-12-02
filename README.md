@@ -11,7 +11,7 @@ PixeneOS is a `shell` script designed to patch GrapheneOS OTA (Over The Air) ima
 - [Magisk](https://github.com/pixincreate/Magisk)
 - [MSD](https://github.com/chenxiaolong/MSD)
 - [OEMUnlockOnBoot](https://github.com/chenxiaolong/OEMUnlockOnBoot)
-- [AlterInstaller](https://github.com/chenxiaolong/AlterInstalle)
+- [AlterInstaller](https://github.com/chenxiaolong/AlterInstaller)
 
 > [!NOTE]
 >
