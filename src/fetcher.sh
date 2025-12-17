@@ -52,7 +52,7 @@ function get() {
   local url="${2}"
   local signature_url="${3:-}"
 
-  echo "Downloading \`${filename}\`..."
+  echo "Downloading \`${filename}\` from `${url}`..."
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
