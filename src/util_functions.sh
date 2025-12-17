@@ -229,6 +229,9 @@ function patch_ota() {
       echo -e "Magisk is not enabled. Skipping...\n"
     fi
 
+    #have to clear space bc we are runnning out when the csig is made
+    rm -rf ${WORKDIR}/extracted/extracts/
+
     # Python command to run the patch script
     python ${my_avbroot_setup}/patch.py "${args[@]}"
   fi
