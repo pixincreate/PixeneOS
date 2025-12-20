@@ -11,7 +11,7 @@
 ### I'm getting an error on boot saying `Device is corrupt. It can't be trusted`. What can I do? What are my options?
 
 - Flash the OTA, switch partitions, flash it again. Then sideload the OTA on both partitions *before* flashing custom keys (see farewelltospring's [comment](https://github.com/schnatterer/rooted-graphene/issues/96#issuecomment-2986363782) in [#96](https://github.com/schnatterer/rooted-graphene/issues/96) for details).
-- See [#89](https://github.com/schnatterer/rooted-graphene/issues/89) and [#96](https://github.com/schnatterer/rooted-graphene/issues/96) for details. 
+- See [#89](https://github.com/schnatterer/rooted-graphene/issues/89) and [#96](https://github.com/schnatterer/rooted-graphene/issues/96) for details.
 
 ### Root does not seem to exist after update
 
