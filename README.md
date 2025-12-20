@@ -159,7 +159,7 @@ It is easier to use the web installer to flash GrapheneOS. However, it is recomm
    fastboot flash avb_custom_key /path/to/avb_pkmd.bin
    ```
 
-5. Sideload the OTA (This avoids / reduces the possibility of running into `Device is corrupt. It can't be trusted` error).
+5. Sideload the OTA (This helps avoid or reduce the possibility of running into the `Device is corrupt. It can't be trusted` error).
    - Run `fastboot reboot recovery` to get into recovery mode
    - An Android icon lying down with the text `No command` should be visible on the screen
    - Hold the power button and press the volume up button a single time to get into the recovery UI
