@@ -13,8 +13,7 @@ function get_latest_version() {
       grep -E 'refs/tags/' |
       sed 's/refs\/tags\///' |
       sort -V |
-      tail -n1 |
-      sed 's/canary-//'
+      tail -n1
   )
 
   if [[ GRAPHENEOS[UPDATE_TYPE] == "install" ]]; then
@@ -53,7 +52,7 @@ function get() {
   local url="${2}"
   local signature_url="${3:-}"
 
-  echo "Downloading \`${filename}\`..."
+  echo "Downloading \`${filename}\` from `${url}`..."
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
