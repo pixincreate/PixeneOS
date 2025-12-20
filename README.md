@@ -165,7 +165,7 @@ It is easier to use the web installer to flash GrapheneOS. However, it is recomm
    - Hold the power button and press the volume up button a single time to get into the recovery UI
    - Using the volume buttons, navigate to `Apply update from ADB` and select it with the power button
    - As the recovery prompt says, use `adb sideload /path/to/ota.zip.patched` to sideload the patched OTA
-   - After the sideload completes, select reboot to bootloader
+   - After the sideload completes, select 'Reboot to bootloader'
 
 6. Reboot into fastboot and lock the bootloader. This will trigger a data wipe.
 
