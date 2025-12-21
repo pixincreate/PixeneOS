@@ -1,7 +1,7 @@
 {
   "version": 2,
   "full": {
-    "location_ota": "https://github.com/pixincreate/PixeneOS/releases/download/2024101700/bluejay-2024101700-magisk-28001-75fce14.zip",
-    "location_csig": "https://github.com/pixincreate/PixeneOS/releases/download/2024101700/bluejay-2024101700-magisk-28001-75fce14.zip.csig"
+    "location_ota": "https://github.com/pixincreate/PixeneOS/releases/download/2025121700/bluejay-2025121700-magisk-v30.6-8bbc7fa.zip",
+    "location_csig": "https://github.com/pixincreate/PixeneOS/releases/download/2025121700/bluejay-2025121700-magisk-v30.6-8bbc7fa.zip.csig"
   }
 }
