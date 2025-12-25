@@ -71,7 +71,7 @@ function get() {
       # Download signatures
       if [ -n "${signature_url}" ]; then
         echo "Downloading signature for \`${filename}\`..."
-        curl -sLfL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
+        curl -sLf "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
       fi
 
       # afsr, avbroot and custota-tool are binaries that need to be extracted and granted permissions
