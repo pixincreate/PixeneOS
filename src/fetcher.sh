@@ -52,7 +52,7 @@ function get() {
   local url="${2}"
   local signature_url="${3:-}"
 
-  echo "Downloading \`${filename}\` from `${url}`..."
+  echo "Downloading \`${filename}\`..."
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
@@ -65,13 +65,13 @@ function get() {
     fi
 
     # Download the files directly to modules directory
-    curl -sL "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
+    curl -sLf "${url}" --output "${WORKDIR}/modules/${filename}.${suffix}"
 
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
       # Download signatures
       if [ -n "${signature_url}" ]; then
         echo "Downloading signature for \`${filename}\`..."
-        curl -sL "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
+        curl -sLf "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
       fi
 
       # afsr, avbroot and custota-tool are binaries that need to be extracted and granted permissions
