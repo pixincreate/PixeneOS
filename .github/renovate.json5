@@ -20,8 +20,9 @@
       matchStrings: [
         'VERSION\\[AVBROOT_SETUP\\]=\\"(?<currentValue>.*?)\\"',
       ],
-      depNameTemplate: "chenxiaolong/my-avbroot-setup",
-      datasourceTemplate: "github-tags",
+      depNameTemplate: "https://github.com/chenxiaolong/my-avbroot-setup.git",
+      datasourceTemplate: "git-refs",
+      currentValueTemplate: "master",
       versioningTemplate: "sha",
     },
     {
