@@ -175,9 +175,15 @@ jobs:
 
       - name: Setup Environment variables
         run: |
-          echo "KEYS_AVB_BASE64=${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
-          echo "KEYS_CERT_OTA_BASE64=${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
-          echo "KEYS_OTA_BASE64=${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
+          echo "KEYS_AVB_BASE64<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.AVB_KEY }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "KEYS_CERT_OTA_BASE64<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.CERT_OTA }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "KEYS_OTA_BASE64<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.OTA_KEY }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Patch OTA
         shell: bash

@@ -16,7 +16,9 @@ function base64_encode() {
   KEYS[CERT_OTA_BASE64]=$(base64 -w0 "${KEYS[CERT_OTA]}") && echo "KEYS[CERT_OTA_BASE64]=${KEYS[CERT_OTA_BASE64]}" && success_status=true
 
   if [[ "${success_status}" == true ]]; then
-    export "${KEYS[AVB_BASE64]}}" "${KEYS[OTA_BASE64]}" "${KEYS[CERT_OTA_BASE64]}"
+    export KEYS_AVB_BASE64="${KEYS[AVB_BASE64]}"
+    export KEYS_OTA_BASE64="${KEYS[OTA_BASE64]}"
+    export KEYS_CERT_OTA_BASE64="${KEYS[CERT_OTA_BASE64]}"
     echo -e "Encoded keys to base64.\n"
   else
     echo "Failed to encode keys to base64.\n"
@@ -31,7 +33,7 @@ function base64_decode() {
 
   # Check if any of the KEYS or individual key values are empty
   if [ -z "${KEYS[AVB_BASE64]}" ] || [ -z "${KEYS[CERT_OTA_BASE64]}" ] || [ -z "${KEYS[OTA_BASE64]}" ] ||
-    [ -z "${KEYS_AVB_BASE64}" ] || [ -z "${KEYS_CERT_OTA_BASE64}" ] || [ -z "${KEYS_OTA_BASE64}" ]; then
+    [ -z "${KEYS_AVB_BASE64:-}" ] || [ -z "${KEYS_CERT_OTA_BASE64:-}" ] || [ -z "${KEYS_OTA_BASE64:-}" ]; then
     echo "Error: One or more BASE64 encoded values are empty. Please ensure all required keys are set."
     exit 1
   fi
@@ -51,8 +53,8 @@ function base64_decode() {
       # Generate output file name based on key name
       local output_file="${WORKDIR}/.keys/${KEYS[$(echo ${key} | sed 's/_BASE64$//')]}"
 
-      # Decode bas64 and write to a file
-      echo "${base64_key}" | base64 --decode >"${output_file}" 2>/dev/null
+      # Decode base64 and write to a file
+      echo "${base64_key}" | base64 --decode >"${output_file}"
 
       if [[ $? -ne 0 ]]; then
         echo "Error decoding base64 for ${key}"
