@@ -266,7 +266,7 @@ function env_setup() {
   local afsr="${WORKDIR}/tools/afsr"
   local custota_tool="${WORKDIR}/tools/custota-tool"
   local my_avbroot_setup="${WORKDIR}/tools/my-avbroot-setup"
-  local requirements_file="${my_avbroot_setup}/requirements.txt"
+  local pyproject_file="${my_avbroot_setup}/pyproject.toml"
 
   # Add the paths to the PATH environment variable just so that the script can find them
   if ! command -v avbroot &>/dev/null && ! command -v afsr &>/dev/null && ! command -v custota-tool &>/dev/null; then
@@ -277,22 +277,16 @@ function env_setup() {
   enable_venv
 
   # Install required Python packages
-  if [[ -f "${requirements_file}" ]]; then
-    local missing_packages=false
-    while read -r package; do
-      [[ -z "${package}" ]] && continue
-      if ! pip list | grep -i "^${package%%[=><]*}" &>/dev/null; then
-        missing_packages=true
-        break
-      fi
-    done <"${requirements_file}"
-
-    if [[ "${missing_packages}" == "true" ]]; then
-      echo -e "Installing required Python packages from requirements.txt..."
-      pip3 install -r "${requirements_file}"
+  if [[ -f "${pyproject_file}" ]]; then
+    if ! command -v uv &>/dev/null; then
+      echo -e "uv not found. Installing..."
+      python3 -m pip install uv
     fi
+
+    echo -e "Installing required Python packages from pyproject.toml..."
+    uv pip install -r "${pyproject_file}"
   else
-    echo -e "Warning: requirements.txt not found at ${requirements_file}"
+    echo -e "Warning: pyproject.toml not found at ${my_avbroot_setup}"
   fi
 }
 
