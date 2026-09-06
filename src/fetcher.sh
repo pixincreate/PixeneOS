@@ -6,17 +6,22 @@ source src/declarations.sh
 
 # Fetch the latest version of GrapheneOS and Magisk and sets up the OTA URL
 function get_latest_version() {
-  local latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
-  local latest_magisk_version=$(
+  local latest_grapheneos_version
+  local latest_magisk_version
+
+  latest_grapheneos_version=$(curl -sL "${GRAPHENEOS[OTA_BASE_URL]}/${DEVICE_NAME}-${GRAPHENEOS[UPDATE_CHANNEL]}" | sed 's/ .*//')
+  # Annotated tags produce an extra `<tag>^{}` entry that must not become the version
+  latest_magisk_version=$(
     git ls-remote --tags "${DOMAIN}/${MAGISK[REPOSITORY]}.git" |
       awk -F'\t' '{print $2}' |
       grep -E 'refs/tags/' |
+      grep -v '\^{}$' |
       sed 's/refs\/tags\///' |
       sort -V |
       tail -n1
   )
 
-  if [[ GRAPHENEOS[UPDATE_TYPE] == "install" ]]; then
+  if [[ "${GRAPHENEOS[UPDATE_TYPE]}" == "install" ]]; then
     echo -e "The update type is set to \`install\` which is not supported by AVBRoot.\nExiting..."
     exit 1
   fi
@@ -93,7 +98,7 @@ function download_ota() {
   local ota="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
   # Set the URLs if not set
-  if [ -n "${GRAPHENEOS[OTA_URL]}" ]; then
+  if [ -z "${GRAPHENEOS[OTA_URL]}" ]; then
     get_latest_version
   fi
 
