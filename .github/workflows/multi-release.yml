@@ -1,0 +1,86 @@
+name: Patch and Release OTA for Multiple Devices
+
+# Fans out one `release.yml` run per device.
+# This workflow is meant for forks that build for more than one device.
+# It never runs on a schedule and does not affect single device setups.
+
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: 'Comma-separated device code names. With root, append the Magisk preinit device per entry. For example: "bluejay:sda8, panther:sda15" or "bluejay, panther". Leave empty to use `DEVICES` from env.toml'
+        required: false
+      root:
+        description: Add root to the builds
+        required: false
+        type: boolean
+        default: false
+      update-channel:
+        description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
+        required: false
+      release-type:
+        description: 'How to handle the release. `default`: build and publish if new. `build-only`: only build. `force-publish`: build and publish even if it exists.'
+        required: true
+        type: choice
+        options:
+          - default
+          - build-only
+          - force-publish
+        default: default
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      devices: ${{ steps.parse.outputs.devices }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Parse device list
+        id: parse
+        env:
+          DEVICES_INPUT: ${{ inputs.devices }}
+        run: |
+          devices_raw="${DEVICES_INPUT}"
+
+          # Fall back to `DEVICES` from env.toml when the input is empty
+          if [[ -z "${devices_raw}" ]]; then
+            source src/util_functions.sh && check_toml_env
+            devices_raw="${DEVICES:-}"
+          fi
+
+          if [[ -z "${devices_raw}" ]]; then
+            echo "::error::No devices given. Fill the \`devices\` input or set \`DEVICES\` in env.toml."
+            exit 1
+          fi
+
+          # Turn "bluejay:sda8, panther" into [{"device": "bluejay", "preinit": "sda8"}, {"device": "panther", "preinit": ""}]
+          devices=$(jq -cn --arg list "$devices_raw" '
+            $list | split(",")
+                  | map(gsub("^\\s+|\\s+$"; ""))
+                  | map(select(length > 0) | split(":") | {device: .[0], preinit: (.[1] // "")})
+          ')
+
+          if [[ $(jq 'length' <<<"$devices") -eq 0 ]]; then
+            echo "::error::No devices found in: $devices_raw"
+            exit 1
+          fi
+
+          echo "devices=$devices" >> $GITHUB_OUTPUT
+
+  release:
+    needs: matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(needs.matrix.outputs.devices) }}
+    permissions: write-all
+    uses: ./.github/workflows/release.yml
+    with:
+      device-id: ${{ matrix.target.device }}
+      root: ${{ inputs.root }}
+      magisk-preinit-device: ${{ matrix.target.preinit }}
+      update-channel: ${{ inputs.update-channel }}
+      release-type: ${{ inputs.release-type }}
+    secrets: inherit

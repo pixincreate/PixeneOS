@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Declare associative arrays and variables
+# shellcheck disable=SC2034  # the variables are used by the scripts that source this file
 declare -A ADDITIONALS
 declare -A AVBROOT
 declare -A GRAPHENEOS
@@ -15,8 +16,9 @@ ARCH="x86_64-unknown-linux-gnu" # for Linux
 # ARCH="x86_64-pc-windows-msvc" # for Windows
 
 # Initial setup environment variables
-CLEANUP="${CLEANUP:-'false'}"                # Clean up after the script finishes
+CLEANUP="${CLEANUP:-false}"                  # Clean up after the script finishes
 DEVICE_NAME="${DEVICE_NAME:-}"               # Device name, passed from the CI environment
+FORCE_UPDATE="${FORCE_UPDATE:-false}"        # Rebuild the current release when a module gets an update
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-true}" # Enable interactive mode
 WORKDIR=".tmp"
 

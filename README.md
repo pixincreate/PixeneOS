@@ -268,6 +268,11 @@ PixeneOS can be run on your local machine. A Linux based machine is preferred.
 
 `INTERACTIVE_MODE`, by default is set to `true` that calls `check_toml_env` function to check the existence of `env.toml`. If the file exist, it will read the `env.toml` file and set the environment variables accordingly. If the `env.toml` is non-existent, ignored. If it exist, and the format is wrong, the script exits with an error.
 
+Configuration is layered.
+`src/declarations.sh` sets the defaults, `env.toml` overrides them, and workflow inputs override both.
+In CI, `env.toml` is read only on scheduled runs.
+Manual runs take all values from the workflow inputs.
+
 To make the patched OTA available to the device, it needs to be hosted on the server. PixeneOS uses GitHub for pushing updates, handled by [release.yml](.github/workflows/release.yml).
 
 To set up automated release, add the following variables in GitHub secrets:
@@ -280,6 +285,22 @@ To set up automated release, add the following variables in GitHub secrets:
 - Passphrases used to generate the keys:
   - `PASSPHRASE_AVB`
   - `PASSPHRASE_OTA`
+
+### Force Update
+
+By default, scheduled runs skip the build when a release for the current GrapheneOS version and flavor already exists.
+Set `FORCE_UPDATE = "true"` in `env.toml` to let scheduled runs rebuild the current version when a module gets an update.
+The check compares the module versions in `src/declarations.sh` against the commit that built the existing release asset.
+A rebuild replaces the previous asset of the same device and flavor on the release.
+To force a build manually, run [release.yml](.github/workflows/release.yml) from the Actions tab and set `release-type` to `force-publish`.
+
+### Multiple Devices
+
+Use [multi-release.yml](.github/workflows/multi-release.yml) to build for more than one device.
+It starts one release run per device from a comma-separated list, for example `bluejay, panther`.
+With root enabled, append the Magisk preinit device to each entry, for example `bluejay:sda8, panther:sda15`.
+Leave the `devices` input empty to use the `DEVICES` value from `env.toml`, so you do not have to type the list on every run.
+This workflow runs only manually and does not affect single device setups.
 
 ### Hop Between Root and Rootless
 
