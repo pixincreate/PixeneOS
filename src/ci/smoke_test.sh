@@ -43,8 +43,8 @@ for tool in "${tools_array[@]}"; do
   check_url "${tool}.sig" "${SIGNATURE_URL}"
 done
 
-# Magisk APK from the fork's latest tag
-check_url "magisk" "${MAGISK[URL]}/releases/download/${VERSION[MAGISK]}/Magisk-${VERSION[MAGISK]}.apk"
+# Magisk APK from the latest tag of the configured repository
+check_url "magisk" "${DOMAIN}/${MAGISK[REPOSITORY]}/releases/download/${VERSION[MAGISK]}/Magisk-${VERSION[MAGISK]}.apk"
 
 # GrapheneOS OTA for the configured device
 check_url "grapheneos-ota" "${GRAPHENEOS[OTA_URL]}"

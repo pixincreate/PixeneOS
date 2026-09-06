@@ -66,7 +66,7 @@ function check_and_download_dependencies() {
     RETRY_COUNT=0 # Reset retry count for magisk
     while true; do
       # Magisk is an exception as it is an APK and hence we do the get call directly and verify
-      URL="${MAGISK[URL]}/releases/download/${VERSION[MAGISK]}/Magisk-${VERSION[MAGISK]}.apk"
+      URL="${DOMAIN}/${MAGISK[REPOSITORY]}/releases/download/${VERSION[MAGISK]}/Magisk-${VERSION[MAGISK]}.apk"
       log "URL for \`magisk\`: ${URL}"
       get "magisk" "${URL}"
       verify_downloads "magisk"
@@ -487,10 +487,6 @@ function check_toml_env() {
         # printf -v keeps values with spaces or commas intact, eval would split them
         printf -v "${key}" '%s' "${config_vars[$key]}"
       done
-
-      # Re-derive values that depend on the overrides
-      MAGISK[REPOSITORY]="${GITHUB_USER}/Magisk"
-      MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
     else
       error "Failed to find the required variables in \`${toml_file}\`.\n"
       exit 1

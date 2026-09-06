@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034  # the variables are used by the scripts that source this file
 
 source src/logger.sh
 
 # Declare associative arrays and variables
 declare -A ADDITIONALS
-declare -A AVBROOT
 declare -A GRAPHENEOS
 declare -A KEYS
 declare -A MAGISK
@@ -43,8 +41,9 @@ VERSION[OEMUNLOCKONBOOT]="${VERSION[OEMUNLOCKONBOOT]:-1.4}"
 
 # Magisk
 MAGISK[PREINIT]="${MAGISK_PREINIT:-}"
-MAGISK[REPOSITORY]="${GITHUB_USER}/Magisk"
-MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
+# The default fork carries Zygisk fixes for GrapheneOS.
+# Set to `topjohnwu/Magisk` for upstream Magisk.
+MAGISK[REPOSITORY]="${MAGISK_REPOSITORY:-pixincreate/Magisk}"
 
 # Keys
 KEYS[AVB]="${KEYS[AVB]:-avb.key}"
@@ -53,7 +52,6 @@ KEYS[CERT_OTA]="${KEYS[CERT_OTA]:-ota.crt}"
 KEYS[CERT_OTA_BASE64]="${KEYS[CERT_OTA_BASE64]:-''}"
 KEYS[OTA]="${KEYS[OTA]:-ota.key}"
 KEYS[OTA_BASE64]="${KEYS[OTA_BASE64]:-''}"
-KEYS[PKMD]="${KEYS[PKMD]:-avb_pkmd.bin}"
 
 # GrapheneOS
 GRAPHENEOS[OTA_BASE_URL]="https://releases.grapheneos.org"

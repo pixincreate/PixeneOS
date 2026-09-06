@@ -21,7 +21,9 @@ jobs:
           done
 
       - name: Shellcheck
-        run: shellcheck -S warning src/*.sh src/ci/*.sh
+        # `-x` follows the source chain from the entry points, so cross-file
+        # variable usage is visible and needs no suppressions
+        run: shellcheck -x -S warning src/main.sh src/setup_hooks.sh src/ci/*.sh
 
       - name: Check env.toml parsing
         shell: bash
