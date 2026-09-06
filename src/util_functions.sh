@@ -34,7 +34,8 @@ function check_and_download_dependencies() {
   IFS=' ' read -r -a tools_array <<<"${tools}"
 
   for tool in "${tools_array[@]}"; do
-    local flag=$(flag_check "${tool}")
+    local flag
+    flag=$(flag_check "${tool}")
 
     if [[ "${flag}" == 'false' ]]; then
       echo -e "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
@@ -79,7 +80,8 @@ function check_and_download_dependencies() {
 # If flag for a tool is disabled, it is not downloaded
 function flag_check() {
   local tool="${1}"
-  local tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
+  local tool_upper_case
+  tool_upper_case=$(echo "${tool}" | tr '[:lower:]' '[:upper:]')
 
   if [[ "${tool}" == "my-avbroot-setup" ]]; then
     FLAG="${ADDITIONALS[MY_AVBROOT_SETUP]}"
@@ -166,7 +168,6 @@ function patch_ota() {
 
   # Set the paths
   local ota_zip="${WORKDIR}/${GRAPHENEOS[OTA_TARGET]}"
-  local pkmd="${KEYS[PKMD]}"
   local grapheneos_pkmd="${WORKDIR}/extracted/avb_pkmd.bin"
   local grapheneos_otacert="${WORKDIR}/extracted/ota/META-INF/com/android/otacert"
   local magisk_path="${WORKDIR}/modules/magisk.apk"
@@ -185,8 +186,8 @@ function patch_ota() {
 
   # At present, the script lacks the ability to disable certain modules.
   # Everything is hardcoded to be enabled by default.
-  if ls "${ota_zip}.patched*.zip" 1>/dev/null 2>&1; then
-    echo -e "File ${ota_zip}.pathed.zip already exists in local. Patch skipped."
+  if [[ -f "${OUTPUTS[PATCHED_OTA]}" ]]; then
+    echo -e "File ${OUTPUTS[PATCHED_OTA]} already exists in local. Patch skipped."
   else
     echo -e "Patching OTA..."
     local args=()
@@ -270,7 +271,9 @@ function env_setup() {
 
   # Add the paths to the PATH environment variable just so that the script can find them
   if ! command -v avbroot &>/dev/null && ! command -v afsr &>/dev/null && ! command -v custota-tool &>/dev/null; then
-    export PATH="$(realpath ${afsr}):$(realpath ${avbroot}):$(realpath ${custota_tool}):$PATH"
+    local tool_paths
+    tool_paths="$(realpath "${afsr}"):$(realpath "${avbroot}"):$(realpath "${custota_tool}")"
+    export PATH="${tool_paths}:${PATH}"
   fi
 
   # Enabled python virtual environment
@@ -293,8 +296,9 @@ function env_setup() {
 # Function to enable the python virtual environment
 function enable_venv() {
   local dir_path='' # Default value is empty string
-  local base_path=$(basename "$(pwd)")
   local venv_path=''
+  local base_path
+  base_path=$(basename "$(pwd)")
 
   # Check presence of venv
   # Create a virtual environment if not found
@@ -321,25 +325,25 @@ function enable_venv() {
 
   # Ensure venv_path is set correctly and activate the virtual environment
   if [ -f "${venv_path}" ]; then
+    # shellcheck source=/dev/null
     source "${venv_path}"
   else
     echo -e "Virtual environment activation script not found at \`${venv_path}\`."
   fi
 }
 
-# Construct URL for the tools and download them
-# This function is called by download_dependencies function when running in non-interactive mode
-function url_constructor() {
+# Construct download URLs for a tool or module
+# Sets URL and SIGNATURE_URL without downloading anything
+function construct_url() {
   local repository="${1}"
   local user='chenxiaolong'
-  INTERACTIVE_MODE="${2:-true}"
+  local repository_upper_case
+  repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
 
-  local repository_upper_case=$(echo "${repository}" | tr '[:lower:]' '[:upper:]')
-
-  echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
   # `my-avbroot-setup` is git repository
   if [[ "${repository}" == "my-avbroot-setup" ]]; then
     URL="${DOMAIN}/${user}/${repository}"
+    SIGNATURE_URL=""
   else
     # Afsr, avbroot, and custota-tool are binaries and are platform dependent. Modules are zipped files.
     if [[ "${repository}" == "afsr" || "${repository}" == "avbroot" || "${repository}" == "custota-tool" ]]; then
@@ -364,7 +368,16 @@ function url_constructor() {
     URL="${download_page}/${version}/${application}"
     SIGNATURE_URL="${download_page}/${version}/${application}.sig"
   fi
+}
 
+# Construct URL for the tools and download them
+# This function is called by download_dependencies function when running in non-interactive mode
+function url_constructor() {
+  local repository="${1}"
+  INTERACTIVE_MODE="${2:-true}"
+
+  echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
+  construct_url "${repository}"
   echo -e "URL for \`${repository}\`: ${URL}"
 
   # If the script is running in interactive mode, prompt the user to overwrite the existing files
@@ -452,7 +465,8 @@ function make_directories() {
 
 function generate_ota_info() {
   # Detect build flavor
-  local flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
+  local flavor
+  flavor=$([[ ${ADDITIONALS[ROOT]} == 'true' ]] && echo "magisk-${VERSION[MAGISK]}" || echo "rootless")
   # e.g. bluejay-2024082200-rootless-abc12345-dirty.zip
   OUTPUTS[PATCHED_OTA]="${DEVICE_NAME}-${VERSION[GRAPHENEOS]}-${flavor}-$(git rev-parse --short HEAD)$(dirty_suffix).zip"
 }
@@ -474,7 +488,8 @@ function check_toml_env() {
       echo -e "Found variables in \`${toml_file}\` and will take precedence over other values.\n"
       for key in "${!config_vars[@]}"; do
         echo -e "${key}: ${config_vars[$key]}"
-        eval "${key}=${config_vars[$key]}"
+        # printf -v keeps values with spaces or commas intact, eval would split them
+        printf -v "${key}" '%s' "${config_vars[$key]}"
       done
     else
       echo -e "Failed to find the required variables in \`${toml_file}\`.\n"
