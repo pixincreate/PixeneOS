@@ -140,15 +140,14 @@ function cleanup() {
 # Generate the AVB and OTA signing keys.
 # Has to be called manually.
 function generate_keys() {
-  local public_key_metadata='avb_pkmd.bin'
-
   # Generate the AVB and OTA signing keys
   avbroot key generate-key -o "${KEYS[AVB]}"
   avbroot key generate-key -o "${KEYS[OTA]}"
 
   # Convert the public key portion of the AVB signing key to the AVB public key metadata format
   # This is the format that the bootloader requires when setting the custom root of trust
-  avbroot key extract-avb -k "${KEYS[AVB]}" -o "${public_key_metadata}"
+  # Flash it with: fastboot flash avb_custom_key <file>
+  avbroot key encode-avb -k "${KEYS[AVB]}" -o "${KEYS[PKMD]}"
 
   # Generate a self-signed certificate for the OTA signing key
   # This is used by recovery to verify OTA updates when sideloading
