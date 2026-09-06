@@ -11,7 +11,7 @@ source src/util_functions.sh
 
 function main() {
   if [[ "${INTERACTIVE_MODE}" == "true" ]]; then
-    echo -e "Running in interactive mode...\n"
+    log "Running in interactive mode...\n"
     check_toml_env
   fi
 

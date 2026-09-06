@@ -16,15 +16,15 @@ function auto_retry_check() {
   if [[ "${ADDITIONALS[RETRY]}" == "true" ]]; then
     if ((RETRY_COUNT < MAX_RETRIES)); then
       RETRY_COUNT=$((RETRY_COUNT + 1))
-      echo -e "Auto retry is enabled. Retrying (${RETRY_COUNT}/${MAX_RETRIES})...\n"
+      warn "Auto retry is enabled. Retrying (${RETRY_COUNT}/${MAX_RETRIES})...\n"
       RETRY="true"
       return 0
     else
-      echo -e "Maximum retry limit reached. Exiting...\n"
+      error "Maximum retry limit reached. Exiting...\n"
       exit 1
     fi
   else
-    echo -e "Auto retry is not enabled. Exiting...\n"
+    error "Auto retry is not enabled. Exiting...\n"
     exit 1
   fi
 }
@@ -37,7 +37,7 @@ function verify_downloads() {
   local tool="${1}"
   local tool_path=""
 
-  echo "Verifying \`${tool}\`..."
+  log "Verifying \`${tool}\`..."
 
   if [[ -f "${WORKDIR}/modules/${tool}.zip" ]] && [ "${tool}" != "magisk" ]; then
     tool_path="${WORKDIR}/modules/${tool}.zip"
@@ -51,13 +51,13 @@ function verify_downloads() {
   if [[ -e "${tool_path}" ]]; then
     # Check if the tool is a directory or a file
     if [[ -d "${tool_path}" ]]; then
-      echo -e "Tool ${tool} is a directory in \`${WORKDIR}/tools/\`. Verified.\n"
+      log "Tool ${tool} is a directory in \`${WORKDIR}/tools/\`. Verified.\n"
     elif [[ -f "${tool_path}" ]]; then
-      echo -e "Module \`${tool_path}\` found and verified in \`${WORKDIR}/modules/\`.\n"
+      log "Module \`${tool_path}\` found and verified in \`${WORKDIR}/modules/\`.\n"
     fi
     RETRY="false"
   else
-    echo -e "Error: \`${tool}\` not found in \`${WORKDIR}\`\n"
+    error "\`${tool}\` not found in \`${WORKDIR}\`\n"
     auto_retry_check
     return $?
   fi
@@ -65,7 +65,7 @@ function verify_downloads() {
   # Check if the signature is present, `my-avbroot-setup` and `magisk` do not have one
   if [[ "${tool}" != "my-avbroot-setup" && "${tool}" != "magisk" ]] &&
     [[ ! -f "${WORKDIR}/signatures/${tool}.zip.sig" ]]; then
-    echo -e "Error: Signature for \`${tool}\` not found in \`${WORKDIR}/signatures\`\n"
+    error "Signature for \`${tool}\` not found in \`${WORKDIR}/signatures\`\n"
     auto_retry_check
     return $?
   fi

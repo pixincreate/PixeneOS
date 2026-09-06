@@ -3,19 +3,22 @@
 # ---
 # LOGGING
 # Provides simple, timestamped logging functions.
+# Messages may contain escape sequences such as `\n`, `%b` renders them.
 # ---
 
 # Usage: log "Doing something..."
-log() {
-  local timestamp
-  timestamp=$(date +"%Y-%m-%d %T")
-  printf "[%s] [INFO] -- %s\\n" "$timestamp" "$1"
+function log() {
+  printf "[%s] [INFO] -- %b\n" "$(date +"%Y-%m-%d %T")" "${1}"
+}
+
+# Prints a warning message to stderr.
+# Usage: warn "Something looks off."
+function warn() {
+  printf "[%s] [WARN] -- %b\n" "$(date +"%Y-%m-%d %T")" "${1}" >&2
 }
 
 # Prints an error message to stderr.
 # Usage: error "Something went wrong."
-error() {
-  local timestamp
-  timestamp=$(date +"%Y-%m-%d %T")
-  printf "[%s] [ERROR] -- %s\\n" "$timestamp" "$1" >&2
+function error() {
+  printf "[%s] [ERROR] -- %b\n" "$(date +"%Y-%m-%d %T")" "${1}" >&2
 }

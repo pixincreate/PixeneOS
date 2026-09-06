@@ -22,7 +22,7 @@ function get_latest_version() {
   )
 
   if [[ "${GRAPHENEOS[UPDATE_TYPE]}" == "install" ]]; then
-    echo -e "The update type is set to \`install\` which is not supported by AVBRoot.\nExiting..."
+    error "The update type is set to \`install\` which is not supported by AVBRoot.\nExiting..."
     exit 1
   fi
 
@@ -32,10 +32,10 @@ function get_latest_version() {
   GRAPHENEOS[OTA_URL]="${GRAPHENEOS[OTA_BASE_URL]}/${GRAPHENEOS[OTA_TARGET]}.zip"
 
   # e.g.  bluejay-ota_update-2024080200
-  echo -e "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
+  log "GrapheneOS OTA target: \`${GRAPHENEOS[OTA_TARGET]}\`\nGrapheneOS OTA URL: ${GRAPHENEOS[OTA_URL]}\n"
 
   if [[ -z "${latest_grapheneos_version}" ]]; then
-    echo -e "Failed to get the latest version."
+    error "Failed to get the latest version."
     exit 1
   fi
 
@@ -44,7 +44,7 @@ function get_latest_version() {
   fi
 
   if [[ -z "${latest_magisk_version}" ]]; then
-    echo -e "Failed to get the latest Magisk version."
+    error "Failed to get the latest Magisk version."
     exit 1
   else
     VERSION[MAGISK]="${latest_magisk_version}"
@@ -57,7 +57,7 @@ function get() {
   local url="${2}"
   local signature_url="${3:-}"
 
-  echo "Downloading \`${filename}\`..."
+  log "Downloading \`${filename}\`..."
 
   # `my-avbroot-setup` is a special case as it is a git repository
   if [[ "${filename}" == "my-avbroot-setup" ]]; then
@@ -75,22 +75,22 @@ function get() {
     if [[ "${filename}" != "my-avbroot-setup" ]]; then
       # Download signatures
       if [ -n "${signature_url}" ]; then
-        echo "Downloading signature for \`${filename}\`..."
+        log "Downloading signature for \`${filename}\`..."
         curl -sLf "${signature_url}" --output "${WORKDIR}/signatures/${filename}.zip.sig"
       fi
 
       # afsr, avbroot and custota-tool are binaries that need to be extracted and granted permissions
       if [[ "${filename}" == "afsr" || "${filename}" == "avbroot" || "${filename}" == "custota-tool" ]]; then
-        echo -e "Extracting and granting permissions for \`${filename}\`..."
+        log "Extracting and granting permissions for \`${filename}\`..."
         echo N | unzip -q -o "${WORKDIR}/modules/${filename}.zip" -d "${WORKDIR}/tools/${filename}"
         chmod +x "${WORKDIR}/tools/${filename}/${filename}"
 
-        echo -e "Cleaning up..."
+        log "Cleaning up..."
         rm "${WORKDIR}/modules/${filename}.zip"
       fi
     fi
   fi
-  echo -e "\`${filename}\` downloaded."
+  log "\`${filename}\` downloaded."
 }
 
 # Function to check and download the dependencies
@@ -104,10 +104,10 @@ function download_ota() {
 
   # Download if not downloaded already
   if [ ! -f "${ota}" ]; then
-    echo -e "Downloading OTA from: ${GRAPHENEOS[OTA_URL]}...\nPlease be patient while the download happens."
+    log "Downloading OTA from: ${GRAPHENEOS[OTA_URL]}...\nPlease be patient while the download happens."
     curl -sL "${GRAPHENEOS[OTA_URL]}" --output "${ota}"
-    echo -e "OTA downloaded to: \`${ota}\`\n"
+    log "OTA downloaded to: \`${ota}\`\n"
   else
-    echo -e "OTA is already downloaded in: \`${ota}\`\n"
+    log "OTA is already downloaded in: \`${ota}\`\n"
   fi
 }
