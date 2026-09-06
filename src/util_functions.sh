@@ -14,7 +14,7 @@ function check_and_download_dependencies() {
 
   # Check for Python requirements
   if ! command -v python3 &>/dev/null; then
-    echo -e "Python 3 is required to run this script.\nExiting..."
+    error "Python 3 is required to run this script.\nExiting..."
     exit 1
   fi
 
@@ -38,17 +38,17 @@ function check_and_download_dependencies() {
     flag=$(flag_check "${tool}")
 
     if [[ "${flag}" == 'false' ]]; then
-      echo -e "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
+      log "\`${tool}\` is **NOT** enabled in the configuration.\nSkipping...\n"
       continue
     fi
 
     if [ -f "${WORKDIR}/modules/${tool}.zip" ]; then
-      echo -e "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
+      log "\`${tool}.zip\` file already exists in \`${WORKDIR}/modules\`."
       continue
     fi
 
     if [ -d "${WORKDIR}/tools/${tool}" ]; then
-      echo -e "\`${tool}\` file already exists in \`${WORKDIR}/tools\`."
+      log "\`${tool}\` file already exists in \`${WORKDIR}/tools\`."
       continue
     fi
 
@@ -67,7 +67,7 @@ function check_and_download_dependencies() {
     while true; do
       # Magisk is an exception as it is an APK and hence we do the get call directly and verify
       URL="${MAGISK[URL]}/releases/download/${VERSION[MAGISK]}/Magisk-${VERSION[MAGISK]}.apk"
-      echo "URL for \`magisk\`: ${URL}"
+      log "URL for \`magisk\`: ${URL}"
       get "magisk" "${URL}"
       verify_downloads "magisk"
 
@@ -101,7 +101,7 @@ function flag_check() {
 # Function to create and make the release called by main script
 function create_and_make_release() {
   if [[ ! -d $WORKDIR ]]; then
-    echo -e "Error: $WORKDIR is non-existent. Downloading the tools..."
+    warn "$WORKDIR is non-existent. Downloading the tools..."
 
     # Check for requirements and download them accordingly
     check_and_download_dependencies
@@ -127,14 +127,14 @@ function create_ota() {
 # Function to cleanup the temporary files and unset the keys when not in interactive mode
 function cleanup() {
   if [[ "${CLEANUP}" != 'true' ]]; then
-    echo -e "Cleanup is disabled. Exiting...\n"
+    log "Cleanup is disabled. Exiting...\n"
     return
   fi
 
-  echo "Cleaning up..."
+  log "Cleaning up..."
   rm -rf "${WORKDIR}"
   unset "${KEYS[@]}"
-  echo "Cleanup complete."
+  log "Cleanup complete."
 }
 
 # Generate the AVB and OTA signing keys.
@@ -180,16 +180,14 @@ function patch_ota() {
 
   # Extract the official public keys and certificates if not found
   if [[ ! -e "${grapheneos_pkmd}" || ! -e "${grapheneos_otacert}" ]]; then
-    echo "Extracting official keys..."
+    log "Extracting official keys..."
     extract_official_keys
   fi
 
-  # At present, the script lacks the ability to disable certain modules.
-  # Everything is hardcoded to be enabled by default.
   if [[ -f "${OUTPUTS[PATCHED_OTA]}" ]]; then
-    echo -e "File ${OUTPUTS[PATCHED_OTA]} already exists in local. Patch skipped."
+    log "File ${OUTPUTS[PATCHED_OTA]} already exists in local. Patch skipped."
   else
-    echo -e "Patching OTA..."
+    log "Patching OTA..."
     local args=()
 
     # OTA input and output
@@ -209,27 +207,25 @@ function patch_ota() {
     args+=("--pass-avb-env-var" "PASSPHRASE_AVB")
     args+=("--pass-ota-env-var" "PASSPHRASE_OTA")
 
-    # Modules
-    args+=("--module-custota" "${WORKDIR}/modules/custota.zip")
-    args+=("--module-msd" "${WORKDIR}/modules/msd.zip")
-    args+=("--module-bcr" "${WORKDIR}/modules/bcr.zip")
-    args+=("--module-oemunlockonboot" "${WORKDIR}/modules/oemunlockonboot.zip")
-    args+=("--module-alterinstaller" "${WORKDIR}/modules/alterinstaller.zip")
-
-    # Module signatures
-    args+=("--module-custota-sig" "${WORKDIR}/signatures/custota.zip.sig")
-    args+=("--module-msd-sig" "${WORKDIR}/signatures/msd.zip.sig")
-    args+=("--module-bcr-sig" "${WORKDIR}/signatures/bcr.zip.sig")
-    args+=("--module-oemunlockonboot-sig" "${WORKDIR}/signatures/oemunlockonboot.zip.sig")
-    args+=("--module-alterinstaller-sig" "${WORKDIR}/signatures/alterinstaller.zip.sig")
+    # Modules and their signatures
+    # Disabled modules are left out, `patch.py` skips modules without arguments
+    local module
+    for module in custota msd bcr oemunlockonboot alterinstaller; do
+      if [[ "$(flag_check "${module}")" == 'true' ]]; then
+        args+=("--module-${module}" "${WORKDIR}/modules/${module}.zip")
+        args+=("--module-${module}-sig" "${WORKDIR}/signatures/${module}.zip.sig")
+      else
+        log "Module \`${module}\` is disabled. Skipping..."
+      fi
+    done
 
     # Add support for Magisk if root config is enabled
     if [[ "${ADDITIONALS[ROOT]}" == 'true' ]]; then
-      echo -e "Magisk is enabled. Modifying the setup script...\n"
+      log "Magisk is enabled. Modifying the setup script...\n"
       args+=("--patch-arg=--magisk" "--patch-arg" "${magisk_path}")
       args+=("--patch-arg=--magisk-preinit-device" "--patch-arg" "${MAGISK[PREINIT]}")
     else
-      echo -e "Magisk is not enabled. Skipping...\n"
+      log "Magisk is not enabled. Skipping...\n"
     fi
 
     # Have to clear storage space because, `csig` results in storage runout
@@ -248,10 +244,10 @@ function my_avbroot_setup() {
   # Paths
   local setup_script="${WORKDIR}/tools/my-avbroot-setup/patch.py"
   local magisk_path="${WORKDIR}/modules/magisk.apk"
-  local location_path="${DOMAIN}/${USER}/${REPOSITORY}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUTS[PATCHED_OTA]}"
+  local location_path="${DOMAIN}/${GITHUB_USER}/${GITHUB_REPO}/releases/download/${VERSION[GRAPHENEOS]}/${OUTPUTS[PATCHED_OTA]}"
 
   # Add support to pass env-vars to the setup script for passphrase in the CI/CD pipeline
-  echo -e "Running script modifications..."
+  log "Running script modifications..."
 
   # Update location path to use GitHub releases
   sed -i -e "s|generate_update_info(update_info, args.output.name)|generate_update_info(update_info, '${location_path}')|" "${setup_script}"
@@ -282,14 +278,14 @@ function env_setup() {
   # Install required Python packages
   if [[ -f "${pyproject_file}" ]]; then
     if ! command -v uv &>/dev/null; then
-      echo -e "uv not found. Installing..."
+      warn "uv not found. Installing..."
       python3 -m pip install uv
     fi
 
-    echo -e "Installing required Python packages from pyproject.toml..."
+    log "Installing required Python packages from pyproject.toml..."
     uv pip install -r "${pyproject_file}"
   else
-    echo -e "Warning: pyproject.toml not found at ${my_avbroot_setup}"
+    warn "pyproject.toml not found at ${my_avbroot_setup}"
   fi
 }
 
@@ -304,14 +300,14 @@ function enable_venv() {
   # Create a virtual environment if not found
   if [[ "${base_path}" == "my-avbroot-setup" ]]; then
     if [ ! -d "venv" ]; then
-      echo -e "Virtual environment not found. Creating..."
+      log "Virtual environment not found. Creating..."
       python3 -m venv venv
     fi
   else
-    echo -e "The script is not run from the \`my-avbroot-setup\` directory.\nSearching for the directory..."
+    log "The script is not run from the \`my-avbroot-setup\` directory.\nSearching for the directory..."
     dir_path=$(find . -type d -name "my-avbroot-setup" -print -quit)
     if [ ! -d "${dir_path}/venv" ]; then
-      echo -e "Virtual environment not found in path \`${dir_path}\`. Creating..."
+      log "Virtual environment not found in path \`${dir_path}\`. Creating..."
       python3 -m venv "${dir_path}/venv"
     fi
   fi
@@ -328,7 +324,7 @@ function enable_venv() {
     # shellcheck source=/dev/null
     source "${venv_path}"
   else
-    echo -e "Virtual environment activation script not found at \`${venv_path}\`."
+    warn "Virtual environment activation script not found at \`${venv_path}\`."
   fi
 }
 
@@ -376,9 +372,9 @@ function url_constructor() {
   local repository="${1}"
   INTERACTIVE_MODE="${2:-true}"
 
-  echo -e "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
+  log "Constructing URL for \`${repository}\` as \`${repository}\` is non-existent at \`${WORKDIR}\`..."
   construct_url "${repository}"
-  echo -e "URL for \`${repository}\`: ${URL}"
+  log "URL for \`${repository}\`: ${URL}"
 
   # If the script is running in interactive mode, prompt the user to overwrite the existing files
   if [[ "${INTERACTIVE_MODE}" == 'true' ]]; then
@@ -387,10 +383,10 @@ function url_constructor() {
       read -r confirm
       confirm=${confirm:-"yes"}
       if [[ $confirm =~ ^[yY](es|ES)?$ ]]; then
-        echo "Removing existing files..."
+        log "Removing existing files..."
         rm -rf "${WORKDIR}/tools/${repository}" "${WORKDIR}/modules/${repository}.zip" "${WORKDIR}/signatures/${repository}.zip.sig"
       else
-        echo "Aborted."
+        error "Aborted."
         exit 1
       fi
     fi
@@ -409,7 +405,7 @@ function download_dependencies() {
   if type url_constructor &>/dev/null; then
     url_constructor "${tool}" "${INTERACTIVE_MODE}"
   else
-    echo -e "Error: \`url_constructor\` function is not defined."
+    error "\`url_constructor\` function is not defined."
     exit 1
   fi
 }
@@ -485,14 +481,18 @@ function check_toml_env() {
     done < <(grep -v '^#' "$toml_file") # Ignore comments
 
     if [[ ${#config_vars[@]} -gt 0 ]]; then
-      echo -e "Found variables in \`${toml_file}\` and will take precedence over other values.\n"
+      log "Found variables in \`${toml_file}\` and will take precedence over other values.\n"
       for key in "${!config_vars[@]}"; do
         echo -e "${key}: ${config_vars[$key]}"
         # printf -v keeps values with spaces or commas intact, eval would split them
         printf -v "${key}" '%s' "${config_vars[$key]}"
       done
+
+      # Re-derive values that depend on the overrides
+      MAGISK[REPOSITORY]="${GITHUB_USER}/Magisk"
+      MAGISK[URL]="${DOMAIN}/${MAGISK[REPOSITORY]}"
     else
-      echo -e "Failed to find the required variables in \`${toml_file}\`.\n"
+      error "Failed to find the required variables in \`${toml_file}\`.\n"
       exit 1
     fi
   fi

@@ -272,6 +272,7 @@ Configuration is layered.
 `src/declarations.sh` sets the defaults, `env.toml` overrides them, and workflow inputs override both.
 In CI, `env.toml` is read only on scheduled runs.
 Manual runs take all values from the workflow inputs.
+Forks set `GITHUB_USER` and `GITHUB_REPO` in `env.toml` so `src/declarations.sh` stays untouched.
 
 To make the patched OTA available to the device, it needs to be hosted on the server. PixeneOS uses GitHub for pushing updates, handled by [release.yml](.github/workflows/release.yml).
 
