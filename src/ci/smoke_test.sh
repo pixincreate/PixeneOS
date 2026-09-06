@@ -14,7 +14,8 @@ function check_url() {
   local url="${2}"
   local status
 
-  status=$(curl -sIL -o /dev/null -w '%{http_code}' "${url}")
+  # `|| true` keeps errexit from ending the run, a failed request reports as 000
+  status=$(curl -sIL --max-time 30 --retry 2 -o /dev/null -w '%{http_code}' "${url}" || true)
   if [[ "${status}" == "200" ]]; then
     echo "ok   ${name}: ${url}"
   else
