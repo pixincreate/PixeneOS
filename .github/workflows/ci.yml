@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Check shell syntax
+        run: |
+          for file in src/*.sh src/ci/*.sh; do
+            bash -n "$file"
+          done
+
+      - name: Shellcheck
+        run: shellcheck -S warning src/*.sh src/ci/*.sh
+
+      - name: Check env.toml parsing
+        shell: bash
+        run: |
+          source src/util_functions.sh && check_toml_env
+
+      - name: Check download URLs
+        run: src/ci/smoke_test.sh
