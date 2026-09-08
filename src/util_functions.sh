@@ -486,6 +486,14 @@ function check_toml_env() {
         # printf -v keeps values with spaces or commas intact, eval would split them
         printf -v "${key}" '%s' "${config_vars[$key]}"
       done
+
+      # `ROOT` and `MAGISK_PREINIT` are friendly aliases for the internal variables
+      if [[ -n "${config_vars[ROOT]:-}" ]]; then
+        ADDITIONALS[ROOT]="${config_vars[ROOT]}"
+      fi
+      if [[ -n "${config_vars[MAGISK_PREINIT]:-}" ]]; then
+        MAGISK[PREINIT]="${config_vars[MAGISK_PREINIT]}"
+      fi
     else
       error "Failed to find the required variables in \`${toml_file}\`.\n"
       exit 1

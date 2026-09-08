@@ -68,18 +68,6 @@ jobs:
     permissions: write-all
 
     steps:
-      - name: Check if `magisk-preinit-device` is set when `root` is true
-        run: |
-          # Convert inputs to proper boolean values
-          root="${{ inputs.root }}"
-          magisk_preinit_device="${{ inputs.magisk-preinit-device }}"
-
-          # Ensure that the boolean comparison is correctly handled
-          if [ "$root" == "true" ] && [ -z "$magisk_preinit_device" ]; then
-            echo -e "::error:: magisk-preinit-device is required when root is true."
-            exit 1
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v7
         with:
@@ -95,6 +83,21 @@ jobs:
           echo "DEVICE_NAME=${DEVICE_NAME}" >> $GITHUB_ENV
           echo "GRAPHENEOS_UPDATE_CHANNEL=${GRAPHENEOS[UPDATE_CHANNEL]}" >> $GITHUB_ENV
           echo "FORCE_UPDATE=${FORCE_UPDATE:-false}" >> $GITHUB_ENV
+          # Let scheduled runs build rooted OTAs when env.toml enables it
+          echo "ROOT=${ADDITIONALS[ROOT]}" >> $GITHUB_ENV
+          echo "MAGISK_PREINIT=${MAGISK[PREINIT]}" >> $GITHUB_ENV
+
+      - name: Check if `magisk-preinit-device` is set when `root` is true
+        run: |
+          # Inputs win on manual runs, env.toml supplies the values on schedule
+          root="${{ inputs.root || env.ROOT }}"
+          magisk_preinit_device="${{ inputs.magisk-preinit-device || env.MAGISK_PREINIT }}"
+
+          # Ensure that the boolean comparison is correctly handled
+          if [ "$root" == "true" ] && [ -z "$magisk_preinit_device" ]; then
+            echo -e "::error:: magisk-preinit-device is required when root is true."
+            exit 1
+          fi
 
       - name: Set GrapheneOS version
         shell: bash
@@ -114,7 +117,7 @@ jobs:
         if: github.event_name == 'schedule' || inputs.release-type == 'default'
         env:
           REPOSITORY: ${{ github.repository }}
-          ROOT: ${{ inputs.root }}
+          ROOT: ${{ inputs.root || env.ROOT }}
         run: src/ci/check_existing_build.sh
 
       - name: Setup Git
@@ -150,9 +153,9 @@ jobs:
       - name: Patch OTA
         shell: bash
         env:
-          ADDITIONALS_ROOT: ${{ inputs.root }}
+          ADDITIONALS_ROOT: ${{ inputs.root || env.ROOT }}
           CLEANUP: true
-          MAGISK_PREINIT: ${{ inputs.magisk-preinit-device }}
+          MAGISK_PREINIT: ${{ inputs.magisk-preinit-device || env.MAGISK_PREINIT }}
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
         run: |
@@ -189,7 +192,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          ROOT: ${{ inputs.root }}
+          ROOT: ${{ inputs.root || env.ROOT }}
         run: src/ci/remove_superseded_assets.sh
 
       - name: Publish OTA to server
@@ -197,5 +200,5 @@ jobs:
         if: inputs.release-type != 'build-only'
         env:
           RELEASE_TYPE: ${{ inputs.release-type }}
-          ROOT: ${{ inputs.root }}
+          ROOT: ${{ inputs.root || env.ROOT }}
         run: src/ci/publish_ota.sh
