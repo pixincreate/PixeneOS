@@ -122,11 +122,11 @@ jobs:
 
       - name: Setup Git
         env:
-          MY_EMAIL: ${{ secrets.EMAIL }}
-          GH_NAME: ${{ github.repository_owner }}
+          USER_EMAIL: ${{ secrets.EMAIL }}
+          USER_NAME: ${{ github.repository_owner }}
         run: |
-          git config --global user.email "$MY_EMAIL"
-          git config --global user.name "$GH_NAME"
+          git config --global user.email "$USER_EMAIL"
+          git config --global user.name "$USER_NAME"
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@master
