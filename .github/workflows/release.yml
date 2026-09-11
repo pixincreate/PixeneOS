@@ -22,7 +22,7 @@ on:
         description: GrapheneOS update channel. Supports `alpha`, `beta` and `stable`. Defaults to `stable`
         required: false
       release-type:
-        description: 'How to handle the release. `default`: build and publish if new. `build-only`: only build. `force-publish`: build and publish even if it exists.'
+        description: "How to handle the release. `default`: build and publish if new. `build-only`: only build. `force-publish`: build and publish even if it exists."
         required: true
         type: choice
         options:
@@ -121,9 +121,12 @@ jobs:
         run: src/ci/check_existing_build.sh
 
       - name: Setup Git
+        env:
+          USER_EMAIL: ${{ secrets.EMAIL }}
+          USER_NAME: ${{ github.repository_owner }}
         run: |
-          # Configure git for pushing changes
-          git config --global user.email ${{ secrets.EMAIL }} && git config --global user.name PiX
+          git config --global user.email "$USER_EMAIL"
+          git config --global user.name "$USER_NAME"
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@master
