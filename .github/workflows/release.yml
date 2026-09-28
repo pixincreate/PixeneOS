@@ -158,6 +158,8 @@ jobs:
         env:
           ADDITIONALS_ROOT: ${{ inputs.root || env.ROOT }}
           CLEANUP: true
+          GITHUB_REPO: ${{ github.event.repository.name }}
+          GITHUB_USER: ${{ github.repository_owner }}
           MAGISK_PREINIT: ${{ inputs.magisk-preinit-device || env.MAGISK_PREINIT }}
           PASSPHRASE_AVB: ${{ secrets.PASSPHRASE_AVB }}
           PASSPHRASE_OTA: ${{ secrets.PASSPHRASE_OTA }}
