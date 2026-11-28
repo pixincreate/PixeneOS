@@ -1,7 +1,7 @@
 {
   "version": 2,
   "full": {
-    "location_ota": "https://github.com/pixincreate/PixeneOS/releases/download/2026111800/bluejay-2026111800-rootless-79e8038.zip",
-    "location_csig": "https://github.com/pixincreate/PixeneOS/releases/download/2026111800/bluejay-2026111800-rootless-79e8038.zip.csig"
+    "location_ota": "https://github.com/pixincreate/PixeneOS/releases/download/2026112700/bluejay-2026112700-rootless-5eb5c67.zip",
+    "location_csig": "https://github.com/pixincreate/PixeneOS/releases/download/2026112700/bluejay-2026112700-rootless-5eb5c67.zip.csig"
   }
 }
